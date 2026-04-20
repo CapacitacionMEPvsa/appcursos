@@ -49,27 +49,40 @@ st.markdown(f"## 👤 {nombre}")
 # =========================
 # 🔥 FUNCION PARA EXTRAER BLOQUES
 # =========================
-def extraer_bloque(df_emp, inicio, fin, categoria):
+def extraer_bloque(df_emp, inicio, fin, paso=5):
     data = []
+    columnas = list(df_emp.columns)
 
-    for col in range(inicio, fin + 1):
+    for col in range(inicio, fin, paso):
 
-        if col >= len(df_emp.columns):
+        if col + 4 >= len(columnas):
             continue
 
-        data.append(pd.DataFrame({
-            "nomina": df_emp[COL_NOMINA].values,
-            "nombre": df_emp[COL_NOMBRE].values,
-            "proceso": df_emp[COL_PROCESO].values,
-            "categoria": categoria,
-            "curso": df_emp.iloc[:, col],
-            "vencimiento": df_emp.iloc[:, col + 1] if col + 1 < len(df_emp.columns) else None,
-            "estatus": df_emp.iloc[:, col + 2] if col + 2 < len(df_emp.columns) else None,
-            "observaciones": df_emp.iloc[:, 33]  # Anterior fijo
-        }))
+        try:
+            curso = columnas[col].split("|")[0]
+
+            temp = pd.DataFrame({
+                "curso": curso,
+                "inicio": df_emp.iloc[:, col],
+                "emision": df_emp.iloc[:, col + 1],
+                "vencimiento": df_emp.iloc[:, col + 2],  # 👈 antes vigencia
+                "estatus_excel": df_emp.iloc[:, col + 4],  # por si lo necesitas
+                "observaciones": df_emp.iloc[:, col - 1] if col - 1 >= 0 else "N/A"  # 👈 ANTERIOR
+            })
+
+            data.append(temp)
+
+        except:
+            continue
 
     if data:
-        return pd.concat(data, ignore_index=True)
+        df_out = pd.concat(data, ignore_index=True)
+
+        # reemplazar vacíos
+        df_out = df_out.fillna("N/A")
+
+        return df_out
+
     return pd.DataFrame()
 
 # =========================
