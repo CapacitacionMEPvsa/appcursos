@@ -102,7 +102,14 @@ cursos.append(extraer_bloque(empleado, 266, 288, "CURSOS COMPLEMENTARIOS"))
 # =========================
 # UNIR TODO
 # =========================
+cursos = [c for c in cursos if not c.empty]
+
+if len(cursos) == 0:
+    st.error("No se encontraron cursos para este trabajador")
+    st.stop()
+
 df_final = pd.concat(cursos, ignore_index=True)
+df_final.columns = df_final.columns.astype(str).str.strip()
 
 # limpiar vacíos
 df_final = df_final[df_final["curso"].notna()]
