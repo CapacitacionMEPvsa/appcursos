@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from datetime import datetime
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 import io
@@ -23,28 +24,63 @@ if nomina:
         nombre = empleado.iloc[0]["nombre"]
         st.success(f"Empleado: {nombre}")
 
-        # Limpiar datos
+        # Convertir fecha (sin hora)
         empleado["vencimiento"] = pd.to_datetime(
             empleado["vencimiento"], errors='coerce'
         ).dt.date
 
+        # Limpiar tipo de curso
         empleado["tipodecurso"] = empleado["tipodecurso"].str.lower().str.strip()
 
-        # Función para mostrar secciones
+        # -------- ESTATUS AUTOMÁTICO --------
+        hoy = datetime.today().date()
+
+        def calcular_estatus(fecha):
+            if pd.isna(fecha):
+                return "Sin fecha"
+            dias = (fecha - hoy).days
+            if dias < 0:
+                return "Vencido"
+            elif dias <= 30:
+                return "Por vencer"
+            else:
+                return "Vigente"
+
+        empleado["estatus_calculado"] = empleado["vencimiento"].apply(calcular_estatus)
+
+        # -------- COLORES --------
+        def colorear_estatus(val):
+            if val == "Vencido":
+                return "color: red; font-weight: bold"
+            elif val == "Por vencer":
+                return "color: orange; font-weight: bold"
+            elif val == "Vigente":
+                return "color: green; font-weight: bold"
+            return ""
+
+        # -------- FUNCIÓN PARA SECCIONES --------
         def mostrar_seccion(titulo, filtro):
             data = empleado[empleado["tipodecurso"] == filtro]
+
             with st.expander(titulo):
                 if data.empty:
                     st.write("Sin registros")
                 else:
-                    st.dataframe(data[["curso", "estatus", "vencimiento"]])
+                    tabla = data[["curso", "vencimiento", "estatus_calculado"]]
 
-        # Secciones automáticas
+                    st.dataframe(
+                        tabla.style.applymap(
+                            colorear_estatus,
+                            subset=["estatus_calculado"]
+                        )
+                    )
+
+        # -------- SECCIONES --------
         mostrar_seccion("📘 Cursos Técnicos", "técnico")
         mostrar_seccion("🤝 Habilidades", "habilidades")
         mostrar_seccion("🛡️ Seguridad", "seguridad")
 
-        # -------- PDF --------
+        # -------- GENERAR PDF --------
         def generar_pdf(data, nombre):
             buffer = io.BytesIO()
             c = canvas.Canvas(buffer, pagesize=letter)
@@ -56,7 +92,7 @@ if nomina:
             y -= 20
 
             for i, row in data.iterrows():
-                texto = f"{row['curso']} | {row['estatus']} | {row['vencimiento']}"
+                texto = f"{row['curso']} | {row['estatus_calculado']} | {row['vencimiento']}"
                 c.drawString(50, y, texto)
                 y -= 15
 
