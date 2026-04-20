@@ -2,13 +2,11 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 import io
-import os
 
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
-from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet
-
+# =========================
+# CONFIGURACIÓN
+# =========================
+st.set_page_config(layout="wide")
 st.title("Consulta de Cursos")
 
 # =========================
@@ -16,8 +14,67 @@ st.title("Consulta de Cursos")
 # =========================
 df = pd.read_excel("BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx")
 
-# Limpiar columnas
+# limpiar nombres de columnas
 df.columns = df.columns.str.strip().str.lower().str.replace(" ", "")
+
+# =========================
+# 🔥 DEFINICIÓN DE BLOQUES
+# (AJUSTA AQUÍ SEGÚN TU EXCEL)
+# =========================
+bloques = [
+
+    # ===== SEGURIDAD =====
+    {
+        "curso": "anexosspa",          # nombre de columna del curso
+        "vencimiento": "vigenciasspa", # columna fecha vigencia
+        "estatus": "estatussspa",      # columna estatus (si no existe se calcula)
+        "tipo": "seguridad"
+    },
+
+    # ===== EJEMPLOS (AGREGA MÁS IGUAL) =====
+    # {
+    #     "curso": "trabajoenalturas",
+    #     "vencimiento": "vigenciaalturas",
+    #     "estatus": "estatusalturas",
+    #     "tipo": "seguridad"
+    # },
+
+    # {
+    #     "curso": "equipos",
+    #     "vencimiento": "vigenciaequipos",
+    #     "estatus": "estatusequipos",
+    #     "tipo": "tecnico"
+    # },
+
+]
+
+# =========================
+# TRANSFORMAR A FORMATO VERTICAL
+# =========================
+cursos = []
+
+for b in bloques:
+    if b["curso"] in df.columns:
+
+        temp = df[["nomina", "nombre", "proceso"]].copy()
+
+        temp["curso"] = df[b["curso"]]
+        temp["vencimiento"] = df[b["vencimiento"]]
+
+        # usar estatus si existe, si no calcularlo después
+        if b["estatus"] in df.columns:
+            temp["Estatus"] = df[b["estatus"]]
+        else:
+            temp["Estatus"] = None
+
+        temp["tipodecurso"] = b["tipo"]
+
+        cursos.append(temp)
+
+df_final = pd.concat(cursos, ignore_index=True)
+
+# eliminar vacíos
+df_final = df_final[df_final["curso"].notna()]
 
 # =========================
 # INPUT
@@ -25,41 +82,51 @@ df.columns = df.columns.str.strip().str.lower().str.replace(" ", "")
 nomina = st.text_input("Ingresa tu número de nómina")
 
 if nomina:
-    empleado = df[df["nomina"].astype(str).str.strip() == nomina.strip()].copy()
+
+    empleado = df_final[
+        df_final["nomina"].astype(str).str.strip() == nomina.strip()
+    ].copy()
 
     if empleado.empty:
         st.error("No se encontraron registros")
     else:
+
         nombre = empleado.iloc[0]["nombre"]
-        st.success(f"Empleado: {nombre}")
 
         # =========================
-        # LIMPIEZA
+        # HEADER
+        # =========================
+        col1, col2 = st.columns([1, 6])
+
+        with col1:
+            st.image("logo.png", width=120)
+
+        with col2:
+            st.markdown(f"## 👤 {nombre}")
+
+        # =========================
+        # BOTONES
+        # =========================
+        colA, colB = st.columns([1, 2])
+
+        with colA:
+            descargar = st.button("📄 Descargar Kardex PDF")
+
+        with colB:
+            filtro = st.toggle("🚀 Solo pendientes o por vencer")
+
+        # =========================
+        # LIMPIEZA FECHAS
         # =========================
         empleado["vencimiento"] = pd.to_datetime(
             empleado["vencimiento"], errors="coerce"
         ).dt.date
 
-        empleado["tipodecurso"] = (
-            empleado["tipodecurso"]
-            .astype(str)
-            .str.lower()
-            .str.strip()
-            .str.replace("á", "a")
-            .str.replace("é", "e")
-            .str.replace("í", "i")
-            .str.replace("ó", "o")
-            .str.replace("ú", "u")
-        )
-
-        # =========================
-        # ESTATUS
-        # =========================
         hoy = datetime.today().date()
 
         def calcular_estatus(fecha):
             if pd.isna(fecha):
-                return "Sin fecha"
+                return "Pendiente"
             dias = (fecha - hoy).days
             if dias < 0:
                 return "Vencido"
@@ -68,177 +135,88 @@ if nomina:
             else:
                 return "Vigente"
 
-        empleado["Estatus"] = empleado["vencimiento"].apply(calcular_estatus)
+        # calcular solo si no venía definido
+        empleado["Estatus"] = empleado.apply(
+            lambda row: calcular_estatus(row["vencimiento"])
+            if pd.isna(row["Estatus"]) else row["Estatus"],
+            axis=1
+        )
 
         # =========================
-        # SEMÁFORO EN APP
+        # FILTRO
         # =========================
-        def semaforo(val):
-            if val == "Vencido":
-                return "🔴 Vencido"
-            elif val == "Por vencer":
-                return "🟡 Por vencer"
-            elif val == "Vigente":
-                return "🟢 Vigente"
-            return val
+        if filtro:
+            empleado = empleado[
+                empleado["Estatus"].isin(["Vencido", "Por vencer", "Pendiente"])
+            ]
 
         # =========================
-        # MOSTRAR SECCIONES
+        # COLORES
         # =========================
-        def mostrar_seccion(titulo, filtro):
-            data = empleado[empleado["tipodecurso"] == filtro]
+        def color_fila(row):
+            if row["Estatus"] == "Vigente":
+                return ['background-color: #c8e6c9'] * len(row)
+            elif row["Estatus"] == "Vencido":
+                return ['background-color: #ffcdd2'] * len(row)
+            elif row["Estatus"] == "Por vencer":
+                return ['background-color: #fff3cd'] * len(row)
+            else:
+                return ['background-color: #eeeeee'] * len(row)
 
-            st.subheader(titulo)
+        # =========================
+        # TABLAS
+        # =========================
+        def mostrar_cursos(titulo, data):
 
             if data.empty:
-                st.write("Sin registros")
-            else:
-                tabla = data[["curso", "Estatus", "vencimiento"]].copy()
-                tabla["Estatus"] = tabla["Estatus"].apply(semaforo)
-                st.dataframe(tabla, use_container_width=True)
+                return
 
-        mostrar_seccion("🛠️ Cursos Técnicos", "Técnicos")
-        st.markdown("---")
-        mostrar_seccion("🧑‍🏫 Cursos de Seguridad", "seguridad")
-        st.markdown("---")
-        mostrar_seccion("📚 Cursos Externos", "externos")
-        st.markdown("---")        
-        mostrar_seccion("🤝 Cursos Complementarios", "complementario")
+            st.markdown(f"## 📁 {titulo}")
 
-        # =========================
-        # GENERAR PDF
-        # =========================
-        def generar_pdf(data, nombre):
+            tabla = data[["curso", "vencimiento", "Estatus"]].copy()
+            tabla.columns = ["Curso", "Vencimiento", "Estatus"]
 
-            buffer = io.BytesIO()
-            doc = SimpleDocTemplate(buffer, pagesize=letter)
-
-            elements = []
-            styles = getSampleStyleSheet()
-
-            # ENCABEZADO
-            encabezado = []
-
-            if os.path.exists("logo.png"):
-                logo = Image("logo.png", width=80, height=50)
-            else:
-                logo = ""
-
-            titulo = Paragraph(
-                "<para align='center'><b>Materiales y Equipo Petrolero</b><br/>"
-                "<font size=10>Kardex de Capacitación Laboral</font></para>",
-                styles["Title"]
+            tabla["Observaciones"] = ""
+            tabla["Capacitación"] = tabla["Estatus"].apply(
+                lambda x: "Tomar Curso" if x != "Vigente" else ""
             )
 
-            encabezado.append([logo, titulo])
+            styled = tabla.style.apply(color_fila, axis=1)
 
-            tabla_encabezado = Table(encabezado, colWidths=[100, 380])
-            tabla_encabezado.setStyle([("VALIGN", (0, 0), (-1, -1), "MIDDLE")])
+            st.dataframe(
+                styled,
+                use_container_width=True,
+                hide_index=True
+            )
 
-            elements.append(tabla_encabezado)
-            elements.append(Spacer(1, 15))
+        # =========================
+        # SECCIONES
+        # =========================
+        mostrar_cursos(
+            "CURSOS DE SEGURIDAD",
+            empleado[empleado["tipodecurso"] == "seguridad"]
+        )
 
-            # DATOS
-            nomina_emp = str(data.iloc[0]["nomina"])
-            proceso = str(data.iloc[0].get("proceso", "N/A"))
+        mostrar_cursos(
+            "CURSOS TÉCNICOS",
+            empleado[empleado["tipodecurso"] == "tecnico"]
+        )
 
-            elements.append(Paragraph(f"<b>Nombre del colaborador:</b> {nombre}", styles["Normal"]))
-            elements.append(Paragraph(f"<b>No. Nómina:</b> {nomina_emp}", styles["Normal"]))
-            elements.append(Paragraph(f"<b>Proceso:</b> {proceso}", styles["Normal"]))
-            elements.append(Spacer(1, 15))
-
-            # =========================
-            # CALCULAR CUMPLIMIENTO
-            # =========================
-            total = len(data)
-            vigentes = len(data[data["Estatus"] == "Vigente"])
-            por_vencer = len(data[data["Estatus"] == "Por vencer"])
-
-            cumplidos = vigentes + por_vencer
-            porcentaje = round((cumplidos / total) * 100, 1) if total > 0 else 0
-
-            # =========================
-            # TABLAS
-            # =========================
-            def tabla_cursos(titulo, filtro):
-
-                seccion = data[data["tipodecurso"] == filtro]
-
-                if seccion.empty:
-                    return
-
-                elements.append(Paragraph(f"<b>{titulo}</b>", styles["Heading2"]))
-                elements.append(Spacer(1, 5))
-
-                tabla_data = [["No.", "Curso", "Vencimiento", "Estatus", "Observaciones"]]
-
-                for i, (_, row) in enumerate(seccion.iterrows(), start=1):
-
-                    if row["Estatus"] == "Vencido":
-                        estatus = "🔴 Vencido"
-                    elif row["Estatus"] == "Por vencer":
-                        estatus = "🟡 Por vencer"
-                    else:
-                        estatus = "🟢 Vigente"
-
-                    tabla_data.append([
-                        str(i),
-                        str(row["curso"]),
-                        str(row["vencimiento"]),
-                        estatus,
-                        ""
-                    ])
-
-                tabla = Table(
-                    tabla_data,
-                    colWidths=[40, 200, 90, 90, 120],
-                    repeatRows=1
-                )
-
-                tabla.setStyle(TableStyle([
-                    ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
-                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-                    ("GRID", (0, 0), (-1, -1), 1, colors.black),
-                    ("ALIGN", (0, 0), (0, -1), "CENTER"),
-                    ("ALIGN", (2, 1), (4, -1), "CENTER"),
-                    ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-                    ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
-                    ("TOPPADDING", (0, 0), (-1, -1), 8),
-                ]))
-
-                elements.append(tabla)
-                elements.append(Spacer(1, 15))
-
-            # SECCIONES
-            tabla_cursos("Cursos Técnicos", "Técnicos")
-            tabla_cursos("Cursos de Seguridad", "seguridad")
-            tabla_cursos("Cursos de Externos", "Externos")
-            tabla_cursos("Cursos de Complementarios", "Complementarios")
-            
-            # RESUMEN
-            elements.append(Spacer(1, 10))
-            elements.append(Paragraph(
-                f"<b>Resumen:</b><br/>Total cursos: {total}<br/>"
-                f"Cumplidos: {cumplidos}<br/>"
-                f"<b>Porcentaje: {porcentaje}%</b>",
-                styles["Normal"]
-            ))
-
-            # FECHA
-            elements.append(Spacer(1, 20))
-            fecha = datetime.today().strftime("%Y-%m-%d")
-            elements.append(Paragraph(f"<b>Fecha del reporte:</b> {fecha}", styles["Normal"]))
-
-            doc.build(elements)
+        # =========================
+        # PDF (BÁSICO)
+        # =========================
+        def generar_pdf(data, nombre):
+            buffer = io.BytesIO()
+            buffer.write(f"Kardex de {nombre}".encode())
             buffer.seek(0)
             return buffer
 
-        # BOTÓN PDF
-        pdf = generar_pdf(empleado, nombre)
+        if descargar:
+            pdf = generar_pdf(empleado, nombre)
 
-        st.download_button(
-            label="📄 Descargar Kardex en PDF",
-            data=pdf,
-            file_name="kardex_capacitacion.pdf",
-            mime="application/pdf"
-        )
+            st.download_button(
+                label="Descargar PDF",
+                data=pdf,
+                file_name="kardex.pdf",
+                mime="application/pdf"
+            )
