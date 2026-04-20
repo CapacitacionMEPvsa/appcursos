@@ -108,15 +108,15 @@ if nomina:
         # =========================
         # PDF
         # =========================
-        def generar_pdf(data, nombre):
+    def generar_pdf(data, nombre):
 
-    import io
-    import os
-    from datetime import datetime
-    from reportlab.lib.pagesizes import letter
-    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
-    from reportlab.lib import colors
-    from reportlab.lib.styles import getSampleStyleSheet
+        import io
+        import os
+        from datetime import datetime
+        from reportlab.lib.pagesizes import letter
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+        from reportlab.lib import colors
+        from reportlab.lib.styles import getSampleStyleSheet
 
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter)
