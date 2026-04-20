@@ -72,7 +72,7 @@ if not Nóomina:
 # FILTRAR EMPLEADO
 # =========================
 empleado = df_final[
-    df_final["nomina"].astype(str).str.strip() == nomina.strip()
+    df_final["Nómina"].astype(str).str.strip() == Nómina.strip()
 ]
 
 if empleado.empty:
