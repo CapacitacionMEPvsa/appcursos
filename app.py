@@ -65,7 +65,7 @@ df_final = df_final[df_final["curso"].notna()]
 # =========================
 Nómina = st.text_input("Ingresa tu número de nómina")
 
-if not nomina:
+if not Nóomina:
     st.stop()
 
 # =========================
@@ -93,13 +93,12 @@ empleado = empleado.dropna(axis=1, how="all")
 # COLUMNAS VISIBLES
 # =========================
 columnas_visibles = [
-    "nomina",
-    "nombre",
-    "proceso",
-    "categoria",
-    "curso",
-    "vencimiento",
-    "estatus"
+    "Nómina",
+    "Nombre",
+    "Proceso",
+    "Curso",
+    "Vencimiento",
+    "Estatus"
 ]
 
 columnas_finales = [c for c in columnas_visibles if c in empleado.columns]
