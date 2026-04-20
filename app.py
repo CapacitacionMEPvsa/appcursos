@@ -32,7 +32,7 @@ COL_PROCESO = "Proceso"
 # 🔥 CREAR CURSOS (AQUÍ ESTÁ LO IMPORTANTE)
 # =========================
 bloques = [
-    {"categoria": "CERTIFICACIONES TECNICAS", "inicio": 20},
+    {"categoria": "CERTIFICACIONES TECNICAS", "inicio": 20, "fin":80},
     {"categoria": "ANEXO SSPA", "inicio": 88},
     {"categoria": "COMPETENCIAS TECNICAS BASICAS", "inicio": 200},
 ]
@@ -52,14 +52,13 @@ for b in bloques:
     temp["categoria"] = b["categoria"]
     temp["observaciones"] = df.iloc[:, b["inicio"] - 2]
 
-    # ✅ CURSO VIENE DEL HEADER (fila 2)
     temp["curso"] = df.columns[b["inicio"]]
 
-    # ✅ ESTOS SÍ VIENEN DEL TRABAJADOR
     temp["vencimiento"] = df.iloc[:, b["inicio"] + 3]
     temp["vencimiento"] = pd.to_datetime(
         temp["vencimiento"], errors="coerce"
-).dt.date
+    ).dt.date
+
     temp["estatus"] = df.iloc[:, b["inicio"] + 5]
 
     cursos.append(temp)
