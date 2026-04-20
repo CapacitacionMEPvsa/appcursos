@@ -14,6 +14,9 @@ st.title("Consulta de Cursos")
 # =========================
 df = pd.read_excel("BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx")
 
+st.write(df.columns.tolist())
+st.stop()
+
 # limpiar nombres de columnas
 df.columns = df.columns.str.strip().str.lower().str.replace(" ", "")
 
