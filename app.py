@@ -101,7 +101,9 @@ if nomina:
         st.markdown("---")
         mostrar_seccion("🛡️ Cursos de Seguridad", "seguridad")
         st.markdown("---")
-        mostrar_seccion("🤝 Cursos de Habilidades / Externos", "habilidades")
+        mostrar_seccion("🛡️ Cursos Externos", "externos")
+        st.markdown("---")        
+        mostrar_seccion("🤝 Cursos Complementarios", "complementario")
 
         # =========================
         # GENERAR PDF
