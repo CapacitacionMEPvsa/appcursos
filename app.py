@@ -57,24 +57,16 @@ for b in bloques:
         })
 
         temp["categoria"] = b["categoria"]
-
-        # nombre del curso
         temp["curso"] = fila_cursos[i]
-
-        # datos
 if b["categoria"] == "ANEXO SSPA":
-
-    # ✅ aquí usas EMISIÓN en lugar de vencimiento
-    temp["vencimiento"] = pd.to_datetime(
+        temp["vencimiento"] = pd.to_datetime(
         df.iloc[:, i + 1], errors="coerce"
-    ).dt.date
+        ).dt.date
 
-    temp["estatus"] = df.iloc[:, i + 3]
-
-    temp["observaciones"] = ""
+        temp["estatus"] = df.iloc[:, i + 3]   
+        temp["observaciones"] = ""
 
 else:
-    # 🔹 lógica original (Certificaciones)
     temp["vencimiento"] = pd.to_datetime(
         df.iloc[:, i + 3], errors="coerce"
     ).dt.date
@@ -86,7 +78,7 @@ else:
         ~obs.astype(str).str.isnumeric(), ""
     )
 
-        cursos.append(temp)
+cursos.append(temp)
 
 df_final = pd.concat(cursos, ignore_index=True)
 
