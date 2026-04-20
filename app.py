@@ -61,20 +61,22 @@ if nomina:
 
         empleado["estatus_calculado"] = empleado["vencimiento"].apply(calcular_estatus)
 
-        # -------- MOSTRAR EN APP --------
-       def mostrar_seccion(titulo, filtro):
-    data = empleado[empleado["tipodecurso"] == filtro]
+        # -------- MOSTRAR SECCIONES (SIEMPRE ABIERTAS) --------
+        def mostrar_seccion(titulo, filtro):
+            data = empleado[empleado["tipodecurso"] == filtro]
 
-    st.subheader(titulo)
+            st.subheader(titulo)
 
-    if data.empty:
-        st.write("Sin registros")
-    else:
-        tabla = data[["curso", "estatus_calculado", "vencimiento"]]
-        st.dataframe(tabla)
+            if data.empty:
+                st.write("Sin registros")
+            else:
+                tabla = data[["curso", "estatus_calculado", "vencimiento"]]
+                st.dataframe(tabla)
 
         mostrar_seccion("📘 Cursos Técnicos", "tecnico")
+        st.markdown("---")
         mostrar_seccion("🤝 Habilidades", "habilidades")
+        st.markdown("---")
         mostrar_seccion("🛡️ Seguridad", "seguridad")
 
         # -------- PDF --------
@@ -84,7 +86,6 @@ if nomina:
             elements = []
             styles = getSampleStyleSheet()
 
-            # Logo (seguro)
             if os.path.exists("logo.png"):
                 logo = Image("logo.png", width=120, height=60)
                 elements.append(logo)
@@ -98,15 +99,14 @@ if nomina:
             elements.append(Paragraph(f"<b>Fecha:</b> {fecha_hoy}", styles["Normal"]))
             elements.append(Spacer(1, 15))
 
-            # Resumen
             resumen = data["estatus_calculado"].value_counts()
+
             elements.append(Paragraph("<b>Resumen de Cursos</b>", styles["Heading2"]))
             elements.append(Paragraph(f"🔴 Vencidos: {resumen.get('Vencido', 0)}", styles["Normal"]))
             elements.append(Paragraph(f"🟡 Por vencer: {resumen.get('Por vencer', 0)}", styles["Normal"]))
             elements.append(Paragraph(f"🟢 Vigentes: {resumen.get('Vigente', 0)}", styles["Normal"]))
             elements.append(Spacer(1, 15))
 
-            # Función para secciones
             def agregar_seccion(titulo, filtro):
                 seccion = data[data["tipodecurso"] == filtro]
 
@@ -147,12 +147,10 @@ if nomina:
                 elements.append(tabla)
                 elements.append(Spacer(1, 15))
 
-            # Secciones en PDF
             agregar_seccion("📘 Cursos Técnicos", "tecnico")
             agregar_seccion("🤝 Habilidades", "habilidades")
             agregar_seccion("🛡️ Seguridad", "seguridad")
 
-            # Firma
             elements.append(Spacer(1, 20))
             elements.append(Paragraph("__________________________", styles["Normal"]))
             elements.append(Paragraph("Firma del empleado", styles["Normal"]))
