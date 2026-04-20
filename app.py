@@ -50,7 +50,7 @@ for b in bloques:
     })
 
     temp["categoria"] = b["categoria"]
-    temp["observaciones"] = df.iloc[:, b["inicio"] - 3]
+    temp["observaciones"] = df.iloc[:, b["inicio"] - 4]
 
     # ✅ CURSO VIENE DEL HEADER (fila 2)
     temp["curso"] = df.columns[b["inicio"]]
