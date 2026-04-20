@@ -72,7 +72,7 @@ cursos = []
 for b in bloques:
 
     base = df[[COL_NOMINA, COL_NOMBRE]].copy()
-    base.columns = ["nomina", "nombre"]
+    base.columns = ["Nómina", "nombre"]
 
     temp = base.copy()
 
@@ -91,12 +91,12 @@ df_final = df_final[df_final["curso"].notna()]
 # =========================
 # INPUT
 # =========================
-nomina = st.text_input("Ingresa tu número de nómina")
+Nómina = st.text_input("Ingresa tu número de nómina")
 
-if nomina:
+if Nómina:
 
     empleado = df_final[
-        df_final["nomina"].astype(str).str.strip() == nomina.strip()
+        df_final["Nómina"].astype(str).str.strip() == Nómina.strip()
     ].copy()
 
     if empleado.empty:
