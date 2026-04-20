@@ -15,7 +15,7 @@ df = pd.read_excel(
     "BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx",
     header=[1, 2]
 )
-
+st.write(df.columns.tolist())
 # Unir encabezados
 df.columns = df.columns.map(lambda x: f"{x[0]}|{x[1]}" if pd.notna(x[1]) else x[0])
 df = df.reset_index(drop=True)
