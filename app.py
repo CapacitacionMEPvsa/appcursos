@@ -27,7 +27,7 @@ df.columns = (
 # =========================
 # 🔥 MAPEO MANUAL (ESTO ES LO CORRECTO EN TU CASO)
 # =========================
-COL_NOMINA = "No. Nómina"
+COL_NOMINA = "Nómina"
 COL_NOMBRE = "Nombre del Colaborador"
 COL_PROCESO = "Proceso"
 COL_CATEGORIA = "Categoría"
