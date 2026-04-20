@@ -14,66 +14,60 @@ st.title("Consulta de Cursos")
 # =========================
 df = pd.read_excel("BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx")
 
-# limpiar nombres de columnas
-df.columns = df.columns.str.strip().str.lower().str.replace(" ", "")
+# ⚠️ IMPORTANTE: NO limpiar columnas agresivamente aquí
+# porque tu archivo no es estructurado
 
 # =========================
-# 🔥 DEFINICIÓN DE BLOQUES
-# (AJUSTA AQUÍ SEGÚN TU EXCEL)
+# 🔥 DEFINICIÓN DE BLOQUES (POR ÍNDICE)
 # =========================
 bloques = [
 
-    # ===== SEGURIDAD =====
     {
-        "curso": "anexosspa",          # nombre de columna del curso
-        "vencimiento": "vigenciasspa", # columna fecha vigencia
-        "estatus": "estatussspa",      # columna estatus (si no existe se calcula)
+        "nombre": "CERTIFICACIONES TECNICAS",
+        "inicio": 20,
+        "tipo": "tecnico"
+    },
+
+    {
+        "nombre": "ANEXO SSPA",
+        "inicio": 88,
         "tipo": "seguridad"
     },
 
-    # ===== EJEMPLOS (AGREGA MÁS IGUAL) =====
-    # {
-    #     "curso": "trabajoenalturas",
-    #     "vencimiento": "vigenciaalturas",
-    #     "estatus": "estatusalturas",
-    #     "tipo": "seguridad"
-    # },
-
-    # {
-    #     "curso": "equipos",
-    #     "vencimiento": "vigenciaequipos",
-    #     "estatus": "estatusequipos",
-    #     "tipo": "tecnico"
-    # },
+    {
+        "nombre": "COMPETENCIAS TECNICAS BASICAS",
+        "inicio": 200,
+        "tipo": "tecnico"
+    }
 
 ]
 
 # =========================
-# TRANSFORMAR A FORMATO VERTICAL
+# 🔥 EXTRACCIÓN CORRECTA (CLAVE)
 # =========================
 cursos = []
 
 for b in bloques:
-    if b["curso"] in df.columns:
 
-        temp = df[["nomina", "nombre", "proceso"]].copy()
+    # columnas base (ajusta si cambia tu archivo)
+    base = df.iloc[:, [0, 1]].copy()
+    base.columns = ["nomina", "nombre"]
 
-        temp["curso"] = df[b["curso"]]
-        temp["vencimiento"] = df[b["vencimiento"]]
+    temp = base.copy()
 
-        # usar estatus si existe, si no calcularlo después
-        if b["estatus"] in df.columns:
-            temp["Estatus"] = df[b["estatus"]]
-        else:
-            temp["Estatus"] = None
+    temp["curso"] = df.iloc[:, b["inicio"]]
+    temp["vencimiento"] = df.iloc[:, b["inicio"] + 2]
+    temp["estatus"] = df.iloc[:, b["inicio"] + 3]
 
-        temp["tipodecurso"] = b["tipo"]
+    temp["tipodecurso"] = b["tipo"]
+    temp["categoria"] = b["nombre"]
 
-        cursos.append(temp)
+    cursos.append(temp)
 
+# unir todo
 df_final = pd.concat(cursos, ignore_index=True)
 
-# eliminar vacíos
+# limpiar vacíos
 df_final = df_final[df_final["curso"].notna()]
 
 # =========================
@@ -105,18 +99,12 @@ if nomina:
             st.markdown(f"## 👤 {nombre}")
 
         # =========================
-        # BOTONES
+        # FILTRO
         # =========================
-        colA, colB = st.columns([1, 2])
-
-        with colA:
-            descargar = st.button("📄 Descargar Kardex PDF")
-
-        with colB:
-            filtro = st.toggle("🚀 Solo pendientes o por vencer")
+        filtro = st.toggle("🚀 Solo pendientes o por vencer")
 
         # =========================
-        # LIMPIEZA FECHAS
+        # ESTATUS CALCULADO (si viene vacío)
         # =========================
         empleado["vencimiento"] = pd.to_datetime(
             empleado["vencimiento"], errors="coerce"
@@ -135,11 +123,8 @@ if nomina:
             else:
                 return "Vigente"
 
-        # calcular solo si no venía definido
-        empleado["Estatus"] = empleado.apply(
-            lambda row: calcular_estatus(row["vencimiento"])
-            if pd.isna(row["Estatus"]) else row["Estatus"],
-            axis=1
+        empleado["estatus"] = empleado["estatus"].fillna(
+            empleado["vencimiento"].apply(calcular_estatus)
         )
 
         # =========================
@@ -147,63 +132,26 @@ if nomina:
         # =========================
         if filtro:
             empleado = empleado[
-                empleado["Estatus"].isin(["Vencido", "Por vencer", "Pendiente"])
+                empleado["estatus"].isin(["Vencido", "Por vencer", "Pendiente"])
             ]
 
         # =========================
-        # COLORES
+        # MOSTRAR TABLA
         # =========================
-        def color_fila(row):
-            if row["Estatus"] == "Vigente":
-                return ['background-color: #c8e6c9'] * len(row)
-            elif row["Estatus"] == "Vencido":
-                return ['background-color: #ffcdd2'] * len(row)
-            elif row["Estatus"] == "Por vencer":
-                return ['background-color: #fff3cd'] * len(row)
-            else:
-                return ['background-color: #eeeeee'] * len(row)
+        st.markdown("## 📋 Cursos del trabajador")
 
-        # =========================
-        # TABLAS
-        # =========================
-        def mostrar_cursos(titulo, data):
-
-            if data.empty:
-                return
-
-            st.markdown(f"## 📁 {titulo}")
-
-            tabla = data[["curso", "vencimiento", "Estatus"]].copy()
-            tabla.columns = ["Curso", "Vencimiento", "Estatus"]
-
-            tabla["Observaciones"] = ""
-            tabla["Capacitación"] = tabla["Estatus"].apply(
-                lambda x: "Tomar Curso" if x != "Vigente" else ""
-            )
-
-            styled = tabla.style.apply(color_fila, axis=1)
-
-            st.dataframe(
-                styled,
-                use_container_width=True,
-                hide_index=True
-            )
-
-        # =========================
-        # SECCIONES
-        # =========================
-        mostrar_cursos(
-            "CURSOS DE SEGURIDAD",
-            empleado[empleado["tipodecurso"] == "seguridad"]
-        )
-
-        mostrar_cursos(
-            "CURSOS TÉCNICOS",
-            empleado[empleado["tipodecurso"] == "tecnico"]
+        st.dataframe(
+            empleado[[
+                "categoria",
+                "curso",
+                "vencimiento",
+                "estatus"
+            ]],
+            use_container_width=True
         )
 
         # =========================
-        # PDF (BÁSICO)
+        # PDF (BASE)
         # =========================
         def generar_pdf(data, nombre):
             buffer = io.BytesIO()
@@ -211,11 +159,11 @@ if nomina:
             buffer.seek(0)
             return buffer
 
-        if descargar:
+        if st.button("📄 Descargar PDF"):
             pdf = generar_pdf(empleado, nombre)
 
             st.download_button(
-                label="Descargar PDF",
+                label="Descargar",
                 data=pdf,
                 file_name="kardex.pdf",
                 mime="application/pdf"
