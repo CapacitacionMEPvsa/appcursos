@@ -53,7 +53,7 @@ for b in bloques:
     temp["observaciones"] = df.iloc[:, b["inicio"] - 2]
 
     # ✅ CURSO VIENE DEL HEADER (fila 2)
-    temp["curso"] = df.columns[b["inicio"]]
+    temp["curso"] = df.columns[b["inicio"] + 1]
 
     # ✅ ESTOS SÍ VIENEN DEL TRABAJADOR
     temp["vencimiento"] = df.iloc[:, b["inicio"] + 1]
