@@ -68,7 +68,10 @@ for b in bloques:
 
         temp["estatus"] = df.iloc[:, i + 5]
 
-        temp["observaciones"] = df.iloc[:, i - 2]
+        obs = df.iloc[:, i - 2]
+
+# limpiar valores que claramente no son observaciones (números)
+temp["observaciones"] = obs.where(~obs.astype(str).str.isnumeric(), "")
 
         cursos.append(temp)
 
