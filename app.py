@@ -65,7 +65,7 @@ df_final = df_final[df_final["curso"].notna()]
 # =========================
 Nómina = st.text_input("Ingresa tu número de nómina")
 
-if not Nóomina:
+if not Nómina:
     st.stop()
 
 # =========================
