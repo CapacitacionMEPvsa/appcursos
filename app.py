@@ -2,15 +2,14 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
 import io
 
 st.title("Consulta de Cursos")
 
-# Leer Excel
 df = pd.read_excel("BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx")
-
-# Limpiar columnas
 df.columns = df.columns.str.strip().str.lower().str.replace(" ", "")
 
 nomina = st.text_input("Ingresa tu número de nómina")
@@ -18,18 +17,14 @@ nomina = st.text_input("Ingresa tu número de nómina")
 if nomina:
     empleado = df[df["nomina"].astype(str).str.strip() == nomina.strip()]
 
-    if empleado.empty:
-        st.error("No se encontraron registros")
-    else:
+    if not empleado.empty:
         nombre = empleado.iloc[0]["nombre"]
         st.success(f"Empleado: {nombre}")
 
-        # Convertir fecha (sin hora)
         empleado["vencimiento"] = pd.to_datetime(
             empleado["vencimiento"], errors='coerce'
         ).dt.date
 
-        # Limpiar tipo de curso
         empleado["tipodecurso"] = (
             empleado["tipodecurso"]
             .astype(str)
@@ -42,66 +37,107 @@ if nomina:
             .str.replace("ú", "u")
         )
 
-        # -------- ESTATUS AUTOMÁTICO --------
         hoy = datetime.today().date()
 
         def calcular_estatus(fecha):
             if pd.isna(fecha):
-                return "⚪ Sin fecha"
+                return "Sin fecha"
             dias = (fecha - hoy).days
             if dias < 0:
-                return "🔴 Vencido"
+                return "Vencido"
             elif dias <= 30:
-                return "🟡 Por vencer"
+                return "Por vencer"
             else:
-                return "🟢 Vigente"
+                return "Vigente"
 
         empleado["estatus_calculado"] = empleado["vencimiento"].apply(calcular_estatus)
 
-        # -------- FUNCIÓN PARA SECCIONES --------
-        def mostrar_seccion(titulo, filtro):
-            data = empleado[empleado["tipodecurso"] == filtro]
-
-            with st.expander(titulo):
-                if data.empty:
-                    st.write("Sin registros")
-                else:
-                    tabla = data[["curso", "estatus_calculado", "vencimiento"]]
-                    st.dataframe(tabla)
-
-        # -------- SECCIONES --------
-        mostrar_seccion("📘 Cursos Técnicos", "tecnico")
-        mostrar_seccion("🤝 Habilidades", "habilidades")
-        mostrar_seccion("🛡️ Seguridad", "seguridad")
-
-        # -------- GENERAR PDF --------
+        # -------- PDF PROFESIONAL --------
         def generar_pdf(data, nombre):
             buffer = io.BytesIO()
-            c = canvas.Canvas(buffer, pagesize=letter)
+            doc = SimpleDocTemplate(buffer, pagesize=letter)
+            elements = []
+            styles = getSampleStyleSheet()
 
-            y = 750
-            c.setFont("Helvetica", 10)
+            # LOGO
+            try:
+                logo = Image("logo.png", width=120, height=60)
+                elements.append(logo)
+            except:
+                pass
 
-            c.drawString(50, y, f"Empleado: {nombre}")
-            y -= 20
+            # ENCABEZADO
+            elements.append(Paragraph("<b>REPORTE DE CAPACITACIÓN</b>", styles["Title"]))
+            elements.append(Spacer(1, 10))
 
-            for i, row in data.iterrows():
-                texto = f"{row['curso']} | {row['estatus_calculado']} | {row['vencimiento']}"
-                c.drawString(50, y, texto)
-                y -= 15
+            fecha_hoy = datetime.today().strftime("%Y-%m-%d")
 
-                if y < 50:
-                    c.showPage()
-                    y = 750
+            elements.append(Paragraph(f"<b>Empleado:</b> {nombre}", styles["Normal"]))
+            elements.append(Paragraph(f"<b>Fecha:</b> {fecha_hoy}", styles["Normal"]))
+            elements.append(Spacer(1, 15))
 
-            c.save()
+            # -------- RESUMEN --------
+            resumen = data["estatus_calculado"].value_counts()
+
+            vencidos = resumen.get("Vencido", 0)
+            por_vencer = resumen.get("Por vencer", 0)
+            vigentes = resumen.get("Vigente", 0)
+
+            elements.append(Paragraph("<b>Resumen de Cursos</b>", styles["Heading2"]))
+            elements.append(Spacer(1, 5))
+
+            elements.append(Paragraph(f"🔴 Vencidos: {vencidos}", styles["Normal"]))
+            elements.append(Paragraph(f"🟡 Por vencer: {por_vencer}", styles["Normal"]))
+            elements.append(Paragraph(f"🟢 Vigentes: {vigentes}", styles["Normal"]))
+
+            elements.append(Spacer(1, 15))
+
+            # -------- TABLA --------
+            tabla_data = [["Curso", "Estatus", "Vencimiento"]]
+
+            for _, row in data.iterrows():
+                tabla_data.append([
+                    str(row["curso"]),
+                    str(row["estatus_calculado"]),
+                    str(row["vencimiento"])
+                ])
+
+            tabla = Table(tabla_data)
+
+            # COLORES POR FILA
+            style = [
+                ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                ("GRID", (0, 0), (-1, -1), 1, colors.black),
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+            ]
+
+            # Pintar estatus
+            for i, row in enumerate(data.itertuples(), start=1):
+                if row.estatus_calculado == "Vencido":
+                    style.append(("TEXTCOLOR", (1, i), (1, i), colors.red))
+                elif row.estatus_calculado == "Por vencer":
+                    style.append(("TEXTCOLOR", (1, i), (1, i), colors.orange))
+                elif row.estatus_calculado == "Vigente":
+                    style.append(("TEXTCOLOR", (1, i), (1, i), colors.green))
+
+            tabla.setStyle(TableStyle(style))
+
+            elements.append(tabla)
+            elements.append(Spacer(1, 30))
+
+            # FIRMA
+            elements.append(Paragraph("__________________________", styles["Normal"]))
+            elements.append(Paragraph("Firma del empleado", styles["Normal"]))
+
+            doc.build(elements)
             buffer.seek(0)
             return buffer
 
         pdf = generar_pdf(empleado, nombre)
 
         st.download_button(
-            label="📄 Descargar reporte en PDF",
+            label="📄 Descargar PDF profesional",
             data=pdf,
             file_name="reporte_cursos.pdf",
             mime="application/pdf"
