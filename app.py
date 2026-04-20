@@ -68,7 +68,7 @@ if nomina:
             else:
                 return "Vigente"
 
-        empleado["estatus_calculado"] = empleado["vencimiento"].apply(calcular_estatus)
+        empleado["Estatus"] = empleado["vencimiento"].apply(calcular_estatus)
 
         # =========================
         # SEMÁFORO EN APP
@@ -93,8 +93,8 @@ if nomina:
             if data.empty:
                 st.write("Sin registros")
             else:
-                tabla = data[["curso", "estatus_calculado", "vencimiento"]].copy()
-                tabla["estatus_calculado"] = tabla["estatus_calculado"].apply(semaforo)
+                tabla = data[["curso", "Estatus", "vencimiento"]].copy()
+                tabla["Estatus"] = tabla["Estatus"].apply(semaforo)
                 st.dataframe(tabla, use_container_width=True)
 
         mostrar_seccion("📘 Cursos Técnicos", "tecnico")
@@ -151,8 +151,8 @@ if nomina:
             # CALCULAR CUMPLIMIENTO
             # =========================
             total = len(data)
-            vigentes = len(data[data["estatus_calculado"] == "Vigente"])
-            por_vencer = len(data[data["estatus_calculado"] == "Por vencer"])
+            vigentes = len(data[data["Estatus"] == "Vigente"])
+            por_vencer = len(data[data["Estatus"] == "Por vencer"])
 
             cumplidos = vigentes + por_vencer
             porcentaje = round((cumplidos / total) * 100, 1) if total > 0 else 0
@@ -174,9 +174,9 @@ if nomina:
 
                 for i, (_, row) in enumerate(seccion.iterrows(), start=1):
 
-                    if row["estatus_calculado"] == "Vencido":
+                    if row["Estatus"] == "Vencido":
                         estatus = "🔴 Vencido"
-                    elif row["estatus_calculado"] == "Por vencer":
+                    elif row["Estatus"] == "Por vencer":
                         estatus = "🟡 Por vencer"
                     else:
                         estatus = "🟢 Vigente"
