@@ -45,7 +45,7 @@ for b in bloques:
 
     temp = temp.rename(columns={
         COL_NOMINA: "Nómina",
-        COL_NOMBRE: "nombre",
+        COL_NOMBRE: "Nombre del colaborador",
         COL_PROCESO: "proceso"
     })
 
