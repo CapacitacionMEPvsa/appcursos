@@ -59,30 +59,26 @@ for b in bloques:
         temp["categoria"] = b["categoria"]
         temp["curso"] = fila_cursos[i]
 
-        if b["categoria"] == "ANEXO SSPA":
+        # 🔥 bloque completo del curso
+        bloque = df.iloc[:, i:i+6]
 
-            temp["vencimiento"] = pd.to_datetime(
-                df.iloc[:, i + 1], errors="coerce"
-            ).dt.date
+        # convertir a fechas donde se pueda
+        fechas = bloque.apply(pd.to_datetime, errors="coerce")
 
-            temp["estatus"] = df.iloc[:, i + 3]
-            temp["observaciones"] = ""
+        # vencimiento (ajusta si necesitas otra columna)
+        temp["vencimiento"] = fechas.iloc[:, 2].dt.date
 
-        else:
+        # estatus
+        temp["estatus"] = bloque.iloc[:, -1]
 
-            temp["vencimiento"] = pd.to_datetime(
-                df.iloc[:, i + 3], errors="coerce"
-            ).dt.date
+        # observaciones limpias
+        obs = bloque.iloc[:, 0]
+        temp["observaciones"] = obs.where(
+            ~obs.astype(str).str.isnumeric(), ""
+        )
 
-            temp["estatus"] = df.iloc[:, i + 5]
-
-            obs = df.iloc[:, i - 2]
-            temp["observaciones"] = obs.where(
-                ~obs.astype(str).str.isnumeric(), ""
-            )
-
-        # ✅ ESTA LÍNEA VA AL MISMO NIVEL QUE EL IF
         cursos.append(temp)
+        
 df_final = pd.concat(cursos, ignore_index=True)
 
 df_final = df_final[df_final["curso"].notna()]
