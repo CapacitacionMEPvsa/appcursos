@@ -50,14 +50,14 @@ for b in bloques:
     })
 
     temp["categoria"] = b["categoria"]
-    temp["observaciones"] = df.iloc[:, b["inicio"] - 2]
+    temp["Observaciones"] = df.iloc[:, b["inicio"] - 2]
 
     # ✅ CURSO VIENE DEL HEADER (fila 2)
-    temp["curso"] = df.columns[b["inicio"]]
+    temp["Curso"] = df.columns[b["inicio"]]
 
     # ✅ ESTOS SÍ VIENEN DEL TRABAJADOR
-    temp["vencimiento"] = df.iloc[:, b["inicio"] + 1]
-    temp["estatus"] = df.iloc[:, b["inicio"] + 2]
+    temp["Vencimiento"] = df.iloc[:, b["inicio"] + 1]
+    temp["Estatus"] = df.iloc[:, b["inicio"] + 1]
 
     cursos.append(temp)
 
