@@ -122,3 +122,37 @@ st.dataframe(
     ]],
     use_container_width=True
 )
+from datetime import datetime
+
+# =========================
+# FORMATO FECHA
+# =========================
+df_final["vencimiento"] = pd.to_datetime(df_final["vencimiento"], errors="coerce")
+
+# mostrar fecha completa bonita
+df_final["vencimiento"] = df_final["vencimiento"].dt.strftime("%d/%m/%Y")
+
+# =========================
+# CALCULO SEMAFORO
+# =========================
+hoy = pd.Timestamp.today().normalize()
+
+def calcular_estatus(fecha):
+    try:
+        fecha_dt = pd.to_datetime(fecha, dayfirst=True)
+    except:
+        return "N/A"
+
+    if pd.isna(fecha_dt):
+        return "N/A"
+
+    dias = (fecha_dt - hoy).days
+
+    if dias < 0:
+        return "🔴 VENCIDO"
+    elif dias <= 30:
+        return "🟠 POR VENCER"
+    else:
+        return "🟢 VIGENTE"
+
+df_final["estatus"] = df_final["vencimiento"].apply(calcular_estatus)
