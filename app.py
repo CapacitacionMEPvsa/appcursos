@@ -49,39 +49,34 @@ st.markdown(f"## 👤 {nombre}")
 # =========================
 # 🔥 FUNCION PARA EXTRAER BLOQUES
 # =========================
-def extraer_bloque(df_emp, inicio, fin, paso=5):
+def extraer_bloque(emp, inicio, fin, categoria, obs_col=33):
+
     data = []
-    columnas = list(df_emp.columns)
 
-    for col in range(inicio, fin, paso):
+    for col in range(inicio, fin):
 
-        if col + 4 >= len(columnas):
+        if col >= len(emp.columns):
             continue
 
-        try:
-            curso = columnas[col].split("|")[0]
+        curso = emp.iloc[:, col]
 
-            temp = pd.DataFrame({
-                "curso": curso,
-                "inicio": df_emp.iloc[:, col],
-                "emision": df_emp.iloc[:, col + 1],
-                "vencimiento": df_emp.iloc[:, col + 2],  # 👈 antes vigencia
-                "estatus_excel": df_emp.iloc[:, col + 4],  # por si lo necesitas
-                "observaciones": df_emp.iloc[:, col - 1] if col - 1 >= 0 else "N/A"  # 👈 ANTERIOR
-            })
-
-            data.append(temp)
-
-        except:
+        # saltar columnas vacías
+        if curso.isna().all():
             continue
+
+        data.append(pd.DataFrame({
+            "nomina": emp[COL_NOMINA].values,
+            "nombre": emp[COL_NOMBRE].values,
+            "proceso": emp[COL_PROCESO].values if COL_PROCESO else None,
+            "categoria": categoria,
+            "curso": curso,
+            "vencimiento": emp.iloc[:, col + 1] if col + 1 < len(emp.columns) else None,
+            "estatus": emp.iloc[:, col + 2] if col + 2 < len(emp.columns) else None,
+            "observaciones": emp.iloc[:, obs_col] if obs_col < len(emp.columns) else None
+        }))
 
     if data:
-        df_out = pd.concat(data, ignore_index=True)
-
-        # reemplazar vacíos
-        df_out = df_out.fillna("N/A")
-
-        return df_out
+        return pd.concat(data, ignore_index=True)
 
     return pd.DataFrame()
 
