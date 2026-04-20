@@ -86,7 +86,7 @@ columnas_visibles = [
     "Curso",
     "Vencimiento",
     "Estatus",
-    "Observaciones"
+    "Observaciones",
 ]
 
 columnas_finales = [c for c in columnas_visibles if c in data.columns]
