@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from datetime import datetime
 
 # =========================
 # CONFIG
@@ -12,11 +13,13 @@ st.title("Consulta de Cursos")
 # =========================
 df = pd.read_excel(
     "BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx",
-    header=None
+    header=[1, 2]
 )
 
-df.columns = df.iloc[1]
-df = df[2:].reset_index(drop=True)
+# Unir encabezados
+df.columns = df.columns.map(lambda x: f"{x[0]}|{x[1]}" if pd.notna(x[1]) else x[0])
+df = df.reset_index(drop=True)
+
 df.columns = df.columns.astype(str).str.strip()
 
 # =========================
@@ -47,101 +50,77 @@ nombre = empleado.iloc[0][COL_NOMBRE]
 st.markdown(f"## 👤 {nombre}")
 
 # =========================
-# 🔥 FUNCION PARA EXTRAER BLOQUES
+# FUNCION EXTRAER BLOQUES
 # =========================
-def extraer_bloque(emp, inicio, fin, categoria, obs_col=33):
-
+def extraer_bloque(df_emp, inicio, fin, paso=5):
     data = []
+    columnas = list(df_emp.columns)
 
-    for col in range(inicio, fin):
+    for col in range(inicio, fin, paso):
 
-        if col >= len(emp.columns):
+        if col + 4 >= len(columnas):
             continue
 
-        curso = emp.iloc[:, col]
+        try:
+            curso = columnas[col].split("|")[0]
 
-        # saltar columnas vacías
-        if curso.isna().all():
+            temp = pd.DataFrame({
+                "curso": curso,
+                "inicio": df_emp.iloc[:, col],
+                "emision": df_emp.iloc[:, col + 1],
+                "vencimiento": df_emp.iloc[:, col + 2],
+                "estatus_excel": df_emp.iloc[:, col + 4],
+                "observaciones": df_emp.iloc[:, col - 1] if col - 1 >= 0 else "N/A"
+            })
+
+            data.append(temp)
+
+        except Exception:
             continue
-
-        data.append(pd.DataFrame({
-            "nomina": emp[COL_NOMINA].values,
-            "nombre": emp[COL_NOMBRE].values,
-            "proceso": emp[COL_PROCESO].values if COL_PROCESO else None,
-            "categoria": categoria,
-            "curso": curso,
-            "vencimiento": emp.iloc[:, col + 1] if col + 1 < len(emp.columns) else None,
-            "estatus": emp.iloc[:, col + 2] if col + 2 < len(emp.columns) else None,
-            "observaciones": emp.iloc[:, obs_col] if obs_col < len(emp.columns) else None
-        }))
 
     if data:
-        return pd.concat(data, ignore_index=True)
+        df_out = pd.concat(data, ignore_index=True)
+        df_out = df_out.fillna("N/A")
+        return df_out
 
     return pd.DataFrame()
 
 # =========================
-# 🔥 CONSTRUIR TODOS LOS BLOQUES
+# CONSTRUIR BLOQUES
 # =========================
 cursos = []
 
-# ANEXO SSPA
-cursos.append(extraer_bloque(empleado, 33, 200, "ANEXO SSPA"))
-
-# CURSOS EXTERNOS
-cursos.append(extraer_bloque(empleado, 6, 32, "CURSOS EXTERNOS"))
-cursos.append(extraer_bloque(empleado, 297, 381, "CURSOS EXTERNOS"))
-
-# CURSOS TÉCNICOS
-cursos.append(extraer_bloque(empleado, 201, 265, "CURSOS TECNICOS"))
-cursos.append(extraer_bloque(empleado, 289, 296, "CURSOS TECNICOS"))
-
-# COMPLEMENTARIOS
-cursos.append(extraer_bloque(empleado, 266, 288, "CURSOS COMPLEMENTARIOS"))
+cursos.append(extraer_bloque(empleado, 5, 200))
+cursos.append(extraer_bloque(empleado, 200, 400))
 
 # =========================
 # UNIR TODO
 # =========================
-cursos = [c for c in cursos if not c.empty]
+df_final = pd.concat(cursos, ignore_index=True)
 
-if len(cursos) == 0:
-    st.error("No se encontraron cursos para este trabajador")
+# =========================
+# VALIDAR SI ESTA VACIO
+# =========================
+if df_final.empty:
+    st.warning("No se encontraron cursos para este trabajador")
     st.stop()
 
-df_final = pd.concat(cursos, ignore_index=True)
-df_final.columns = df_final.columns.astype(str).str.strip()
-
-# limpiar vacíos
-df_final = df_final[df_final["curso"].notna()]
-
 # =========================
-# MOSTRAR
+# LIMPIAR FILAS SIN DATOS
 # =========================
-st.markdown("## 📋 Mis cursos")
-
-st.dataframe(
-    df_final[[
-        "curso",
-        "inicio",
-        "emision",
-        "vencimiento",
-        "estatus",
-        "observaciones"
-    ]],
-    use_container_width=True
-)
-from datetime import datetime
+df_final = df_final[
+    (df_final["vencimiento"] != "N/A") |
+    (df_final["estatus_excel"] != "N/A")
+]
 
 # =========================
 # FORMATO FECHA
 # =========================
 df_final["vencimiento"] = pd.to_datetime(df_final["vencimiento"], errors="coerce")
-
-# mostrar fecha completa bonita
 df_final["vencimiento"] = df_final["vencimiento"].dt.strftime("%d/%m/%Y")
 
 # =========================
-# CALCULO SEMAFORO
+# SEMAFORO = ESTATUS
 # =========================
 hoy = pd.Timestamp.today().normalize()
 
@@ -164,3 +143,57 @@ def calcular_estatus(fecha):
         return "🟢 VIGENTE"
 
 df_final["estatus"] = df_final["vencimiento"].apply(calcular_estatus)
+
+# =========================
+# ASEGURAR COLUMNAS (FIX ERROR)
+# =========================
+columnas_esperadas = [
+    "curso",
+    "inicio",
+    "emision",
+    "vencimiento",
+    "estatus",
+    "observaciones"
+]
+
+for col in columnas_esperadas:
+    if col not in df_final.columns:
+        df_final[col] = "N/A"
+
+# =========================
+# DEBUG (PUEDES QUITAR DESPUÉS)
+# =========================
+st.write("Columnas detectadas:", df_final.columns.tolist())
+st.write("Preview:", df_final.head())
+
+# =========================
+# ALERTAS
+# =========================
+vencidos = df_final[df_final["estatus"] == "🔴 VENCIDO"]
+por_vencer = df_final[df_final["estatus"] == "🟠 POR VENCER"]
+
+if not vencidos.empty:
+    st.error(f"🚨 Tienes {len(vencidos)} curso(s) vencido(s)")
+
+if not por_vencer.empty:
+    st.warning(f"⚠️ Tienes {len(por_vencer)} curso(s) por vencer en los próximos 30 días")
+
+if vencidos.empty and por_vencer.empty:
+    st.success("✅ Todos tus cursos están vigentes")
+
+# =========================
+# MOSTRAR
+# =========================
+st.markdown("## 📋 Mis cursos")
+
+st.dataframe(
+    df_final[[
+        "curso",
+        "inicio",
+        "emision",
+        "vencimiento",
+        "estatus",
+        "observaciones"
+    ]],
+    use_container_width=True
+)
