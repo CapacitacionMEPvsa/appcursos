@@ -62,13 +62,29 @@ for b in bloques:
         temp["curso"] = fila_cursos[i]
 
         # datos
-        temp["vencimiento"] = pd.to_datetime(
-            df.iloc[:, i + 3], errors="coerce"
-        ).dt.date
+if b["categoria"] == "ANEXO SSPA":
 
-        temp["estatus"] = df.iloc[:, i + 5]
+    # ✅ aquí usas EMISIÓN en lugar de vencimiento
+    temp["vencimiento"] = pd.to_datetime(
+        df.iloc[:, i + 1], errors="coerce"
+    ).dt.date
 
-        obs = df.iloc[:, i - 2]
+    temp["estatus"] = df.iloc[:, i + 3]
+
+    temp["observaciones"] = ""
+
+else:
+    # 🔹 lógica original (Certificaciones)
+    temp["vencimiento"] = pd.to_datetime(
+        df.iloc[:, i + 3], errors="coerce"
+    ).dt.date
+
+    temp["estatus"] = df.iloc[:, i + 5]
+
+    obs = df.iloc[:, i - 2]
+    temp["observaciones"] = obs.where(
+        ~obs.astype(str).str.isnumeric(), ""
+    )
 
     # limpiar valores que claramente no son observaciones (números)
         temp["observaciones"] = obs.where(~obs.astype(str).str.isnumeric(), "")
