@@ -27,6 +27,7 @@ df.columns = df.columns.astype(str).str.strip()
 # =========================
 COL_NOMINA = "Nómina"
 COL_NOMBRE = "Nombre del Colaborador"
+COL_PROCESO = "Proceso"
 
 # =========================
 # INPUT
@@ -61,6 +62,7 @@ empleado = empleado.dropna(axis=1, how="all")
 columnas_visibles = [
     COL_NOMINA,
     COL_NOMBRE,
+    COL_PROCESO,
     "categoria",
     "curso",
     "vencimiento",
