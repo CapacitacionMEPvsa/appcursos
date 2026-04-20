@@ -57,6 +57,9 @@ for b in bloques:
 
     # ✅ ESTOS SÍ VIENEN DEL TRABAJADOR
     temp["vencimiento"] = df.iloc[:, b["inicio"] + 3]
+    temp["vencimiento"] = pd.to_datetime(
+        temp["vencimiento"], errors="coerce"
+).dt.date
     temp["estatus"] = df.iloc[:, b["inicio"] + 5]
 
     cursos.append(temp)
