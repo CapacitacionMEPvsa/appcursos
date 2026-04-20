@@ -59,7 +59,7 @@ for b in bloques:
         temp["categoria"] = b["categoria"]
 
         # nombre del curso
-         temp["curso"] = fila_cursos[i]
+        temp["curso"] = fila_cursos[i]
 
         # datos
         temp["vencimiento"] = pd.to_datetime(
