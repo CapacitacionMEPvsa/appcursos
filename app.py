@@ -15,22 +15,18 @@ df = pd.read_excel(
     "BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx",
     header=[1, 2]
 )
-st.write(df.columns.tolist())
-# Unir encabezados
+
+# Limpiar columnas
 df.columns = df.columns.map(lambda x: f"{x[0]}|{x[1]}" if pd.notna(x[1]) else x[0])
 df = df.reset_index(drop=True)
+df.columns = [str(c).replace("\n", " ").strip() for c in df.columns]
 
-df.columns = df.columns.astype(str).str.strip()
-
 # =========================
-# COLUMNAS BASE
-# =========================
-# =========================
-# DETECTAR COLUMNAS REALES
+# DETECTAR COLUMNAS (FIX ROBUSTO)
 # =========================
 def buscar_columna(nombre):
     for col in df.columns:
-        if nombre.lower() in col.lower():
+        if nombre.lower() in str(col).lower():
             return col
     return None
 
@@ -38,16 +34,18 @@ COL_NOMINA = buscar_columna("nomina")
 COL_NOMBRE = buscar_columna("nombre")
 COL_PROCESO = buscar_columna("proceso")
 
-# DEBUG (puedes quitarlo después)
-st.write("Columnas encontradas:")
+# 🔴 FALLBACK IMPORTANTE (evita error)
+if not COL_NOMINA:
+    COL_NOMINA = df.columns[0]
+
+if not COL_NOMBRE:
+    COL_NOMBRE = df.columns[1]
+
+# DEBUG
+st.write("Columnas detectadas:")
 st.write("Nómina:", COL_NOMINA)
 st.write("Nombre:", COL_NOMBRE)
 st.write("Proceso:", COL_PROCESO)
-
-# VALIDACIÓN
-if not COL_NOMINA or not COL_NOMBRE:
-    st.error("No se pudieron identificar las columnas principales en el Excel")
-    st.stop()
 
 # =========================
 # INPUT
@@ -95,7 +93,7 @@ def extraer_bloque(df_emp, inicio, fin, paso=5):
 
             data.append(temp)
 
-        except Exception:
+        except:
             continue
 
     if data:
@@ -109,29 +107,17 @@ def extraer_bloque(df_emp, inicio, fin, paso=5):
 # CONSTRUIR BLOQUES
 # =========================
 cursos = []
-
 cursos.append(extraer_bloque(empleado, 5, 200))
 cursos.append(extraer_bloque(empleado, 200, 400))
 
-# =========================
-# UNIR TODO
-# =========================
 df_final = pd.concat(cursos, ignore_index=True)
 
 # =========================
-# VALIDAR SI ESTA VACIO
+# VALIDAR VACÍO
 # =========================
 if df_final.empty:
     st.warning("No se encontraron cursos para este trabajador")
     st.stop()
-
-# =========================
-# LIMPIAR FILAS SIN DATOS
-# =========================
-df_final = df_final[
-    (df_final["vencimiento"] != "N/A") |
-    (df_final["estatus_excel"] != "N/A")
-]
 
 # =========================
 # FORMATO FECHA
@@ -140,7 +126,7 @@ df_final["vencimiento"] = pd.to_datetime(df_final["vencimiento"], errors="coerce
 df_final["vencimiento"] = df_final["vencimiento"].dt.strftime("%d/%m/%Y")
 
 # =========================
-# SEMAFORO = ESTATUS
+# SEMAFORO (ESTATUS)
 # =========================
 hoy = pd.Timestamp.today().normalize()
 
@@ -165,28 +151,6 @@ def calcular_estatus(fecha):
 df_final["estatus"] = df_final["vencimiento"].apply(calcular_estatus)
 
 # =========================
-# ASEGURAR COLUMNAS (FIX ERROR)
-# =========================
-columnas_esperadas = [
-    "curso",
-    "inicio",
-    "emision",
-    "vencimiento",
-    "estatus",
-    "observaciones"
-]
-
-for col in columnas_esperadas:
-    if col not in df_final.columns:
-        df_final[col] = "N/A"
-
-# =========================
-# DEBUG (PUEDES QUITAR DESPUÉS)
-# =========================
-st.write("Columnas detectadas:", df_final.columns.tolist())
-st.write("Preview:", df_final.head())
-
-# =========================
 # ALERTAS
 # =========================
 vencidos = df_final[df_final["estatus"] == "🔴 VENCIDO"]
@@ -196,7 +160,7 @@ if not vencidos.empty:
     st.error(f"🚨 Tienes {len(vencidos)} curso(s) vencido(s)")
 
 if not por_vencer.empty:
-    st.warning(f"⚠️ Tienes {len(por_vencer)} curso(s) por vencer en los próximos 30 días")
+    st.warning(f"⚠️ Tienes {len(por_vencer)} curso(s) por vencer")
 
 if vencidos.empty and por_vencer.empty:
     st.success("✅ Todos tus cursos están vigentes")
