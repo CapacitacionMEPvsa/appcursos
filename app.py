@@ -10,186 +10,74 @@ st.set_page_config(layout="wide")
 st.title("Consulta de Cursos")
 
 # =========================
-# CARGAR EXCEL
+# CARGA EXCEL (YA FUNCIONAL)
 # =========================
-df = pd.read_excel("BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx")
-
-# 🔥 NORMALIZACIÓN FUERTE DE COLUMNAS (CLAVE)
-df.columns = (
-    df.columns
-    .astype(str)
-    .str.strip()
-    .str.replace("\t", "")
-    .str.replace("\n", "")
-    .str.replace("  ", " ")
+df = pd.read_excel(
+    "BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx",
+    header=None
 )
 
+df.columns = df.iloc[1]
+df = df[2:].reset_index(drop=True)
+
+df.columns = df.columns.astype(str).str.strip()
+
 # =========================
-# 🔥 MAPEO MANUAL (ESTO ES LO CORRECTO EN TU CASO)
+# COLUMNAS FIJAS
 # =========================
-COL_NOMINA = "No. Nómina"
+COL_NOMINA = "Nómina"
 COL_NOMBRE = "Nombre del Colaborador"
-COL_PROCESO = "Proceso"
-COL_CATEGORIA = "Categoría"
-
-# =========================
-# VALIDACIÓN (EVITA CRASH)
-# =========================
-required_cols = [COL_NOMINA, COL_NOMBRE]
-
-for col in required_cols:
-    if col not in df.columns:
-        st.error(f"No se encontró la columna: {col}")
-        st.write("Columnas detectadas:", df.columns.tolist())
-        st.stop()
-
-# =========================
-# BLOQUES (NO CAMBIA TU ESTRUCTURA)
-# =========================
-bloques = [
-    {
-        "nombre": "CERTIFICACIONES TECNICAS",
-        "inicio": 20,
-        "tipo": "tecnico"
-    },
-    {
-        "nombre": "ANEXO SSPA",
-        "inicio": 88,
-        "tipo": "seguridad"
-    },
-    {
-        "nombre": "COMPETENCIAS TECNICAS BASICAS",
-        "inicio": 200,
-        "tipo": "tecnico"
-    }
-]
-
-# =========================
-# EXTRACCIÓN
-# =========================
-cursos = []
-
-for b in bloques:
-
-    base = df[[COL_NOMINA, COL_NOMBRE]].copy()
-    base.columns = ["nomina", "nombre"]
-
-    temp = base.copy()
-
-    temp["curso"] = df.iloc[:, b["inicio"]]
-    temp["vencimiento"] = df.iloc[:, b["inicio"] + 1]
-    temp["estatus"] = df.iloc[:, b["inicio"] + 2]
-
-    temp["categoria"] = b["nombre"]
-    temp["tipodecurso"] = b["tipo"]
-
-    cursos.append(temp)
-
-df_final = pd.concat(cursos, ignore_index=True)
-df_final = df_final[df_final["curso"].notna()]
 
 # =========================
 # INPUT
 # =========================
 nomina = st.text_input("Ingresa tu número de nómina")
 
-if nomina:
+if not nomina:
+    st.stop()
 
-    empleado = df_final[
-        df_final["nomina"].astype(str).str.strip() == nomina.strip()
-    ].copy()
+# =========================
+# FILTRAR EMPLEADO
+# =========================
+empleado = df[df[COL_NOMINA].astype(str).str.strip() == nomina.strip()]
 
-    if empleado.empty:
-        st.error("No se encontraron registros")
-    else:
+if empleado.empty:
+    st.error("No encontrado")
+    st.stop()
 
-        nombre = empleado.iloc[0]["nombre"]
+nombre = empleado.iloc[0][COL_NOMBRE]
 
-        # =========================
-        # HEADER
-        # =========================
-        col1, col2 = st.columns([1, 6])
+st.markdown(f"## 👤 {nombre}")
 
-        with col1:
-            st.image("logo.png", width=120)
+# =========================
+# LIMPIEZA DUPLICADOS
+# =========================
+empleado = empleado.loc[:, ~empleado.columns.duplicated()]
+empleado = empleado.dropna(axis=1, how="all")
 
-        with col2:
-            st.markdown(f"## 👤 {nombre}")
+# =========================
+# 🔥 AQUÍ DEFINES QUÉ COLUMNAS QUIERES VER
+# =========================
+columnas_visibles = [
+    COL_NOMINA,
+    COL_NOMBRE,
+    "categoria",
+    "curso",
+    "vencimiento",
+    "estatus"
+]
 
-        # =========================
-        # BOTONES
-        # =========================
-        colA, colB = st.columns([1, 2])
+# =========================
+# VALIDACIÓN DE COLUMNAS
+# =========================
+columnas_finales = [c for c in columnas_visibles if c in empleado.columns]
 
-        with colA:
-            descargar = st.button("📄 Descargar Kardex PDF")
+# =========================
+# MOSTRAR SOLO LO NECESARIO
+# =========================
+st.markdown("## 📋 Mis cursos")
 
-        with colB:
-            filtro = st.toggle("🚀 Solo pendientes o por vencer")
-
-        # =========================
-        # FECHAS
-        # =========================
-        empleado["vencimiento"] = pd.to_datetime(
-            empleado["vencimiento"],
-            errors="coerce"
-        ).dt.date
-
-        hoy = datetime.today().date()
-
-        def calcular_estatus(fecha):
-            if pd.isna(fecha):
-                return "Pendiente"
-            dias = (fecha - hoy).days
-            if dias < 0:
-                return "Vencido"
-            elif dias <= 30:
-                return "Por vencer"
-            else:
-                return "Vigente"
-
-        empleado["estatus"] = empleado["estatus"].fillna(
-            empleado["vencimiento"].apply(calcular_estatus)
-        )
-
-        # =========================
-        # FILTRO
-        # =========================
-        if filtro:
-            empleado = empleado[
-                empleado["estatus"].isin(["Vencido", "Por vencer", "Pendiente"])
-            ]
-
-        # =========================
-        # TABLA
-        # =========================
-        st.markdown("## 📋 Cursos del trabajador")
-
-        st.dataframe(
-            empleado[[
-                "categoria",
-                "curso",
-                "vencimiento",
-                "estatus"
-            ]],
-            use_container_width=True
-        )
-
-        # =========================
-        # PDF (NO TOCADO)
-        # =========================
-        def generar_pdf(data, nombre):
-            buffer = io.BytesIO()
-            buffer.write(f"Kardex de {nombre}".encode())
-            buffer.seek(0)
-            return buffer
-
-        if descargar:
-            pdf = generar_pdf(empleado, nombre)
-
-            st.download_button(
-                label="Descargar PDF",
-                data=pdf,
-                file_name="kardex.pdf",
-                mime="application/pdf"
-            )
+st.dataframe(
+    empleado[columnas_finales],
+    use_container_width=True
+)
