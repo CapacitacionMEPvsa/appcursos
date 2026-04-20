@@ -16,7 +16,12 @@ df = pd.read_excel(
     "BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx",
     header=None
 )
+headers_raw = pd.read_excel(
+    "BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx",
+    header=None
+)
 
+fila_cursos = headers_raw.iloc[1]
 df.columns = df.iloc[1]
 df = df[2:].reset_index(drop=True)
 df.columns = df.columns.astype(str).str.strip()
@@ -54,7 +59,7 @@ for b in bloques:
         temp["categoria"] = b["categoria"]
 
         # nombre del curso
-        temp["curso"] = df.columns[i]
+         temp["curso"] = fila_cursos[i]
 
         # datos
         temp["vencimiento"] = pd.to_datetime(
