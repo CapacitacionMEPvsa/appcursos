@@ -127,3 +127,35 @@ st.dataframe(
     ]],
     use_container_width=True
 )
+# =========================
+# LIMPIEZA FINAL PARA MOSTRAR
+# =========================
+
+df_show = df_final.copy()
+
+# ordenar columnas
+df_show = df_show[[
+    "curso",
+    "inicio",
+    "emision",
+    "vencimiento",
+    "estatus",
+    "observaciones"
+]]
+
+# reemplazar vacíos reales
+df_show = df_show.fillna("N/A")
+
+# evitar strings vacíos
+df_show = df_show.replace("", "N/A")
+
+# =========================
+# MOSTRAR TABLA LIMPIA
+# =========================
+st.markdown("## 📋 Mis cursos")
+
+st.dataframe(
+    df_show,
+    use_container_width=True,
+    hide_index=True
+)
