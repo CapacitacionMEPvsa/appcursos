@@ -4,42 +4,29 @@ from datetime import datetime
 import io
 
 # =========================
-# CONFIG
+# CONFIGURACIÓN
 # =========================
 st.set_page_config(layout="wide")
 st.title("Consulta de Cursos")
 
 # =========================
-# 🔥 LECTURA CORRECTA DEL EXCEL (CRÍTICO)
+# CARGA EXCEL (YA FUNCIONAL)
 # =========================
 df = pd.read_excel(
     "BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx",
     header=None
 )
 
-# 🔥 FORZAR HEADERS REALES (SEGÚN TU EXCEL)
-df.columns = df.iloc[1]  # fila 2 como encabezado real
+df.columns = df.iloc[1]
 df = df[2:].reset_index(drop=True)
 
-# limpiar columnas
 df.columns = df.columns.astype(str).str.strip()
-
-# =========================
-# DEBUG (USAR SOLO UNA VEZ SI FALLA)
-# =========================
-# st.write(df.columns.tolist())
-# st.stop()
 
 # =========================
 # COLUMNAS FIJAS
 # =========================
 COL_NOMINA = "Nómina"
 COL_NOMBRE = "Nombre del Colaborador"
-
-if COL_NOMINA not in df.columns or COL_NOMBRE not in df.columns:
-    st.error("No se detectaron columnas correctas")
-    st.write(df.columns.tolist())
-    st.stop()
 
 # =========================
 # INPUT
@@ -62,4 +49,35 @@ nombre = empleado.iloc[0][COL_NOMBRE]
 
 st.markdown(f"## 👤 {nombre}")
 
-st.dataframe(empleado)
+# =========================
+# LIMPIEZA DUPLICADOS
+# =========================
+empleado = empleado.loc[:, ~empleado.columns.duplicated()]
+empleado = empleado.dropna(axis=1, how="all")
+
+# =========================
+# 🔥 AQUÍ DEFINES QUÉ COLUMNAS QUIERES VER
+# =========================
+columnas_visibles = [
+    COL_NOMINA,
+    COL_NOMBRE,
+    "categoria",
+    "curso",
+    "vencimiento",
+    "estatus"
+]
+
+# =========================
+# VALIDACIÓN DE COLUMNAS
+# =========================
+columnas_finales = [c for c in columnas_visibles if c in empleado.columns]
+
+# =========================
+# MOSTRAR SOLO LO NECESARIO
+# =========================
+st.markdown("## 📋 Mis cursos")
+
+st.dataframe(
+    empleado[columnas_finales],
+    use_container_width=True
+)
