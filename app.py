@@ -9,7 +9,7 @@ df = pd.read_excel("BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx")
 nomina = st.text_input("Ingresa tu número de nómina")
 
 if nomina:
-    empleado = df[df["mep"].astype(str) == nomina]
+    empleado = df[df["nomina"].astype(str) == nomina]
 
     if empleado.empty:
         st.error("No se encontraron registros")
