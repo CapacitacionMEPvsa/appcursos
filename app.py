@@ -83,13 +83,10 @@ data = data.dropna(axis=1, how="all")
 # COLUMNAS A MOSTRAR
 # =========================
 columnas_visibles = [
-    "nomina",
-    "nombre",
-    "proceso",
-    "categoria",
-    "curso",
-    "vencimiento",
-    "estatus"
+    "Curso",
+    "Vencimiento",
+    "Estatus",
+    "Observaciones"
 ]
 
 columnas_finales = [c for c in columnas_visibles if c in data.columns]
