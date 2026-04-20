@@ -15,26 +15,37 @@ st.title("Consulta de Cursos")
 df = pd.read_excel("BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx")
 
 # =========================
-# LIMPIEZA SIMPLE (YA NO COMPLEJA)
+# LIMPIEZA FUERTE DE COLUMNAS (CLAVE)
 # =========================
-df.columns = df.columns.astype(str).str.strip()
+df.columns = (
+    df.columns
+    .astype(str)
+    .str.strip()
+    .str.replace("\n", "")
+    .str.replace("\xa0", " ")
+)
 
 # =========================
-# COLUMNAS FIJAS (YA SIMPLIFICADO)
+# 🔥 DETECCIÓN AUTOMÁTICA (FIX DEFINITIVO)
 # =========================
-COL_NOMINA = "Nómina"
-COL_NOMBRE = "Nombre del Colaborador"
+COL_NOMINA = None
+COL_NOMBRE = None
 
-# =========================
+for col in df.columns:
+    if "nomina" in col.lower():
+        COL_NOMINA = col
+    if "nombre" in col.lower():
+        COL_NOMBRE = col
+
 # VALIDACIÓN
-# =========================
-if COL_NOMINA not in df.columns or COL_NOMBRE not in df.columns:
-    st.error("No se encontraron las columnas requeridas en el Excel")
+if not COL_NOMINA or not COL_NOMBRE:
+    st.error("No se encontraron columnas de Nómina o Nombre en el Excel")
+    st.write("Columnas detectadas:")
     st.write(df.columns.tolist())
     st.stop()
 
 # =========================
-# BLOQUES (TU ESTRUCTURA SE MANTIENE)
+# BLOQUES (TU ESTRUCTURA ORIGINAL)
 # =========================
 bloques = [
     {
@@ -81,7 +92,7 @@ df_final = pd.concat(cursos, ignore_index=True)
 df_final = df_final[df_final["curso"].notna()]
 
 # =========================
-# INPUT (YA FUNCIONA DIRECTO)
+# INPUT
 # =========================
 nomina = st.text_input("Ingresa tu número de nómina")
 
@@ -168,7 +179,7 @@ if nomina:
         )
 
         # =========================
-        # PDF (NO MODIFICADO)
+        # PDF (NO TOCADO)
         # =========================
         def generar_pdf(data, nombre):
             buffer = io.BytesIO()
