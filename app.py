@@ -78,7 +78,7 @@ else:
         ~obs.astype(str).str.isnumeric(), ""
     )
 
-cursos.append(temp)
+    cursos.append(temp)
 
 df_final = pd.concat(cursos, ignore_index=True)
 
