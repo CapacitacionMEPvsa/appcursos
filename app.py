@@ -50,9 +50,12 @@ for b in bloques:
     })
 
     temp["categoria"] = b["categoria"]
+
+    temp["observaciones"] = df.iloc[:, b["inicio"] - 1]
     temp["curso"] = df.iloc[:, b["inicio"]]
     temp["vencimiento"] = df.iloc[:, b["inicio"] + 1]
     temp["estatus"] = df.iloc[:, b["inicio"] + 2]
+    
 
     cursos.append(temp)
 
@@ -93,13 +96,10 @@ empleado = empleado.dropna(axis=1, how="all")
 # COLUMNAS VISIBLES
 # =========================
 columnas_visibles = [
-    "nomina",
-    "nombre",
-    "proceso",
-    "categoria",
     "curso",
     "vencimiento",
-    "estatus"
+    "estatus",
+    "observaciones"
 ]
 
 columnas_finales = [c for c in columnas_visibles if c in empleado.columns]
