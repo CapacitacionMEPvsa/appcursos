@@ -86,9 +86,6 @@ else:
         ~obs.astype(str).str.isnumeric(), ""
     )
 
-    # limpiar valores que claramente no son observaciones (números)
-        temp["observaciones"] = df.iloc[:, i - 2]
-
         cursos.append(temp)
 
 df_final = pd.concat(cursos, ignore_index=True)
