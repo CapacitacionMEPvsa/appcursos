@@ -71,6 +71,11 @@ for b in bloques:
 
         cursos.append(temp)
 
+if len(cursos) == 0:
+    st.error("❌ No se pudieron generar cursos.")
+    st.write("Columnas disponibles:", df.columns.tolist())
+    st.stop()
+
 df_final = pd.concat(cursos, ignore_index=True)
 
 # eliminar vacíos
