@@ -14,27 +14,37 @@ st.title("Consulta de Cursos")
 # =========================
 df = pd.read_excel("BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx")
 
-# 🔥 LIMPIEZA ROBUSTA DE COLUMNAS (CRÍTICO)
+# 🔥 NORMALIZACIÓN FUERTE DE COLUMNAS (CLAVE)
 df.columns = (
     df.columns
     .astype(str)
     .str.strip()
+    .str.replace("\t", "")
     .str.replace("\n", "")
-    .str.replace("\xa0", "")
+    .str.replace("  ", " ")
 )
 
 # =========================
-# 🔥 DETECCIÓN AUTOMÁTICA DE COLUMNAS (FIX KEYERROR)
+# 🔥 MAPEO MANUAL (ESTO ES LO CORRECTO EN TU CASO)
 # =========================
-try:
-    COL_NOMINA = [c for c in df.columns if "nomina" in c.lower()][0]
-    COL_NOMBRE = [c for c in df.columns if "nombre" in c.lower()][0]
-except:
-    st.error("No se encontraron columnas de Nómina o Nombre en el Excel")
-    st.stop()
+COL_NOMINA = "No. Nómina"
+COL_NOMBRE = "Nombre del Colaborador"
+COL_PROCESO = "Proceso"
+COL_CATEGORIA = "Categoría"
 
 # =========================
-# 🔥 BLOQUES (POR ÍNDICE - TU ESTRUCTURA ORIGINAL)
+# VALIDACIÓN (EVITA CRASH)
+# =========================
+required_cols = [COL_NOMINA, COL_NOMBRE]
+
+for col in required_cols:
+    if col not in df.columns:
+        st.error(f"No se encontró la columna: {col}")
+        st.write("Columnas detectadas:", df.columns.tolist())
+        st.stop()
+
+# =========================
+# BLOQUES (NO CAMBIA TU ESTRUCTURA)
 # =========================
 bloques = [
     {
@@ -55,7 +65,7 @@ bloques = [
 ]
 
 # =========================
-# 🔥 EXTRACCIÓN CORRECTA
+# EXTRACCIÓN
 # =========================
 cursos = []
 
@@ -66,7 +76,6 @@ for b in bloques:
 
     temp = base.copy()
 
-    # columnas del curso (por posición)
     temp["curso"] = df.iloc[:, b["inicio"]]
     temp["vencimiento"] = df.iloc[:, b["inicio"] + 1]
     temp["estatus"] = df.iloc[:, b["inicio"] + 2]
@@ -77,8 +86,6 @@ for b in bloques:
     cursos.append(temp)
 
 df_final = pd.concat(cursos, ignore_index=True)
-
-# limpiar vacíos
 df_final = df_final[df_final["curso"].notna()]
 
 # =========================
@@ -88,7 +95,6 @@ nomina = st.text_input("Ingresa tu número de nómina")
 
 if nomina:
 
-    # 🔥 BÚSQUEDA CORRECTA
     empleado = df_final[
         df_final["nomina"].astype(str).str.strip() == nomina.strip()
     ].copy()
@@ -97,7 +103,6 @@ if nomina:
         st.error("No se encontraron registros")
     else:
 
-        # 🔥 NOMBRE CORRECTO DEL TRABAJADOR
         nombre = empleado.iloc[0]["nombre"]
 
         # =========================
@@ -123,7 +128,7 @@ if nomina:
             filtro = st.toggle("🚀 Solo pendientes o por vencer")
 
         # =========================
-        # LIMPIEZA FECHAS
+        # FECHAS
         # =========================
         empleado["vencimiento"] = pd.to_datetime(
             empleado["vencimiento"],
@@ -156,7 +161,7 @@ if nomina:
             ]
 
         # =========================
-        # TABLA FINAL
+        # TABLA
         # =========================
         st.markdown("## 📋 Cursos del trabajador")
 
@@ -171,7 +176,7 @@ if nomina:
         )
 
         # =========================
-        # PDF (NO MODIFICADO - TU LÓGICA ORIGINAL)
+        # PDF (NO TOCADO)
         # =========================
         def generar_pdf(data, nombre):
             buffer = io.BytesIO()
@@ -188,4 +193,3 @@ if nomina:
                 file_name="kardex.pdf",
                 mime="application/pdf"
             )
-            
