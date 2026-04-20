@@ -81,6 +81,57 @@ if len(cursos) == 0:
 
 df_final = pd.concat(cursos, ignore_index=True)
 
+# =========================
+# 🔥 BLOQUES (POR ÍNDICE)
+# =========================
+bloques = [
+    {
+        "nombre": "CERTIFICACIONES TECNICAS",
+        "inicio": 20,
+        "tipo": "tecnico"
+    },
+    {
+        "nombre": "ANEXO SSPA",
+        "inicio": 88,
+        "tipo": "seguridad"
+    },
+    {
+        "nombre": "COMPETENCIAS TECNICAS BASICAS",
+        "inicio": 200,
+        "tipo": "tecnico"
+    }
+]
+
+# =========================
+# 🔥 EXTRACCIÓN (NO TOCA UI NI PDF)
+# =========================
+cursos = []
+
+for b in bloques:
+
+    # base mínima (NO modificar estructura global)
+    base = df.iloc[:, [0, 1]].copy()
+    base.columns = ["nomina", "nombre"]
+
+    temp = base.copy()
+
+    temp["curso"] = df.iloc[:, b["inicio"]]
+    temp["vencimiento"] = df.iloc[:, b["inicio"] + 2]
+
+    # si existe estatus lo respeta, si no lo deja vacío
+    temp["estatus"] = df.iloc[:, b["inicio"] + 3] if df.shape[1] > b["inicio"] + 3 else None
+
+    temp["tipodecurso"] = b["tipo"]
+    temp["categoria"] = b["nombre"]
+
+    cursos.append(temp)
+
+# unir todo
+df_final = pd.concat(cursos, ignore_index=True)
+
+# limpiar vacíos sin afectar lógica posterior
+df_final = df_final[df_final["curso"].notna()]
+
 # eliminar vacíos
 df_final = df_final[df_final["curso"].notna()]
 
