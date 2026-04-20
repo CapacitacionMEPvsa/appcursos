@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+import io
 
 # =========================
 # CONFIGURACIÓN
@@ -28,6 +29,38 @@ COL_NOMBRE = "Nombre del Colaborador"
 COL_PROCESO = "Proceso"
 
 # =========================
+# 🔥 CREAR CURSOS (AQUÍ ESTÁ LO IMPORTANTE)
+# =========================
+bloques = [
+    {"categoria": "CERTIFICACIONES TECNICAS", "inicio": 20},
+    {"categoria": "ANEXO SSPA", "inicio": 88},
+    {"categoria": "COMPETENCIAS TECNICAS BASICAS", "inicio": 200},
+]
+
+cursos = []
+
+for b in bloques:
+
+    temp = df[[COL_NOMINA, COL_NOMBRE, COL_PROCESO]].copy()
+
+    temp = temp.rename(columns={
+        COL_NOMINA: "nomina",
+        COL_NOMBRE: "nombre",
+        COL_PROCESO: "proceso"
+    })
+
+    temp["categoria"] = b["categoria"]
+    temp["curso"] = df.iloc[:, b["inicio"]]
+    temp["vencimiento"] = df.iloc[:, b["inicio"] + 1]
+    temp["estatus"] = df.iloc[:, b["inicio"] + 2]
+
+    cursos.append(temp)
+
+df_final = pd.concat(cursos, ignore_index=True)
+
+df_final = df_final[df_final["curso"].notna()]
+
+# =========================
 # INPUT
 # =========================
 nomina = st.text_input("Ingresa tu número de nómina")
@@ -38,65 +71,45 @@ if not nomina:
 # =========================
 # FILTRAR EMPLEADO
 # =========================
-empleado = df[df[COL_NOMINA].astype(str).str.strip() == nomina.strip()]
+empleado = df_final[
+    df_final["nomina"].astype(str).str.strip() == nomina.strip()
+]
 
 if empleado.empty:
     st.error("No encontrado")
     st.stop()
 
-nombre = empleado.iloc[0][COL_NOMBRE]
+nombre = empleado.iloc[0]["nombre"]
 
 st.markdown(f"## 👤 {nombre}")
 
 # =========================
-# 🔥 CURSOS (YA MAPEADO CORRECTAMENTE)
+# LIMPIEZA
 # =========================
-data = pd.DataFrame()
-
-data["nomina"] = empleado[COL_NOMINA]
-data["nombre"] = empleado[COL_NOMBRE]
-data["proceso"] = empleado[COL_PROCESO]
+empleado = empleado.loc[:, ~empleado.columns.duplicated()]
+empleado = empleado.dropna(axis=1, how="all")
 
 # =========================
-# ANEXO SSPA (TU CASO)
-# =========================
-data["categoria"] = "ANEXO SSPA"
-data["curso"] = df.iloc[:, 34]
-data["vencimiento"] = df.iloc[:, 35]
-data["estatus"] = df.iloc[:, 3]
-
-# =========================
-# FILTRAR SOLO ESTE EMPLEADO
-# =========================
-data = data[data["nomina"].astype(str).str.strip() == nomina.strip()]
-
-# limpiar vacíos
-data = data[data["curso"].notna()]
-
-# =========================
-# LIMPIEZA FINAL
-# =========================
-data = data.loc[:, ~data.columns.duplicated()]
-data = data.dropna(axis=1, how="all")
-
-# =========================
-# COLUMNAS A MOSTRAR
+# COLUMNAS VISIBLES
 # =========================
 columnas_visibles = [
-    "Curso",
-    "Vencimiento",
-    "Estatus",
-    "Observaciones",
+    "nomina",
+    "nombre",
+    "proceso",
+    "categoria",
+    "curso",
+    "vencimiento",
+    "estatus"
 ]
 
-columnas_finales = [c for c in columnas_visibles if c in data.columns]
+columnas_finales = [c for c in columnas_visibles if c in empleado.columns]
 
 # =========================
-# MOSTRAR
+# MOSTRAR CURSOS
 # =========================
 st.markdown("## 📋 Mis cursos")
 
 st.dataframe(
-    data[columnas_finales],
+    empleado[columnas_finales],
     use_container_width=True
 )
