@@ -114,13 +114,15 @@ st.markdown("## 📋 Mis cursos")
 
 st.dataframe(
     df_final[[
-        "categoria",
         "curso",
+        "inicio",
+        "emision",
         "vencimiento",
         "estatus",
         "observaciones"
     ]],
     use_container_width=True
+)
 )
 from datetime import datetime
 
