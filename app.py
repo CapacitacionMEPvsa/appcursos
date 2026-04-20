@@ -97,11 +97,11 @@ if nomina:
                 tabla["Estatus"] = tabla["Estatus"].apply(semaforo)
                 st.dataframe(tabla, use_container_width=True)
 
-        mostrar_seccion("📘 Cursos Técnicos", "Técnicos")
+        mostrar_seccion("🛠️ Cursos Técnicos", "Técnicos")
         st.markdown("---")
-        mostrar_seccion("🛡️ Cursos de Seguridad", "seguridad")
+        mostrar_seccion("🧑‍🏫 Cursos de Seguridad", "seguridad")
         st.markdown("---")
-        mostrar_seccion("🛡️ Cursos Externos", "externos")
+        mostrar_seccion("📚 Cursos Externos", "externos")
         st.markdown("---")        
         mostrar_seccion("🤝 Cursos Complementarios", "complementario")
 
