@@ -32,9 +32,9 @@ COL_PROCESO = "Proceso"
 # 🔥 CREAR CURSOS (AQUÍ ESTÁ LO IMPORTANTE)
 # =========================
 bloques = [
-    {"categoria": "CERTIFICACIONES TECNICAS", "inicio": 20, "fin":80},
-    {"categoria": "ANEXO SSPA", "inicio": 88},
-    {"categoria": "COMPETENCIAS TECNICAS BASICAS", "inicio": 200},
+    {"categoria": "CERTIFICACIONES TECNICAS", "inicio": 20, "fin":700},
+    {"categoria": "ANEXO SSPA", "inicio": 20, "fin":700},
+    {"categoria": "COMPETENCIAS TECNICAS BASICAS", "inicio": 20, "fin":700},
 ]
 
 cursos = []
