@@ -56,8 +56,8 @@ for b in bloques:
     temp["curso"] = df.columns[b["inicio"]]
 
     # ✅ ESTOS SÍ VIENEN DEL TRABAJADOR
-    temp["vencimiento"] = df.iloc[:, b["inicio"] + 2]
-    temp["estatus"] = df.iloc[:, b["inicio"] + 3]
+    temp["vencimiento"] = df.iloc[:, b["inicio"] + 3]
+    temp["estatus"] = df.iloc[:, b["inicio"] + 4]
 
     cursos.append(temp)
 
