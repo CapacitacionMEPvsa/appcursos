@@ -14,17 +14,27 @@ st.title("Consulta de Cursos")
 # =========================
 df = pd.read_excel("BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx")
 
-# 🔥 SOLO LIMPIEZA SUAVE (NO ROMPE ESTRUCTURA)
-df.columns = df.columns.str.strip()
+# 🔥 LIMPIEZA ROBUSTA DE COLUMNAS (CRÍTICO)
+df.columns = (
+    df.columns
+    .astype(str)
+    .str.strip()
+    .str.replace("\n", "")
+    .str.replace("\xa0", "")
+)
 
 # =========================
-# 🔥 COLUMNAS REALES DEL EXCEL
+# 🔥 DETECCIÓN AUTOMÁTICA DE COLUMNAS (FIX KEYERROR)
 # =========================
-COL_NOMINA = "NO. Nómina"
-COL_NOMBRE = "Nombre del Colaborador"
+try:
+    COL_NOMINA = [c for c in df.columns if "nomina" in c.lower()][0]
+    COL_NOMBRE = [c for c in df.columns if "nombre" in c.lower()][0]
+except:
+    st.error("No se encontraron columnas de Nómina o Nombre en el Excel")
+    st.stop()
 
 # =========================
-# 🔥 BLOQUES (NO CAMBIA TU IDEA)
+# 🔥 BLOQUES (POR ÍNDICE - TU ESTRUCTURA ORIGINAL)
 # =========================
 bloques = [
     {
@@ -45,7 +55,7 @@ bloques = [
 ]
 
 # =========================
-# 🔥 EXTRACCIÓN CORREGIDA (CLAVE)
+# 🔥 EXTRACCIÓN CORRECTA
 # =========================
 cursos = []
 
@@ -56,7 +66,7 @@ for b in bloques:
 
     temp = base.copy()
 
-    # 🔥 columnas de cursos (ajustadas correctamente)
+    # columnas del curso (por posición)
     temp["curso"] = df.iloc[:, b["inicio"]]
     temp["vencimiento"] = df.iloc[:, b["inicio"] + 1]
     temp["estatus"] = df.iloc[:, b["inicio"] + 2]
@@ -66,7 +76,6 @@ for b in bloques:
 
     cursos.append(temp)
 
-# unir todo
 df_final = pd.concat(cursos, ignore_index=True)
 
 # limpiar vacíos
@@ -79,7 +88,7 @@ nomina = st.text_input("Ingresa tu número de nómina")
 
 if nomina:
 
-    # 🔥 CORREGIDO: búsqueda por columna real
+    # 🔥 BÚSQUEDA CORRECTA
     empleado = df_final[
         df_final["nomina"].astype(str).str.strip() == nomina.strip()
     ].copy()
@@ -88,11 +97,11 @@ if nomina:
         st.error("No se encontraron registros")
     else:
 
-        # 🔥 CORREGIDO: nombre real del colaborador
+        # 🔥 NOMBRE CORRECTO DEL TRABAJADOR
         nombre = empleado.iloc[0]["nombre"]
 
         # =========================
-        # HEADER (SIN CAMBIOS)
+        # HEADER
         # =========================
         col1, col2 = st.columns([1, 6])
 
@@ -103,7 +112,7 @@ if nomina:
             st.markdown(f"## 👤 {nombre}")
 
         # =========================
-        # BOTONES (SIN CAMBIOS)
+        # BOTONES
         # =========================
         colA, colB = st.columns([1, 2])
 
@@ -114,10 +123,11 @@ if nomina:
             filtro = st.toggle("🚀 Solo pendientes o por vencer")
 
         # =========================
-        # LIMPIEZA DE FECHAS
+        # LIMPIEZA FECHAS
         # =========================
         empleado["vencimiento"] = pd.to_datetime(
-            empleado["vencimiento"], errors="coerce"
+            empleado["vencimiento"],
+            errors="coerce"
         ).dt.date
 
         hoy = datetime.today().date()
@@ -133,7 +143,6 @@ if nomina:
             else:
                 return "Vigente"
 
-        # si no hay estatus, se calcula
         empleado["estatus"] = empleado["estatus"].fillna(
             empleado["vencimiento"].apply(calcular_estatus)
         )
@@ -147,7 +156,7 @@ if nomina:
             ]
 
         # =========================
-        # PRESENTACIÓN (SIN CAMBIOS GRANDES)
+        # TABLA FINAL
         # =========================
         st.markdown("## 📋 Cursos del trabajador")
 
@@ -162,7 +171,7 @@ if nomina:
         )
 
         # =========================
-        # PDF (NO TOCADO)
+        # PDF (NO MODIFICADO - TU LÓGICA ORIGINAL)
         # =========================
         def generar_pdf(data, nombre):
             buffer = io.BytesIO()
@@ -179,3 +188,4 @@ if nomina:
                 file_name="kardex.pdf",
                 mime="application/pdf"
             )
+            
