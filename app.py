@@ -110,112 +110,157 @@ if nomina:
         # =========================
         def generar_pdf(data, nombre):
 
-            buffer = io.BytesIO()
-            doc = SimpleDocTemplate(buffer, pagesize=letter)
+    import io
+    import os
+    from datetime import datetime
+    from reportlab.lib.pagesizes import letter
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+    from reportlab.lib import colors
+    from reportlab.lib.styles import getSampleStyleSheet
 
-            elements = []
-            styles = getSampleStyleSheet()
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
 
-            # ENCABEZADO
-            encabezado = []
+    elements = []
+    styles = getSampleStyleSheet()
 
-            if os.path.exists("logo.png"):
-                logo = Image("logo.png", width=80, height=50)
+    # =========================
+    # ENCABEZADO
+    # =========================
+    encabezado = []
+
+    if os.path.exists("logo.png"):
+        logo = Image("logo.png", width=80, height=50)
+    else:
+        logo = ""
+
+    titulo = Paragraph(
+        "<para align='center'><b>Materiales y Equipo Petrolero</b><br/>"
+        "<font size=10>Kardex de Capacitación Laboral</font></para>",
+        styles["Title"]
+    )
+
+    encabezado.append([logo, titulo])
+
+    tabla_encabezado = Table(encabezado, colWidths=[100, 380])
+    tabla_encabezado.setStyle([("VALIGN", (0, 0), (-1, -1), "MIDDLE")])
+
+    elements.append(tabla_encabezado)
+    elements.append(Spacer(1, 15))
+
+    # =========================
+    # DATOS
+    # =========================
+    nomina_emp = str(data.iloc[0]["nomina"])
+    proceso = str(data.iloc[0].get("proceso", "N/A"))
+
+    elements.append(Paragraph(f"<b>Nombre del colaborador:</b> {nombre}", styles["Normal"]))
+    elements.append(Paragraph(f"<b>No. Nómina:</b> {nomina_emp}", styles["Normal"]))
+    elements.append(Paragraph(f"<b>Proceso:</b> {proceso}", styles["Normal"]))
+    elements.append(Spacer(1, 15))
+
+    # =========================
+    # CONTADOR DE CUMPLIMIENTO
+    # =========================
+    total = len(data)
+    vigentes = len(data[data["estatus_calculado"] == "Vigente"])
+    por_vencer = len(data[data["estatus_calculado"] == "Por vencer"])
+
+    cumplidos = vigentes + por_vencer
+
+    if total > 0:
+        porcentaje = round((cumplidos / total) * 100, 1)
+    else:
+        porcentaje = 0
+
+    # =========================
+    # TABLAS
+    # =========================
+    def tabla_cursos(titulo, filtro):
+
+        seccion = data[data["tipodecurso"] == filtro]
+
+        if seccion.empty:
+            return
+
+        elements.append(Paragraph(f"<b>{titulo}</b>", styles["Heading2"]))
+        elements.append(Spacer(1, 5))
+
+        tabla_data = [["No.", "Curso", "Vencimiento", "Estatus", "Observaciones"]]
+
+        for i, (_, row) in enumerate(seccion.iterrows(), start=1):
+
+            # Semáforo tipo app
+            if row["estatus_calculado"] == "Vencido":
+                estatus = "🔴 Vencido"
+            elif row["estatus_calculado"] == "Por vencer":
+                estatus = "🟡 Por vencer"
+            elif row["estatus_calculado"] == "Vigente":
+                estatus = "🟢 Vigente"
             else:
-                logo = ""
+                estatus = row["estatus_calculado"]
 
-            titulo = Paragraph(
-                "<para align='center'><b>Materiales y Equipo Petrolero</b><br/>"
-                "<font size=10>Kardex de Capacitación Laboral</font></para>",
-                styles["Title"]
-            )
+            tabla_data.append([
+                str(i),
+                str(row["curso"]),
+                str(row["vencimiento"]),
+                estatus,
+                ""
+            ])
 
-            encabezado.append([logo, titulo])
+        tabla = Table(
+            tabla_data,
+            colWidths=[40, 200, 90, 90, 120],
+            repeatRows=1
+        )
 
-            tabla_encabezado = Table(encabezado, colWidths=[100, 380])
-            tabla_encabezado.setStyle([("VALIGN", (0, 0), (-1, -1), "MIDDLE")])
+        style = [
+            ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ("GRID", (0, 0), (-1, -1), 1, colors.black),
+            ("ALIGN", (0, 0), (0, -1), "CENTER"),
+            ("ALIGN", (2, 1), (4, -1), "CENTER"),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+            ("TOPPADDING", (0, 0), (-1, -1), 8),
+        ]
 
-            elements.append(tabla_encabezado)
-            elements.append(Spacer(1, 15))
+        tabla.setStyle(TableStyle(style))
 
-            # DATOS
-            nomina_emp = str(data.iloc[0]["nomina"])
-            proceso = str(data.iloc[0].get("proceso", "N/A"))
+        elements.append(tabla)
+        elements.append(Spacer(1, 15))
 
-            elements.append(Paragraph(f"<b>Nombre del colaborador:</b> {nombre}", styles["Normal"]))
-            elements.append(Paragraph(f"<b>No. Nómina:</b> {nomina_emp}", styles["Normal"]))
-            elements.append(Paragraph(f"<b>Proceso:</b> {proceso}", styles["Normal"]))
-            elements.append(Spacer(1, 15))
+    # =========================
+    # SECCIONES
+    # =========================
+    tabla_cursos("Cursos Técnicos", "tecnico")
+    tabla_cursos("Cursos de Seguridad", "seguridad")
+    tabla_cursos("Cursos de Habilidades / Externos", "habilidades")
 
-            # TABLAS
-            def tabla_cursos(titulo, filtro):
+    # =========================
+    # RESUMEN FINAL
+    # =========================
+    elements.append(Spacer(1, 10))
 
-                seccion = data[data["tipodecurso"] == filtro]
+    resumen = f"""
+    <b>Resumen de cumplimiento:</b><br/>
+    Total de cursos: {total}<br/>
+    Cumplidos (vigentes + por vencer): {cumplidos}<br/>
+    <b>Porcentaje de cumplimiento: {porcentaje}%</b>
+    """
 
-                if seccion.empty:
-                    return
+    elements.append(Paragraph(resumen, styles["Normal"]))
 
-                elements.append(Paragraph(f"<b>{titulo}</b>", styles["Heading2"]))
-                elements.append(Spacer(1, 5))
+    # =========================
+    # PIE
+    # =========================
+    elements.append(Spacer(1, 20))
+    fecha = datetime.today().strftime("%Y-%m-%d")
+    elements.append(Paragraph(f"<b>Fecha del reporte:</b> {fecha}", styles["Normal"]))
 
-                tabla_data = [["No.", "Curso", "Vencimiento", "Estatus", "Observaciones"]]
-
-                for i, (_, row) in enumerate(seccion.iterrows(), start=1):
-
-                    tabla_data.append([
-                        str(i),
-                        str(row["curso"]),
-                        str(row["vencimiento"]),
-                        str(row["estatus_calculado"]),
-                        ""
-                    ])
-
-                tabla = Table(
-                    tabla_data,
-                    colWidths=[40, 200, 90, 80, 130],
-                    repeatRows=1
-                )
-
-                style = [
-                    ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
-                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-                    ("GRID", (0, 0), (-1, -1), 1, colors.black),
-                    ("ALIGN", (0, 0), (0, -1), "CENTER"),
-                    ("ALIGN", (2, 1), (4, -1), "CENTER"),
-                    ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-                    ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
-                    ("TOPPADDING", (0, 0), (-1, -1), 8),
-                ]
-
-                # COLOR EN VENCIMIENTO
-                for i, row in enumerate(seccion.itertuples(), start=1):
-
-                    if row.estatus_calculado == "Vencido":
-                        style.append(("TEXTCOLOR", (2, i), (2, i), colors.red))
-                    elif row.estatus_calculado == "Por vencer":
-                        style.append(("TEXTCOLOR", (2, i), (2, i), colors.orange))
-                    elif row.estatus_calculado == "Vigente":
-                        style.append(("TEXTCOLOR", (2, i), (2, i), colors.green))
-
-                tabla.setStyle(TableStyle(style))
-
-                elements.append(tabla)
-                elements.append(Spacer(1, 15))
-
-            # SECCIONES
-            tabla_cursos("Cursos Técnicos", "tecnico")
-            tabla_cursos("Cursos de Seguridad", "seguridad")
-            tabla_cursos("Cursos de Habilidades / Externos", "habilidades")
-
-            # PIE
-            elements.append(Spacer(1, 20))
-            fecha = datetime.today().strftime("%Y-%m-%d")
-            elements.append(Paragraph(f"<b>Fecha del reporte:</b> {fecha}", styles["Normal"]))
-
-            doc.build(elements)
-
-            buffer.seek(0)
-            return buffer
+    doc.build(elements)
+    buffer.seek(0)
+    return buffer
 
         # BOTÓN
         pdf = generar_pdf(empleado, nombre)
