@@ -30,33 +30,33 @@ if nomina:
         ).dt.date
 
         # Limpiar tipo de curso
-        empleado["tipodecurso"] = empleado["tipodecurso"].str.lower().str.strip()
+        empleado["tipodecurso"] = (
+            empleado["tipodecurso"]
+            .astype(str)
+            .str.lower()
+            .str.strip()
+            .str.replace("á", "a")
+            .str.replace("é", "e")
+            .str.replace("í", "i")
+            .str.replace("ó", "o")
+            .str.replace("ú", "u")
+        )
 
         # -------- ESTATUS AUTOMÁTICO --------
         hoy = datetime.today().date()
 
         def calcular_estatus(fecha):
             if pd.isna(fecha):
-                return "Sin fecha"
+                return "⚪ Sin fecha"
             dias = (fecha - hoy).days
             if dias < 0:
-                return "Vencido"
+                return "🔴 Vencido"
             elif dias <= 30:
-                return "Por vencer"
+                return "🟡 Por vencer"
             else:
-                return "Vigente"
+                return "🟢 Vigente"
 
         empleado["estatus_calculado"] = empleado["vencimiento"].apply(calcular_estatus)
-
-        # -------- COLORES --------
-        def colorear_estatus(val):
-            if val == "Vencido":
-                return "color: red; font-weight: bold"
-            elif val == "Por vencer":
-                return "color: orange; font-weight: bold"
-            elif val == "Vigente":
-                return "color: green; font-weight: bold"
-            return ""
 
         # -------- FUNCIÓN PARA SECCIONES --------
         def mostrar_seccion(titulo, filtro):
@@ -66,17 +66,11 @@ if nomina:
                 if data.empty:
                     st.write("Sin registros")
                 else:
-                    tabla = data[["curso", "vencimiento", "estatus_calculado"]]
-
-                    st.dataframe(
-                        tabla.style.applymap(
-                            colorear_estatus,
-                            subset=["estatus_calculado"]
-                        )
-                    )
+                    tabla = data[["curso", "estatus_calculado", "vencimiento"]]
+                    st.dataframe(tabla)
 
         # -------- SECCIONES --------
-        mostrar_seccion("📘 Cursos Técnicos", "técnico")
+        mostrar_seccion("📘 Cursos Técnicos", "tecnico")
         mostrar_seccion("🤝 Habilidades", "habilidades")
         mostrar_seccion("🛡️ Seguridad", "seguridad")
 
