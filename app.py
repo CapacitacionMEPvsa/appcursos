@@ -25,9 +25,29 @@ df.columns = df.columns.astype(str).str.strip()
 # =========================
 # COLUMNAS BASE
 # =========================
-COL_NOMINA = "Nómina"
-COL_NOMBRE = "Nombre del Colaborador"
-COL_PROCESO = "Proceso"
+# =========================
+# DETECTAR COLUMNAS REALES
+# =========================
+def buscar_columna(nombre):
+    for col in df.columns:
+        if nombre.lower() in col.lower():
+            return col
+    return None
+
+COL_NOMINA = buscar_columna("nomina")
+COL_NOMBRE = buscar_columna("nombre")
+COL_PROCESO = buscar_columna("proceso")
+
+# DEBUG (puedes quitarlo después)
+st.write("Columnas encontradas:")
+st.write("Nómina:", COL_NOMINA)
+st.write("Nombre:", COL_NOMBRE)
+st.write("Proceso:", COL_PROCESO)
+
+# VALIDACIÓN
+if not COL_NOMINA or not COL_NOMBRE:
+    st.error("No se pudieron identificar las columnas principales en el Excel")
+    st.stop()
 
 # =========================
 # INPUT
