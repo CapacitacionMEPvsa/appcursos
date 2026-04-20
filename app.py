@@ -62,15 +62,16 @@ if nomina:
         empleado["estatus_calculado"] = empleado["vencimiento"].apply(calcular_estatus)
 
         # -------- MOSTRAR EN APP --------
-        def mostrar_seccion(titulo, filtro):
-            data = empleado[empleado["tipodecurso"] == filtro]
+       def mostrar_seccion(titulo, filtro):
+    data = empleado[empleado["tipodecurso"] == filtro]
 
-            with st.expander(titulo):
-                if data.empty:
-                    st.write("Sin registros")
-                else:
-                    tabla = data[["curso", "estatus_calculado", "vencimiento"]]
-                    st.dataframe(tabla)
+    st.subheader(titulo)
+
+    if data.empty:
+        st.write("Sin registros")
+    else:
+        tabla = data[["curso", "estatus_calculado", "vencimiento"]]
+        st.dataframe(tabla)
 
         mostrar_seccion("📘 Cursos Técnicos", "tecnico")
         mostrar_seccion("🤝 Habilidades", "habilidades")
