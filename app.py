@@ -44,7 +44,7 @@ for b in bloques:
     temp = df[[COL_NOMINA, COL_NOMBRE, COL_PROCESO]].copy()
 
     temp = temp.rename(columns={
-        COL_NOMINA: "nomina",
+        COL_NOMINA: "Nómina",
         COL_NOMBRE: "nombre",
         COL_PROCESO: "proceso"
     })
@@ -63,7 +63,7 @@ df_final = df_final[df_final["curso"].notna()]
 # =========================
 # INPUT
 # =========================
-nomina = st.text_input("Ingresa tu número de nómina")
+Nómina = st.text_input("Ingresa tu número de nómina")
 
 if not nomina:
     st.stop()
