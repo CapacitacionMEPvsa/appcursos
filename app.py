@@ -61,7 +61,6 @@ def extraer_bloque(df_emp, inicio, fin, categoria):
             "nomina": df_emp[COL_NOMINA].values,
             "nombre": df_emp[COL_NOMBRE].values,
             "proceso": df_emp[COL_PROCESO].values,
-            "categoria": categoria,
             "curso": df_emp.iloc[:, col],
             "vencimiento": df_emp.iloc[:, col + 1] if col + 1 < len(df_emp.columns) else None,
             "estatus": df_emp.iloc[:, col + 2] if col + 2 < len(df_emp.columns) else None,
@@ -106,7 +105,6 @@ st.markdown("## 📋 Mis cursos")
 
 st.dataframe(
     df_final[[
-        "categoria",
         "curso",
         "vencimiento",
         "estatus",
