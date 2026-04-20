@@ -14,50 +14,52 @@ st.title("Consulta de Cursos")
 # =========================
 df = pd.read_excel("BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx")
 
-# ⚠️ IMPORTANTE: NO limpiar columnas agresivamente aquí
-# porque tu archivo no es estructurado
+# ⚠️ IMPORTANTE: NO limpiar agresivamente columnas
+# porque tu archivo es tipo plantilla
 
 # =========================
-# 🔥 DEFINICIÓN DE BLOQUES (POR ÍNDICE)
+# 🔥 BLOQUES POR ÍNDICE
 # =========================
 bloques = [
-
     {
         "nombre": "CERTIFICACIONES TECNICAS",
         "inicio": 20,
         "tipo": "tecnico"
     },
-
     {
         "nombre": "ANEXO SSPA",
         "inicio": 88,
         "tipo": "seguridad"
     },
-
     {
         "nombre": "COMPETENCIAS TECNICAS BASICAS",
         "inicio": 200,
         "tipo": "tecnico"
     }
-
 ]
 
 # =========================
-# 🔥 EXTRACCIÓN CORRECTA (CLAVE)
+# 🔥 EXTRACCIÓN (NO AFECTA PDF NI UI)
 # =========================
 cursos = []
 
 for b in bloques:
 
-    # columnas base (ajusta si cambia tu archivo)
     base = df.iloc[:, [0, 1]].copy()
     base.columns = ["nomina", "nombre"]
 
     temp = base.copy()
 
     temp["curso"] = df.iloc[:, b["inicio"]]
+
+    # vencimiento (ajustable si cambia tu Excel)
     temp["vencimiento"] = df.iloc[:, b["inicio"] + 2]
-    temp["estatus"] = df.iloc[:, b["inicio"] + 3]
+
+    # estatus si existe, si no se calcula después
+    if df.shape[1] > b["inicio"] + 3:
+        temp["estatus"] = df.iloc[:, b["inicio"] + 3]
+    else:
+        temp["estatus"] = None
 
     temp["tipodecurso"] = b["tipo"]
     temp["categoria"] = b["nombre"]
@@ -88,7 +90,7 @@ if nomina:
         nombre = empleado.iloc[0]["nombre"]
 
         # =========================
-        # HEADER
+        # HEADER (NO MODIFICADO)
         # =========================
         col1, col2 = st.columns([1, 6])
 
@@ -99,12 +101,18 @@ if nomina:
             st.markdown(f"## 👤 {nombre}")
 
         # =========================
-        # FILTRO
+        # BOTÓN PDF (TU LÓGICA SE CONSERVA)
         # =========================
-        filtro = st.toggle("🚀 Solo pendientes o por vencer")
+        colA, colB = st.columns([1, 2])
+
+        with colA:
+            descargar = st.button("📄 Descargar Kardex PDF")
+
+        with colB:
+            filtro = st.toggle("🚀 Solo pendientes o por vencer")
 
         # =========================
-        # ESTATUS CALCULADO (si viene vacío)
+        # ESTATUS CALCULADO SI NO EXISTE
         # =========================
         empleado["vencimiento"] = pd.to_datetime(
             empleado["vencimiento"], errors="coerce"
@@ -136,7 +144,7 @@ if nomina:
             ]
 
         # =========================
-        # MOSTRAR TABLA
+        # PRESENTACIÓN (SIN CAMBIOS GRANDES)
         # =========================
         st.markdown("## 📋 Cursos del trabajador")
 
@@ -151,19 +159,23 @@ if nomina:
         )
 
         # =========================
-        # PDF (BASE)
+        # 🔥 TU PDF ORIGINAL NO SE TOCA
         # =========================
         def generar_pdf(data, nombre):
             buffer = io.BytesIO()
+
+            # ⚠️ aquí tú ya tienes tu PDF avanzado,
+            # esto solo es placeholder
             buffer.write(f"Kardex de {nombre}".encode())
+
             buffer.seek(0)
             return buffer
 
-        if st.button("📄 Descargar PDF"):
+        if descargar:
             pdf = generar_pdf(empleado, nombre)
 
             st.download_button(
-                label="Descargar",
+                label="Descargar PDF",
                 data=pdf,
                 file_name="kardex.pdf",
                 mime="application/pdf"
