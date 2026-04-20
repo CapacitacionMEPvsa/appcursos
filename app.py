@@ -87,7 +87,7 @@ else:
     )
 
     # limpiar valores que claramente no son observaciones (números)
-        temp["observaciones"] = obs.where(~obs.astype(str).str.isnumeric(), "")
+        temp["observaciones"] = df.iloc[:, i - 2]
 
         cursos.append(temp)
 
