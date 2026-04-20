@@ -70,8 +70,8 @@ for b in bloques:
 
         obs = df.iloc[:, i - 2]
 
-# limpiar valores que claramente no son observaciones (números)
-temp["observaciones"] = obs.where(~obs.astype(str).str.isnumeric(), "")
+    # limpiar valores que claramente no son observaciones (números)
+        temp["observaciones"] = obs.where(~obs.astype(str).str.isnumeric(), "")
 
         cursos.append(temp)
 
