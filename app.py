@@ -71,16 +71,16 @@ if nomina:
         empleado["estatus_calculado"] = empleado["vencimiento"].apply(calcular_estatus)
 
         # =========================
-        # COLOR EN APP
+        # SEMAFORO (EMOJIS)
         # =========================
-        def color_estatus(val):
+        def semaforo(val):
             if val == "Vencido":
-                return "color: red; font-weight: bold"
+                return "🔴 Vencido"
             elif val == "Por vencer":
-                return "color: orange; font-weight: bold"
+                return "🟡 Por vencer"
             elif val == "Vigente":
-                return "color: green; font-weight: bold"
-            return ""
+                return "🟢 Vigente"
+            return val
 
         # =========================
         # MOSTRAR SECCIONES
@@ -93,11 +93,11 @@ if nomina:
             if data.empty:
                 st.write("Sin registros")
             else:
-                tabla = data[["curso", "estatus_calculado", "vencimiento"]]
+                tabla = data[["curso", "estatus_calculado", "vencimiento"]].copy()
 
-                st.dataframe(
-                    tabla.style.applymap(color_estatus, subset=["estatus_calculado"])
-                )
+                tabla["estatus_calculado"] = tabla["estatus_calculado"].apply(semaforo)
+
+                st.dataframe(tabla, use_container_width=True)
 
         mostrar_seccion("📘 Cursos Técnicos", "tecnico")
         st.markdown("---")
