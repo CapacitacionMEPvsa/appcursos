@@ -39,29 +39,34 @@ bloques = [
 
 cursos = []
 
+cursos = []
+
 for b in bloques:
+    for i in range(b["inicio"], b["fin"], 6):
 
-    temp = df[[COL_NOMINA, COL_NOMBRE, COL_PROCESO]].copy()
+        temp = df[[COL_NOMINA, COL_NOMBRE, COL_PROCESO]].copy()
 
-    temp = temp.rename(columns={
-        COL_NOMINA: "nomina",
-        COL_NOMBRE: "nombre",
-        COL_PROCESO: "proceso"
-    })
+        temp = temp.rename(columns={
+            COL_NOMINA: "nomina",
+            COL_NOMBRE: "nombre",
+            COL_PROCESO: "proceso"
+        })
 
-    temp["categoria"] = b["categoria"]
-    temp["observaciones"] = df.iloc[:, b["inicio"] - 2]
+        temp["categoria"] = b["categoria"]
 
-    temp["curso"] = df.columns[b["inicio"]]
+        # nombre del curso
+        temp["curso"] = df.columns[i]
 
-    temp["vencimiento"] = df.iloc[:, b["inicio"] + 3]
-    temp["vencimiento"] = pd.to_datetime(
-        temp["vencimiento"], errors="coerce"
-    ).dt.date
+        # datos
+        temp["vencimiento"] = pd.to_datetime(
+            df.iloc[:, i + 3], errors="coerce"
+        ).dt.date
 
-    temp["estatus"] = df.iloc[:, b["inicio"] + 5]
+        temp["estatus"] = df.iloc[:, i + 5]
 
-    cursos.append(temp)
+        temp["observaciones"] = df.iloc[:, i - 2]
+
+        cursos.append(temp)
 
 df_final = pd.concat(cursos, ignore_index=True)
 
