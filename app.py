@@ -14,37 +14,27 @@ st.title("Consulta de Cursos")
 # =========================
 df = pd.read_excel("BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx")
 
-# 🔥 NORMALIZACIÓN FUERTE DE COLUMNAS (CLAVE)
-df.columns = (
-    df.columns
-    .astype(str)
-    .str.strip()
-    .str.replace("\t", "")
-    .str.replace("\n", "")
-    .str.replace("  ", " ")
-)
+# =========================
+# LIMPIEZA SIMPLE (YA NO COMPLEJA)
+# =========================
+df.columns = df.columns.astype(str).str.strip()
 
 # =========================
-# 🔥 MAPEO MANUAL (ESTO ES LO CORRECTO EN TU CASO)
+# COLUMNAS FIJAS (YA SIMPLIFICADO)
 # =========================
 COL_NOMINA = "Nómina"
 COL_NOMBRE = "Nombre del Colaborador"
-COL_PROCESO = "Proceso"
-COL_CATEGORIA = "Categoría"
 
 # =========================
-# VALIDACIÓN (EVITA CRASH)
+# VALIDACIÓN
 # =========================
-required_cols = [COL_NOMINA, COL_NOMBRE]
-
-for col in required_cols:
-    if col not in df.columns:
-        st.error(f"No se encontró la columna: {col}")
-        st.write("Columnas detectadas:", df.columns.tolist())
-        st.stop()
+if COL_NOMINA not in df.columns or COL_NOMBRE not in df.columns:
+    st.error("No se encontraron las columnas requeridas en el Excel")
+    st.write(df.columns.tolist())
+    st.stop()
 
 # =========================
-# BLOQUES (NO CAMBIA TU ESTRUCTURA)
+# BLOQUES (TU ESTRUCTURA SE MANTIENE)
 # =========================
 bloques = [
     {
@@ -65,14 +55,14 @@ bloques = [
 ]
 
 # =========================
-# EXTRACCIÓN
+# EXTRACCIÓN DE DATOS
 # =========================
 cursos = []
 
 for b in bloques:
 
     base = df[[COL_NOMINA, COL_NOMBRE]].copy()
-    base.columns = ["Nómina", "nombre"]
+    base.columns = ["nomina", "nombre"]
 
     temp = base.copy()
 
@@ -86,17 +76,19 @@ for b in bloques:
     cursos.append(temp)
 
 df_final = pd.concat(cursos, ignore_index=True)
+
+# limpiar vacíos
 df_final = df_final[df_final["curso"].notna()]
 
 # =========================
-# INPUT
+# INPUT (YA FUNCIONA DIRECTO)
 # =========================
-Nómina = st.text_input("Ingresa tu número de nómina")
+nomina = st.text_input("Ingresa tu número de nómina")
 
-if Nómina:
+if nomina:
 
     empleado = df_final[
-        df_final["Nómina"].astype(str).str.strip() == Nómina.strip()
+        df_final["nomina"].astype(str).str.strip() == nomina.strip()
     ].copy()
 
     if empleado.empty:
@@ -176,7 +168,7 @@ if Nómina:
         )
 
         # =========================
-        # PDF (NO TOCADO)
+        # PDF (NO MODIFICADO)
         # =========================
         def generar_pdf(data, nombre):
             buffer = io.BytesIO()
