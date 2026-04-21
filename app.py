@@ -81,7 +81,7 @@ for b in bloques:
         
 df_final = pd.concat(cursos, ignore_index=True)
 
-df_final["curso"] = df_final["curso"].fillna("Curso sin nombre"")
+df_final["curso"] = df_final["curso"].fillna("Curso sin nombre")
 
 # =========================
 # INPUT
