@@ -102,7 +102,7 @@ def obtener_cursos(rangos):
 # =========================
 # MOSTRAR POR CATEGORÍA
 # =========================
-for categoria, (col_inicio, col_fin) in categorias.items():
+for categoria, cursos_base in categorias.items():
 
     df_cat = obtener_cursos(cursos_base)
 
