@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from fpdf import FPDF
 
 def color_estatus(val):
     val = str(val).lower()
