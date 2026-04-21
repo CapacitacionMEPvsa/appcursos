@@ -24,7 +24,14 @@ encabezados = (
     .str.replace("  ", " ")
     .str.strip()
 )
+for categoria, lista in categorias.items():
 
+    df_cat = obtener_cursos_por_categoria(fila, lista)
+
+    if isinstance(df_cat, pd.DataFrame) and not df_cat.empty:
+
+        st.markdown(f"## 📂 {categoria}")
+        st.dataframe(df_cat, use_container_width=True)
 mapa_cursos = {}
 
 for i, val in enumerate(encabezados):
