@@ -14,17 +14,6 @@ FILE = "BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx"
 
 df_raw = pd.read_excel(FILE, header=None)
 
-# =========================
-# MAPEO AUTOMÁTICO DE CURSOS
-# =========================
-encabezados = df_raw.iloc[1].astype(str).str.strip()
-
-mapa_cursos = {}
-
-for i, val in enumerate(encabezados):
-    if val and val != "nan":
-        mapa_cursos[val] = i
-
 # fila donde están los nombres de cursos
 fila_cursos = df_raw.iloc[1]
 
@@ -68,19 +57,10 @@ st.markdown(f"## 👤 {nombre}")
 # CONFIGURACIÓN DE CURSOS (CON RANGOS)
 # =========================
 categorias = {
-    "CURSOS TÉCNICOS": [
-        "CONOCIMIENTO DE LAS HERRAMIENTAS DEL SERVICIO INTEGRAL",
-        "PROCEDIMIENTOS DE TRABAJO"
-    ],
-    "CURSOS DE SEGURIDAD": [
-        "EQUIPOS Y HERRAMIENTAS PARA INTRODUCCION DE TUBERIAS"
-    ],
-    "CURSOS EXTERNOS": [
-        "APRITE DE TUBERIAS DE REVESTIMIENTO"
-    ],
-    "CURSOS COMPLEMENTARIOS": [
-        "OTRO BLOQUE"  # cámbialo por el nombre real si existe
-    ]
+    "CURSOS TÉCNICOS": (201, 265),
+    "CURSOS DE SEGURIDAD": (33, 175),
+    "CURSOS EXTERNOS": (21, 32),
+    "CURSOS COMPLEMENTARIOS": (266, df.shape[1])
 }
 
 # estructura del bloque
@@ -94,38 +74,7 @@ SALTO = 6  # columnas por curso
 # =========================
 # FUNCIÓN PARA EXTRAER CURSOS
 # =========================
-SALTO = 6
-
-def obtener_cursos_por_nombre(fila, nombres_cursos):
-    cursos = []
-
-    for nombre in nombres_cursos:
-
-        if nombre not in mapa_cursos:
-            continue
-
-        inicio = mapa_cursos[nombre]
-
-        for col in range(inicio, inicio + 100, SALTO):
-
-            if col + 5 >= df.shape[1]:
-                break
-
-            nombre_curso = encabezados.iloc[col + 1]
-
-            if pd.isna(nombre_curso):
-                break
-
-            cursos.append({
-                "Bloque": nombre,
-                "Curso": nombre_curso,
-                "Observación": fila.iloc[col + 1],
-                "Vencimiento": fila.iloc[col + 3],
-                "Estatus": fila.iloc[col + 5],
-            })
-
-    return pd.DataFrame(cursos)
-    
+def obtener_cursos(col_inicio, col_fin):
     cursos = []
 
     for col in range(col_inicio, col_fin, SALTO):
@@ -152,15 +101,9 @@ def obtener_cursos_por_nombre(fila, nombres_cursos):
 # =========================
 # MOSTRAR POR CATEGORÍA
 # =========================
-for categoria, cursos_base in categorias.items():
+for categoria, (col_inicio, col_fin) in categorias.items():
 
-    df_cat = obtener_cursos_por_nombre(fila, cursos_base)
-
-    if df_cat.empty:
-        continue
-
-    st.markdown(f"## 📂 {categoria}")
-    st.dataframe(df_cat, use_container_width=True)
+    df_cat = obtener_cursos(col_inicio, col_fin)
 
     if df_cat.empty:
         continue
