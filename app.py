@@ -92,7 +92,7 @@ def obtener_cursos(rangos):
 
             cursos.append({
                 "Curso": nombre_curso,
-                "Vencimiento": fila.iloc[col],
+                "Vencimiento": pd.to_datetime(fila.iloc[col], errors="coerce").date(),
                 "Estatus": fila.iloc[col + 2] if col + 2 < df.shape[1] else None,
                 "Observaciones": fila.iloc[col + 1] if col + 1 < df.shape[1] else None
             })
