@@ -66,10 +66,10 @@ categorias = {
 SALTO = 5 # columnas por curso
 
 # estructura del bloque
-OFFSET_CURSO = 1
-OFFSET_VENCIMIENTO = 5
-OFFSET_ESTATUS = 2
-OFFSET_OBSERVACIONES = 2
+OFFSET_CURSO = 4
+OFFSET_VENCIMIENTO = 3
+OFFSET_ESTATUS = 1
+OFFSET_OBSERVACIONES = 5
 
 
 # =========================
