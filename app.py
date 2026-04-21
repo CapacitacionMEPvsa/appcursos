@@ -107,8 +107,8 @@ for categoria, (col_inicio, col_fin) in categorias.items():
 
     df_cat = obtener_cursos(col_inicio, col_fin)
 
-    if df_cat.empty:
-        continue
+ if not isinstance(df_cat, pd.DataFrame) or df_cat.empty:
+    continue
 
     st.markdown(f"## 📂 {categoria}")
 
