@@ -78,27 +78,27 @@ OFFSET_OBSERVACIONES = 1
 def obtener_cursos(col_inicio, col_fin):
     cursos = []
 
-    col = col_inicio
-
-    while col < col_fin:
+    for col in range(col_inicio, col_fin):
 
         if col + 5 >= df.shape[1]:
             break
 
-        nombre_curso = fila_cursos.iloc[col + 1]
+        nombre_curso = fila_cursos.iloc[col]
 
-        if pd.isna(nombre_curso) or str(nombre_curso).strip() == "":
-            col += 1
+        # si no es texto válido, saltar
+        if not isinstance(nombre_curso, str):
             continue
 
-        cursos.append({
+        curso = {
             "Curso": nombre_curso,
-            "Vencimiento": fila.iloc[col + 3],
-            "Estatus": fila.iloc[col + 5],
-            "Observaciones": fila.iloc[col + 1],
-        })
+            "Vencimiento": fila.iloc[col],
+            "Estatus": fila.iloc[col + 2] if col + 2 < df.shape[1] else None,
+            "Observaciones": fila.iloc[col + 1] if col + 1 < df.shape[1] else None
+        }
 
-        col += 6
+        cursos.append(curso)
+
+    return pd.DataFrame(cursos)
 
 # =========================
 # MOSTRAR POR CATEGORÍA
@@ -111,5 +111,4 @@ for categoria, (col_inicio, col_fin) in categorias.items():
         continue
 
     st.markdown(f"## 📂 {categoria}")
-
     st.dataframe(df_cat, use_container_width=True)
