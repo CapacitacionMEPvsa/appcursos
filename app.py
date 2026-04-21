@@ -69,7 +69,7 @@ SALTO = 5 # columnas por curso
 OFFSET_CURSO = 1
 OFFSET_VENCIMIENTO = 3
 OFFSET_ESTATUS = 4
-OFFSET_OBSERVACIONES = 1
+OFFSET_OBSERVACIONES = 2
 
 
 # =========================
