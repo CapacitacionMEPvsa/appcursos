@@ -5,7 +5,7 @@ st.title("Consulta por Nómina")
 
 @st.cache_data
 def cargar_datos():
-    df = pd.read_excel("base_datos.xlsx", header=2)
+    df = pd.read_excel("BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx", header=2)
     df.columns = df.columns.astype(str).str.strip()
     return df
 
