@@ -80,8 +80,9 @@ def obtener_cursos(rangos):
 
     for col_inicio, col_fin in rangos:
 
-        for col in range(col_inicio, col_fin, SALTO):
-
+        for col in range(col_inicio, col_fin):
+            if (col - col_inicio) % SALTO != 0:
+                continue
             if col + OFFSET_ESTATUS >= df.shape[1]:
                 break
 
