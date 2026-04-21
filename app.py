@@ -172,7 +172,7 @@ for categoria, cursos_base in categorias.items():
     df_cat = obtener_cursos(cursos_base).copy()
     
     if "Observaciones" in df_cat.columns:
-    df_cat["Observaciones"] = df_cat["Observaciones"].fillna("")
+        df_cat["Observaciones"] = df_cat["Observaciones"].fillna("")
 
     if categoria == "CURSOS EXTERNOS" and "Cert/Folio" in df_cat.columns:
         columnas = ["Curso", "Cert/Folio", "Vencimiento", "Estatus", "Observaciones"]
