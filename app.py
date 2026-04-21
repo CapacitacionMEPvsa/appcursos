@@ -166,7 +166,7 @@ if st.button("📄 Descargar Kardex de Capacitación Laboral"):
     def generar_pdf(nombre, datos_dict):
         pdf = FPDF()
         pdf.add_page()
-        pdf.set_font("Arial", size=10)
+        pdf.set_font("Helvetica", size=10)
 
         pdf.cell(200, 10, txt=f"Kardex de Capacitación - {nombre}", ln=True, align="C")
         pdf.ln(5)
@@ -179,7 +179,8 @@ if st.button("📄 Descargar Kardex de Capacitación Laboral"):
 
             for _, row in df.iterrows():
                 linea = f"{row.get('Curso','')} | {row.get('Cert/Folio','')} | {row.get('Vencimiento','')} | {row.get('Estatus','')}"
-                pdf.cell(200, 6, txt=linea[:100], ln=True)
+                linea = linea.encode("latin-1", "ignore").decode("latin-1")
+                pdf.cell(200, 6, txt=linea, ln=True)
 
             pdf.ln(3)
 
