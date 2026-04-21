@@ -58,14 +58,13 @@ st.markdown(f"## 👤 {nombre}")
 # =========================
 categorias = {
     "CURSOS TÉCNICOS": [(196, 260), (289, 312)],
-    "CURSOS DE SEGURIDAD": [(30, 79), (80, 85),(86, 165)],
+    "CURSOS DE SEGURIDAD": [(30, 164)],
     "CURSOS EXTERNOS": [(3, 29), (296, 315), (321, 385), (396,440)],
     "CURSOS COMPLEMENTARIOS": [(166, 195), (261, 285)]
 }
 
 rangos_con_certificado = [
     (18, 23),  # externos (bloques de 6)
-    (80, 85)   # seguridad especial
 ]
 
 SALTO = 5 # columnas por curso
