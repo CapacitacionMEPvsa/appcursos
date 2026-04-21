@@ -107,12 +107,14 @@ for categoria, (col_inicio, col_fin) in categorias.items():
 
     df_cat = obtener_cursos(col_inicio, col_fin)
 
- if not isinstance(df_cat, pd.DataFrame) or df_cat.empty:
-    continue
+ for categoria, cursos_base in categorias.items():
+
+    df_cat = obtener_cursos(col_inicio, col_fin)
+
+    if not isinstance(df_cat, pd.DataFrame) or df_cat.empty:
+        continue
 
     st.markdown(f"## 📂 {categoria}")
 
-    st.dataframe(
-        df_cat,
-        use_container_width=True
+    st.dataframe(df_cat, use_container_width=True)
     )
