@@ -69,6 +69,19 @@ st.markdown(f"## 👤 {nombre}")
 
 st.markdown("---")
 
+# =========================
+# CONFIGURACIÓN DE CURSOS (CON RANGOS)
+# =========================
+categorias = {
+    "CURSOS TÉCNICOS": [(195, 259), (295, 314)],
+    "CURSOS DE SEGURIDAD": [(30, 164)],
+    "CURSOS EXTERNOS": [(3, 29), (295, 314), (320, 384), (395,439)],
+    "CURSOS COMPLEMENTARIOS": [(165, 194), (260, 284)]
+}
+
+rangos_con_certificado = [
+    (3, 29),  # externos (bloques de 6)
+]
 if st.button("📄 Descargar Kardex de Capacitación Laboral"):
 
     from fpdf import FPDF
@@ -127,19 +140,7 @@ if st.button("📄 Descargar Kardex de Capacitación Laboral"):
             file_name=f"Kardex_{nombre}.pdf",
             mime="application/pdf"
         )
-# =========================
-# CONFIGURACIÓN DE CURSOS (CON RANGOS)
-# =========================
-categorias = {
-    "CURSOS TÉCNICOS": [(195, 259), (295, 314)],
-    "CURSOS DE SEGURIDAD": [(30, 164)],
-    "CURSOS EXTERNOS": [(3, 29), (295, 314), (320, 384), (395,439)],
-    "CURSOS COMPLEMENTARIOS": [(165, 194), (260, 284)]
-}
 
-rangos_con_certificado = [
-    (3, 29),  # externos (bloques de 6)
-]
 def icono_estatus(val):
     val = str(val).lower()
 
