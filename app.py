@@ -63,6 +63,11 @@ categorias = {
     "CURSOS COMPLEMENTARIOS": [(166, 195), (261, 285)]
 }
 
+rangos_con_certificado = [
+    (3, 29),   # externos (bloques de 6)
+    (80, 85)   # seguridad especial
+]
+
 SALTO = 5 # columnas por curso
 
 # estructura del bloque
