@@ -89,7 +89,7 @@ def obtener_cursos(col_inicio, col_fin):
         if not isinstance(nombre_curso, str):
             continue
 
-        curso = appennd{
+        curso = {
             "Curso": nombre_curso,
             "Vencimiento": fila.iloc[col],
             "Estatus": fila.iloc[col + 2] if col + 2 < df.shape[1] else None,
