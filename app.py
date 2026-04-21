@@ -186,7 +186,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     pdf.cell(0, 10, "Kardex de Capacitación Laboral", ln=True, align="C")
 
     pdf.set_font("Helvetica", "", 11)
-    pdf.cell(0, 6, f"Empleado: {nombre}", ln=True, align="C")
+    pdf.cell(0, 6, f"Nombre del colaborador: {nombre}", ln=True, align="C")
     pdf.cell(0, 6, f"Nómina: {nomina}    |    Proceso: {proceso}", ln=True, align="C")
 
     pdf.ln(5)
