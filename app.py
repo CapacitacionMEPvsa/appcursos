@@ -115,22 +115,29 @@ st.markdown(f"## 👤 {nombre}")
 
 cursos = []
 
-# 👉 empezamos en columna F (índice 5)
-# 👉 cada curso ocupa 6 columnas (ajústalo si cambia)
-for col in range(5, df.shape[1], 6):
+num_cols = df.shape[1]
+
+for col in range(5, num_cols, 6):
+
+    # 🔥 validar que no se salga del rango
+    if col + 4 >= num_cols:
+        continue
 
     curso = {
-        "curso": fila.iloc[col + 1],        # G
-        "vencimiento": fila.iloc[col + 2],  # H
-        "estatus": fila.iloc[col + 4],      # J
-        "observaciones": fila.iloc[col]     # F
+        "curso": fila.iloc[col + 1],
+        "vencimiento": fila.iloc[col + 2],
+        "estatus": fila.iloc[col + 4],
+        "observaciones": fila.iloc[col]
     }
 
-    # opcional: evitar cursos vacíos
     if pd.notna(curso["curso"]):
         cursos.append(curso)
 
 df_mostrar = pd.DataFrame(cursos)
+st.write("Total columnas:", num_cols)
+st.write("Columnas índice:", list(range(num_cols)))
+st.write("col actual:", col)
+
 
 # =========================
 # MOSTRAR
