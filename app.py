@@ -163,51 +163,45 @@ if st.button("📄 Descargar Kardex de Capacitación Laboral"):
 
     from fpdf import FPDF
 
-    def generar_pdf(nombre, datos_dict):
-        pdf = FPDF(orientation="L", unit="mm", format="A4")
-        pdf.add_page()
-        pdf.set_font("Helvetica", size=10)
+def generar_pdf(nombre, datos_dict):
+    pdf = FPDF(orientation="L", unit="mm", format="A4")
+    pdf.add_page()
+    pdf.set_font("Helvetica", size=10)
 
-titulo = f"Kardex de Capacitacion - {nombre}"
-titulo = titulo.encode("latin-1", "ignore").decode("latin-1")
-pdf.cell(0, 10, txt=titulo, ln=True, align="C")
-        pdf.ln(3)
+    titulo = f"Kardex de Capacitacion - {nombre}"
+    titulo = titulo.encode("latin-1", "ignore").decode("latin-1")
+    pdf.cell(0, 10, txt=titulo, ln=True, align="C")
+    pdf.ln(3)
 
-        for categoria, df in datos_dict.items():
+    for categoria, df in datos_dict.items():
 
-            pdf.set_font("Helvetica", "B", 11)
-            pdf.cell(0, 8, txt=categoria, ln=True)
-            pdf.ln(1)
+        pdf.set_font("Helvetica", "B", 11)
+        pdf.cell(0, 8, txt=categoria, ln=True)
+        pdf.ln(1)
 
-            columnas = df.columns.tolist()
+        columnas = df.columns.tolist()
 
-            pdf.set_font("Helvetica", "B", 9)
+        pdf.set_font("Helvetica", "B", 9)
         for col in columnas:
             col_text = col.encode("latin-1", "ignore").decode("latin-1")
-                pdf.cell(50, 6, col_text, border=1)
+            pdf.cell(50, 6, col_text, border=1)
+        pdf.ln()
+
+        pdf.set_font("Helvetica", size=8)
+        for _, row in df.iterrows():
+            for col in columnas:
+                valor = str(row.get(col, ""))
+                
+                valor = valor.encode("latin-1", "ignore").decode("latin-1")
+
+                if valor.lower() == "none":
+                    valor = ""
+
+                pdf.cell(50, 6, valor[:20], border=1)
 
             pdf.ln()
 
-            pdf.set_font("Helvetica", size=8)
-
-            for _, row in df.iterrows():
-                for col in columnas:
-                    valor = str(row.get(col, ""))
-
-# limpiar caracteres problemáticos
-valor = valor.encode("latin-1", "ignore").decode("latin-1")
-
-if valor.lower() == "none":
-    valor = ""
-
-                    if valor.lower() == "none":
-                        valor = ""
-
-                    pdf.cell(50, 6, valor[:20], border=1)
-
-                pdf.ln()
-
-            pdf.ln(4)
+        pdf.ln(4)
 
     return pdf.output(dest="S").encode("latin-1")
 
