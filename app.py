@@ -186,8 +186,8 @@ if st.button("📄 Descargar Kardex de Capacitación Laboral"):
 
             pdf.set_font("Helvetica", "B", 9)
             for col in columnas:
-            pdf.cell(50, 6, col, border=1)
-            pdf.ln()
+                pdf.cell(50, 6, col, border=1)
+              pdf.ln()
 
             pdf.set_font("Helvetica", size=8)
 
