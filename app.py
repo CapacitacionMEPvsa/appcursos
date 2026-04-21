@@ -165,40 +165,80 @@ def obtener_cursos(rangos):
 # =========================
 from fpdf import FPDF
 
-def generar_pdf(nombre, datos_dict):
+def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     pdf = FPDF(orientation="L", unit="mm", format="A4")
     pdf.add_page()
-    pdf.set_font("Helvetica", size=10)
 
-    titulo = f"Kardex de Capacitacion - {nombre}"
-    titulo = titulo.encode("latin-1", "ignore").decode("latin-1")
-    pdf.cell(0, 10, txt=titulo, ln=True, align="C")
-    pdf.ln(3)
+    # =========================
+    # 🔰 LOGO (ajusta la ruta)
+    # =========================
+    try:
+        pdf.image("logo.png", x=10, y=8, w=30)  # 👈 pon tu archivo aquí
+    except:
+        pass
 
+    # =========================
+    # 🧾 ENCABEZADO
+    # =========================
+    pdf.set_font("Helvetica", "B", 16)
+    pdf.cell(0, 10, "KARDEX DE CAPACITACIÓN", ln=True, align="C")
+
+    pdf.set_font("Helvetica", "", 11)
+    pdf.cell(0, 6, f"Empleado: {nombre}", ln=True, align="C")
+    pdf.cell(0, 6, f"Nómina: {nomina}    |    Proceso: {proceso}", ln=True, align="C")
+
+    pdf.ln(5)
+
+    # =========================
+    # 📊 TABLAS
+    # =========================
     for categoria, df in datos_dict.items():
 
-        pdf.set_font("Helvetica", "B", 11)
-        pdf.cell(0, 8, txt=categoria, ln=True)
+        pdf.set_font("Helvetica", "B", 12)
+        pdf.cell(0, 8, categoria, ln=True)
         pdf.ln(1)
 
         columnas = df.columns.tolist()
 
+        # encabezados
         pdf.set_font("Helvetica", "B", 9)
+        pdf.set_fill_color(200, 200, 200)
+
         for col in columnas:
-            col_text = col.encode("latin-1", "ignore").decode("latin-1")
-            pdf.cell(50, 6, col_text, border=1)
+            col_text = str(col).encode("latin-1", "ignore").decode("latin-1")
+            pdf.cell(60, 7, col_text, border=1, fill=True)
         pdf.ln()
 
+        # filas
         pdf.set_font("Helvetica", size=8)
+
         for _, row in df.iterrows():
             for col in columnas:
+
                 valor = str(row.get(col, ""))
                 valor = valor.encode("latin-1", "ignore").decode("latin-1")
 
-                if valor.lower() == "none":
-                    valor = ""
+                # =========================
+                # 🎨 COLOR EN ESTATUS
+                # =========================
+                if col.lower() == "estatus":
 
-                pdf.cell(50, 6, valor[:20], border=1)
+                    val_lower = valor.lower()
+
+                    if "vigente" in val_lower:
+                        pdf.set_fill_color(198, 246, 213)  # verde
+                    elif "vencer" in val_lower:
+                        pdf.set_fill_color(254, 252, 191)  # amarillo
+                    elif "vencido" in val_lower:
+                        pdf.set_fill_color(254, 215, 215)  # rojo
+                    else:
+                        pdf.set_fill_color(255, 255, 255)
+
+                    pdf.cell(60, 6, valor[:25], border=1, fill=True)
+
+                else:
+                    pdf.set_fill_color(255, 255, 255)
+                    pdf.cell(60, 6, valor[:25], border=1)
 
             pdf.ln()
 
@@ -230,7 +270,12 @@ if st.button("📄 Descargar Kardex de Capacitación Laboral"):
 
         datos_export[categoria] = df_export
 
-    pdf_bytes = generar_pdf(nombre, datos_export)
+    pdf_bytes = generar_pdf(
+        nombre,
+        datos_export,
+        nomina=nomina,
+        proceso="Operaciones"
+    )
 
     st.download_button(
         label="⬇️ Descargar PDF",
