@@ -57,10 +57,10 @@ st.markdown(f"## 👤 {nombre}")
 # CONFIGURACIÓN DE CURSOS (CON RANGOS)
 # =========================
 categorias = {
-    "CURSOS TÉCNICOS": [(196, 260), (289, 312)],
+    "CURSOS TÉCNICOS": [(195, 259), (295, 314)],
     "CURSOS DE SEGURIDAD": [(30, 164)],
-    "CURSOS EXTERNOS": [(3, 29), (296, 315), (321, 385), (396,440)],
-    "CURSOS COMPLEMENTARIOS": [(165, 194), (261, 285)]
+    "CURSOS EXTERNOS": [(3, 29), (295, 314), (320, 384), (395,439)],
+    "CURSOS COMPLEMENTARIOS": [(165, 194), (260, 284)]
 }
 
 rangos_con_certificado = [
