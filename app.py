@@ -65,6 +65,8 @@ for b in bloques:
         # convertir a fechas donde se pueda
         fechas = bloque.apply(pd.to_datetime, errors="coerce")
 
+        temp["No."] = fechas.iloc[:, 1].dt.date
+        
         # vencimiento (ajusta si necesitas otra columna)
         temp["vencimiento"] = fechas.iloc[:, 2].dt.date
 
