@@ -170,6 +170,7 @@ if st.button("📄 Descargar Kardex de Capacitación Laboral"):
 
 def generar_pdf(nombre, datos_dict):
     from fpdf import FPDF
+    from io import BytesIO
 
     pdf = FPDF(orientation="L", unit="mm", format="A4")
     pdf.add_page()
