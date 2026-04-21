@@ -71,60 +71,60 @@ st.markdown("---")
 
 if st.button("📄 Descargar Kardex de Capacitación Laboral"):
 
-    from fpdf import FPDF
-    from io import BytesIO
+from fpdf import FPDF
 
-    def generar_pdf(nombre, datos_dict):
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font("Arial", size=10)
+def generar_pdf(nombre, datos_dict):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=10)
 
-        pdf.cell(200, 10, txt=f"Kardex de Capacitación - {nombre}", ln=True, align="C")
-        pdf.ln(5)
+    pdf.cell(200, 10, txt=f"Kardex de Capacitación - {nombre}", ln=True, align="C")
+    pdf.ln(5)
 
-        for categoria, df in datos_dict.items():
-            pdf.set_font("Arial", "B", 10)
-            pdf.cell(200, 8, txt=categoria, ln=True)
+    for categoria, df in datos_dict.items():
+        pdf.set_font("Arial", "B", 10)
+        pdf.cell(200, 8, txt=categoria, ln=True)
 
-            pdf.set_font("Arial", size=8)
+        pdf.set_font("Arial", size=8)
 
-            for _, row in df.iterrows():
-                linea = f"{row.get('Curso','')} | {row.get('Cert/Folio','')} | {row.get('Vencimiento','')} | {row.get('Estatus','')}"
-                pdf.cell(200, 6, txt=linea, ln=True)
+        for _, row in df.iterrows():
+            linea = f"{row.get('Curso','')} | {row.get('Cert/Folio','')} | {row.get('Vencimiento','')} | {row.get('Estatus','')}"
+            pdf.cell(200, 6, txt=linea[:100], ln=True)
 
-            pdf.ln(3)
+        pdf.ln(3)
 
-        buffer = BytesIO()
-        pdf.output(buffer)
-        buffer.seek(0)
+    file_path = f"kardex_{nombre}.pdf"
+    pdf.output(file_path)
 
-        return buffer
+    return file_path
 
-    datos_export = {}
 
-    for categoria, cursos_base in categorias.items():
+datos_export = {}
 
-        df_export = obtener_cursos(cursos_base).copy()
+for categoria, cursos_base in categorias.items():
 
-        if categoria == "CURSOS EXTERNOS" and "Cert/Folio" in df_export.columns:
-            df_export["Cert/Folio"] = df_export["Cert/Folio"].fillna("")
+    df_export = obtener_cursos(cursos_base).copy()
 
-        if "Observaciones" in df_export.columns:
-            df_export["Observaciones"] = df_export["Observaciones"].fillna("")
+    if categoria == "CURSOS EXTERNOS" and "Cert/Folio" in df_export.columns:
+        df_export["Cert/Folio"] = df_export["Cert/Folio"].fillna("")
 
-        if "Estatus" in df_export.columns:
-            df_export["Estatus"] = df_export["Estatus"].apply(icono_estatus)
+    if "Observaciones" in df_export.columns:
+        df_export["Observaciones"] = df_export["Observaciones"].fillna("")
 
-        if "Vencimiento" in df_export.columns:
-            df_export = df_export[df_export["Vencimiento"].notna()]
+    if "Estatus" in df_export.columns:
+        df_export["Estatus"] = df_export["Estatus"].apply(icono_estatus)
 
-        datos_export[categoria] = df_export
+    if "Vencimiento" in df_export.columns:
+        df_export = df_export[df_export["Vencimiento"].notna()]
 
-    pdf_file = generar_pdf(nombre, datos_export)
+    datos_export[categoria] = df_export
 
+pdf_file = generar_pdf(nombre, datos_export)
+
+with open(pdf_file, "rb") as f:
     st.download_button(
         label="⬇️ Descargar PDF",
-        data=pdf_file,
+        data=f,
         file_name=f"Kardex_{nombre}.pdf",
         mime="application/pdf"
     )
