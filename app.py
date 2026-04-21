@@ -9,12 +9,12 @@ st.title("📚 Consulta de Cursos por Nómina")
 # Cargar Excel
 @st.cache_data
 def cargar_datos():
-    df = pd.read_excel("BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx", header=2)  # Cambia el nombre si es necesario
+    df = pd.read_excel("BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx", header=1)  # Cambia el nombre si es necesario
     return df
     df.columns = df.columns.str.strip()  # quita espacios
 
 df = cargar_datos()
-st.write(df.columns)
+st.write(list(df.columns))
 
 # Input de nómina
 nomina_input = st.text_input("🔎 Ingresa tu número de nómina")
@@ -51,3 +51,15 @@ if nomina_input:
 
     else:
         st.error("❌ Nómina no encontrada")
+col_nomina = None
+
+for col in df.columns:
+    if "nom" in col.lower():
+        col_nomina = col
+        break
+
+st.write("Columna detectada:", col_nomina)
+
+persona = df[df[col_nomina].astype(str) == nomina_input]
+for col in df.columns:
+    st.write(f"'{col}'")
