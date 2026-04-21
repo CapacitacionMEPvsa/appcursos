@@ -18,7 +18,6 @@ nomina_input = st.text_input("Ingresa tu nómina")
 
 if nomina_input:
 
-    # 🔍 Detectar columna de nómina automáticamente
     col_nomina = None
     for col in df.columns:
         if "nom" in col.lower() or "no." in col.lower():
@@ -26,15 +25,17 @@ if nomina_input:
             break
 
     st.write("Columna usada:", col_nomina)
-    st.write("Valores en Excel:", df[col_nomina].head(10))
+    st.write(df[col_nomina].head(10))
 
-    # filtro
-    persona = df[df[col_nomina].astype(str).str.strip() == nomina_input.strip()]
-    
-    if col_nomina is None:
-        st.error("No se encontró columna de nómina")
-        st.write(df.columns)
+    persona = df[
+        df[col_nomina].astype(str).str.strip() == nomina_input.strip()
+    ]
+
+    if persona.empty:
+        st.error("Nómina no encontrada")
         st.stop()
+
+    persona = persona.iloc[0]
 
 persona = df[
     df[col_nomina]
