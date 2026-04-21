@@ -13,7 +13,7 @@ st.title("Consulta de Cursos")
 FILE = "BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx"
 
 df_raw = pd.read_excel(FILE, header=None)
-for col in df_raw.columns:
+        for col in df_raw.columns:
     df_raw[col] = pd.to_datetime(df_raw[col], errors="ignore").apply(
         lambda x: x.date() if hasattr(x, "date") else x
     )
