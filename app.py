@@ -78,26 +78,27 @@ OFFSET_OBSERVACIONES = 1
 def obtener_cursos(col_inicio, col_fin):
     cursos = []
 
-    for col in range(col_inicio, col_fin, SALTO):
+    col = col_inicio
 
-        if col + OFFSET_ESTATUS >= df.shape[1]:
+    while col < col_fin:
+
+        if col + 5 >= df.shape[1]:
             break
 
-        nombre_curso = fila_cursos.iloc[col + OFFSET_CURSO]
+        nombre_curso = fila_cursos.iloc[col + 1]
 
-        if pd.isna(nombre_curso):
+        if pd.isna(nombre_curso) or str(nombre_curso).strip() == "":
+            col += 1
             continue
 
-        curso = {
+        cursos.append({
             "Curso": nombre_curso,
-            "Vencimiento": fila.iloc[col + OFFSET_VENCIMIENTO],
-            "Estatus": fila.iloc[col + OFFSET_ESTATUS],
-            "Observaciones": fila.iloc[col + OFFSET_OBSERVACIONES]
-        }
+            "Vencimiento": fila.iloc[col + 3],
+            "Estatus": fila.iloc[col + 5],
+            "Observaciones": fila.iloc[col + 1],
+        })
 
-        cursos.append(curso)
-
-    return pd.DataFrame(cursos)
+        col += 6
 
 # =========================
 # MOSTRAR POR CATEGORÍA
