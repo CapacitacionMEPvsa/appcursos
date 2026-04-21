@@ -84,13 +84,13 @@ def icono_estatus(val):
     val = str(val).lower()
 
     if "vigente" in val or "ok" in val:
-        return "🟢 " + val
+        return "🟢 " Vigente
 
     if "proximo" in val or "por vencer" in val or "vence" in val:
-        return "🟡 " + val
+        return "🟡 " Por vencer
 
     if "vencido" in val or "expirado" in val:
-        return "🔴 " + val
+        return "🔴 " Vencido
 
     return val
 SALTO = 5 # columnas por curso
