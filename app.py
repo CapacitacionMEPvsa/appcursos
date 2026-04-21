@@ -65,6 +65,7 @@ if empleado_df.empty:
 
 fila = empleado_df.iloc[0]
 nombre = fila[COL_NOMBRE]
+proceso = fila.iloc[3]
 
 st.markdown(f"## 👤 {nombre}")
 
@@ -274,7 +275,7 @@ if st.button("📄 Descargar Kardex de Capacitación Laboral"):
         nombre,
         datos_export,
         nomina=nomina,
-        proceso="Operaciones"
+        proceso="proceso"
     )
 
     st.download_button(
