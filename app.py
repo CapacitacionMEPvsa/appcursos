@@ -64,7 +64,7 @@ categorias = {
 }
 
 SALTO = 5 # columnas por curso
-st.write("DEBUG:", categoria, df_cat)
+    st.write("DEBUG:", categoria, df_cat)
 
 # estructura del bloque
 OFFSET_CURSO = 1
