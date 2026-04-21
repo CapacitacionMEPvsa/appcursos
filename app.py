@@ -116,22 +116,4 @@ def obtener_cursos_por_nombre(fila, nombres_cursos):
 # =========================
 # MOSTRAR POR CATEGORÍA
 # =========================
-for categoria, cursos_base in categorias.items():
-
-    df_cat = obtener_cursos_por_nombre(fila, cursos_base)
-
-    if df_cat.empty:
-        continue
-
-    st.markdown(f"## 📂 {categoria}")
-    st.dataframe(df_cat, use_container_width=True)
-
-    if df_cat.empty:
-        continue
-
-    st.markdown(f"## 📂 {categoria}")
-
-    st.dataframe(
-        df_cat,
-        use_container_width=True
     )
