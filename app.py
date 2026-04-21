@@ -217,6 +217,11 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
         pdf.set_font("Helvetica", size=8)
 
         for _, row in df.iterrows():
+            y_before = pdf.get_y()
+            x_start = pdf.get_x()
+
+            max_height = 6
+            
             for col in columnas:
 
                 valor = str(row.get(col, ""))
