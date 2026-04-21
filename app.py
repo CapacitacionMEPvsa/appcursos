@@ -54,14 +54,13 @@ nombre = fila[COL_NOMBRE]
 st.markdown(f"## 👤 {nombre}")
 
 # =========================
-# CONFIGURACIÓN DE CURSOS
+# CONFIGURACIÓN DE CURSOS (CON RANGOS)
 # =========================
-# 👉 AQUÍ defines dónde empieza cada tipo
 categorias = {
-    "CURSOS TÉCNICOS": 4,        # F
-    "CURSOS DE SEGURIDAD": 65,   # ejemplo (ajústalo)
-    "CURSOS EXTERNOS": 125,      # ejemplo
-    "CURSOS COMPLEMENTARIOS": 185 # ejemplo
+    "CURSOS TÉCNICOS": (4, 64),
+    "CURSOS DE SEGURIDAD": (65, 124),
+    "CURSOS EXTERNOS": (125, 184),
+    "CURSOS COMPLEMENTARIOS": (185, df.shape[1])
 }
 
 # estructura del bloque
@@ -75,13 +74,12 @@ SALTO = 6  # columnas por curso
 # =========================
 # FUNCIÓN PARA EXTRAER CURSOS
 # =========================
-def obtener_cursos(col_inicio):
+def obtener_cursos(col_inicio, col_fin):
     cursos = []
-    num_cols = df.shape[1]
 
-    for col in range(col_inicio, num_cols, SALTO):
+    for col in range(col_inicio, col_fin, SALTO):
 
-        if col + OFFSET_ESTATUS >= num_cols:
+        if col + OFFSET_ESTATUS >= df.shape[1]:
             break
 
         nombre_curso = fila_cursos.iloc[col + OFFSET_CURSO]
@@ -93,7 +91,7 @@ def obtener_cursos(col_inicio):
             "Curso": nombre_curso,
             "Vencimiento": fila.iloc[col + OFFSET_VENCIMIENTO],
             "Estatus": fila.iloc[col + OFFSET_ESTATUS],
-            "Observaciones": fila.iloc[col + OFFSET_OBSERVACIONES]       
+            "Observaciones": fila.iloc[col + OFFSET_OBSERVACIONES]
         }
 
         cursos.append(curso)
@@ -103,9 +101,9 @@ def obtener_cursos(col_inicio):
 # =========================
 # MOSTRAR POR CATEGORÍA
 # =========================
-for categoria, col_inicio in categorias.items():
+for categoria, (col_inicio, col_fin) in categorias.items():
 
-    df_cat = obtener_cursos(col_inicio)
+    df_cat = obtener_cursos(col_inicio, col_fin)
 
     if df_cat.empty:
         continue
