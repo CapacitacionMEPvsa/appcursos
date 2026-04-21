@@ -275,7 +275,7 @@ if st.button("📄 Descargar Kardex de Capacitación Laboral"):
         nombre,
         datos_export,
         nomina=nomina,
-        proceso="proceso"
+        proceso=proceso
     )
 
     st.download_button(
