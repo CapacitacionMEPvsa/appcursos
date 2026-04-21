@@ -104,7 +104,7 @@ def obtener_cursos(rangos):
 # =========================
 for categoria, (col_inicio, col_fin) in categorias.items():
 
-    df_cat = obtener_cursos(rangos)
+    df_cat = obtener_cursos(cursos_base)
 
     if not isinstance(df_cat, pd.DataFrame) or df_cat.empty:
         continue
