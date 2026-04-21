@@ -64,7 +64,7 @@ categorias = {
 }
 
 rangos_con_certificado = [
-    (18, 29),  # externos (bloques de 6)
+    (3, 29),  # externos (bloques de 6)
 ]
 
 SALTO = 5 # columnas por curso
@@ -113,7 +113,7 @@ def obtener_cursos(rangos):
                 pass
 
             # 🔥 SOLO PARA RANGOS ESPECIALES
-            if (col_inicio, col_fin) in rangos_con_certificado:
+            if any(inicio <= col < fin for inicio, fin in rangos_con_certificado):
                 try:
                     certificado = fila.iloc[col + 1]  # ajusta si no coincide
                 except:
@@ -127,7 +127,7 @@ def obtener_cursos(rangos):
             }
 
             # agregar columna solo si aplica
-            if (col_inicio, col_fin) in rangos_con_certificado:
+            if any(inicio <= col < fin for inicio, fin in rangos_con_certificado):
                 curso_dict["Cert/Folio"] = certificado
 
             cursos.append(curso_dict)
