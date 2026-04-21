@@ -117,7 +117,6 @@ for k in mapa_cursos.keys():
 
 if inicio is None:
     continue
-
         inicio = mapa_cursos[nombre]
 
         for col in range(inicio, inicio + 100, SALTO):
