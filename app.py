@@ -9,8 +9,10 @@ st.title("📚 Consulta de Cursos por Nómina")
 # Cargar Excel
 @st.cache_data
 def cargar_datos():
-    df = pd.read_excel("BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx")  # Cambia el nombre si es necesario
+    df = pd.read_excel("BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx", header=2)  # Cambia el nombre si es necesario
     return df
+    df.columns = df.columns.str.strip()  # quita espacios
+        st.write(df.columns)
 
 df = cargar_datos()
 
@@ -19,7 +21,7 @@ nomina_input = st.text_input("🔎 Ingresa tu número de nómina")
 
 if nomina_input:
     # Filtrar datos
-    persona = df[df["Nomina"].astype(str) == nomina_input]
+    persona = df[df["Nómina"].astype(str) == nomina_input]
 
     if not persona.empty:
         st.subheader("👤 Información del colaborador")
