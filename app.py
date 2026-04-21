@@ -161,6 +161,10 @@ def obtener_cursos(rangos):
 
 if st.button("📄 Descargar Kardex de Capacitación Laboral"):
 
+    st.write("Generando PDF...")  # 👈 AQUÍ VA
+
+    from fpdf import FPDF
+    
     from fpdf import FPDF
     from io import BytesIO
 
