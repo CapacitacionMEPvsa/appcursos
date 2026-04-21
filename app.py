@@ -80,7 +80,19 @@ categorias = {
 rangos_con_certificado = [
     (3, 29),  # externos (bloques de 6)
 ]
+def icono_estatus(val):
+    val = str(val).lower()
 
+    if "vigente" in val or "ok" in val:
+        return "🟢 " + val
+
+    if "proximo" in val or "por vencer" in val or "vence" in val:
+        return "🟡 " + val
+
+    if "vencido" in val or "expirado" in val:
+        return "🔴 " + val
+
+    return val
 SALTO = 5 # columnas por curso
 
 # estructura del bloque
@@ -168,22 +180,9 @@ for categoria, cursos_base in categorias.items():
     if not isinstance(df_cat, pd.DataFrame) or df_cat.empty:
         continue
 
-    st.markdown(f"## 📂 {categoria}")
-def icono_estatus(val):
-    val = str(val).lower()
+st.markdown(f"## 📂 {categoria}")
 
-    if "vigente" in val or "ok" in val:
-        return "🟢 " + val
-
-    if "proximo" in val or "por vencer" in val or "vence" in val:
-        return "🟡 " + val
-
-    if "vencido" in val or "expirado" in val:
-        return "🔴 " + val
-
-    return val
-
-
-df_cat["Estatus"] = df_cat["Estatus"].apply(icono_estatus)
+if "Estatus" in df_cat.columns:
+    df_cat["Estatus"] = df_cat["Estatus"].apply(icono_estatus)
 
 st.dataframe(df_cat, use_container_width=True)
