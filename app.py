@@ -12,9 +12,9 @@ def cargar_datos():
     df = pd.read_excel("BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx", header=2)  # Cambia el nombre si es necesario
     return df
     df.columns = df.columns.str.strip()  # quita espacios
-        st.write(df.columns)
 
 df = cargar_datos()
+st.write(df.columns)
 
 # Input de nómina
 nomina_input = st.text_input("🔎 Ingresa tu número de nómina")
