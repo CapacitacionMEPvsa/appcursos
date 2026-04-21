@@ -161,7 +161,10 @@ def obtener_cursos(rangos):
 
 if st.button("📄 Descargar Kardex de Capacitación Laboral"):
 
-    from fpdf import FPDF
+# =========================
+# BOTÓN DESCARGA PDF (FIX)
+# =========================
+from fpdf import FPDF
 
 def generar_pdf(nombre, datos_dict):
     pdf = FPDF(orientation="L", unit="mm", format="A4")
@@ -191,7 +194,6 @@ def generar_pdf(nombre, datos_dict):
         for _, row in df.iterrows():
             for col in columnas:
                 valor = str(row.get(col, ""))
-                
                 valor = valor.encode("latin-1", "ignore").decode("latin-1")
 
                 if valor.lower() == "none":
@@ -205,6 +207,9 @@ def generar_pdf(nombre, datos_dict):
 
     return pdf.output(dest="S").encode("latin-1")
 
+
+# 🔘 BOTÓN REAL
+if st.button("📄 Descargar Kardex de Capacitación Laboral"):
 
     datos_export = {}
 
@@ -225,7 +230,6 @@ def generar_pdf(nombre, datos_dict):
             df_export = df_export[df_export["Vencimiento"].notna()]
 
         datos_export[categoria] = df_export
-
 
     pdf_bytes = generar_pdf(nombre, datos_export)
 
