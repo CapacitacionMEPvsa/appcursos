@@ -24,6 +24,10 @@ if nomina_input:
             col_nomina = col
             break
 
+    if col_nomina is None:
+        st.error("No se encontró columna de nómina")
+        st.stop()
+
     st.write("Columna usada:", col_nomina)
     st.write(df[col_nomina].head(10))
 
