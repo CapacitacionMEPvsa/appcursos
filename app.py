@@ -17,13 +17,20 @@ df_raw = pd.read_excel(FILE, header=None)
 # =========================
 # MAPEO AUTOMÁTICO DE CURSOS
 # =========================
-encabezados = df_raw.iloc[1].astype(str).str.strip()
+encabezados = (
+    df_raw.iloc[1]
+    .astype(str)
+    .str.replace("\n", " ")
+    .str.replace("  ", " ")
+    .str.strip()
+)
 
 mapa_cursos = {}
 
 for i, val in enumerate(encabezados):
-    if val and val != "nan":
-        mapa_cursos[val] = i
+    if isinstance(val, str) and val.strip() != "" and val != "nan":
+        mapa_cursos[val.strip()] = i
+        st.write(list(mapa_cursos.keys()))
 
 # fila donde están los nombres de cursos
 fila_cursos = df_raw.iloc[1]
@@ -101,8 +108,15 @@ def obtener_cursos_por_nombre(fila, nombres_cursos):
 
     for nombre in nombres_cursos:
 
-        if nombre not in mapa_cursos:
-            continue
+inicio = None
+
+for k in mapa_cursos.keys():
+    if nombre.upper() in k.upper():
+        inicio = mapa_cursos[k]
+        break
+
+if inicio is None:
+    continue
 
         inicio = mapa_cursos[nombre]
 
