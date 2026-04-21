@@ -144,6 +144,11 @@ def obtener_cursos(rangos):
 for categoria, cursos_base in categorias.items():
 
     df_cat = obtener_cursos(cursos_base)
+    if "Cert/Folio" in df_cat.columns:
+        columnas = ["Curso", "Cert/Folio", "Vencimiento", "Estatus", "Observaciones"]
+        columnas = [col for col in columnas if col in df_cat.columns]
+        df_cat = df_cat[columnas]
+
     df_cat = df_cat[df_cat["Vencimiento"].notna()]
 
     if not isinstance(df_cat, pd.DataFrame) or df_cat.empty:
