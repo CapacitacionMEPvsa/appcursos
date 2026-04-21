@@ -94,7 +94,7 @@ def obtener_cursos(col_inicio, col_fin):
             "Vencimiento": fila.iloc[col],
             "Estatus": fila.iloc[col + 2] if col + 2 < df.shape[1] else None,
             "Observaciones": fila.iloc[col + 1] if col + 1 < df.shape[1] else None
-        })
+        }
 
         cursos.append(curso)
 
