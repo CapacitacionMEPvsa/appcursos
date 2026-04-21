@@ -115,6 +115,7 @@ empleado = empleado.sort_values(by="curso")
 # COLUMNAS VISIBLES
 # =========================
 columnas_visibles = [
+    "No.",
     "curso",
     "vencimiento",
     "estatus",
