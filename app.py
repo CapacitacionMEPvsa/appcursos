@@ -80,23 +80,25 @@ def obtener_cursos(rangos):
 
     for col_inicio, col_fin in rangos:
 
-        for col in range(col_inicio, col_fin):
+        for col in range(col_inicio, col_fin, SALTO):
 
-            if col + 5 >= df.shape[1]:
+            if col + OFFSET_ESTATUS >= df.shape[1]:
                 break
 
-            nombre_curso = fila_cursos.iloc[col]
+            nombre_curso = fila_cursos.iloc[col + OFFSET_CURSO]
 
             if not isinstance(nombre_curso, str) or nombre_curso.strip() == "":
                 continue
 
             cursos.append({
                 "Curso": nombre_curso,
-                "Vencimiento": pd.to_datetime(fila.iloc[col], errors="coerce").date(),
-                "Estatus": fila.iloc[col + 2] if col + 2 < df.shape[1] else None,
-                "Observaciones": fila.iloc[col + 1] if col + 1 < df.shape[1] else None
+                "Vencimiento": pd.to_datetime(
+                    fila.iloc[col + OFFSET_VENCIMIENTO], errors="coerce"
+                ).date() if pd.notna(fila.iloc[col + OFFSET_VENCIMIENTO]) else None,
+                "Estatus": fila.iloc[col + OFFSET_ESTATUS],
+                "Observaciones": fila.iloc[col + OFFSET_OBSERVACIONES]
             })
-
+            
     return pd.DataFrame(cursos)
 
 # =========================
