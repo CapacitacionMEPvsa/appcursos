@@ -25,12 +25,23 @@ if nomina_input:
             col_nomina = col
             break
 
+    st.write("Columna usada:", col_nomina)
+    st.write("Valores en Excel:", df[col_nomina].head(10))
+
+    # filtro
+    persona = df[df[col_nomina].astype(str).str.strip() == nomina_input.strip()]
     if col_nomina is None:
         st.error("No se encontró columna de nómina")
         st.write(df.columns)
         st.stop()
 
-    persona = df[df[col_nomina].astype(str) == nomina_input]
+persona = df[
+    df[col_nomina]
+    .astype(str)
+    .str.replace(".0", "", regex=False)
+    .str.strip()
+    == nomina_input.strip()
+]
 
     if persona.empty:
         st.error("Nómina no encontrada")
