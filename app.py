@@ -89,12 +89,12 @@ def obtener_cursos(col_inicio, col_fin):
         if not isinstance(nombre_curso, str):
             continue
 
-        curso = {
+        curso = appennd{
             "Curso": nombre_curso,
             "Vencimiento": fila.iloc[col],
             "Estatus": fila.iloc[col + 2] if col + 2 < df.shape[1] else None,
             "Observaciones": fila.iloc[col + 1] if col + 1 < df.shape[1] else None
-        }
+        })
 
         cursos.append(curso)
 
@@ -105,7 +105,7 @@ def obtener_cursos(col_inicio, col_fin):
 # =========================
 for categoria, (col_inicio, col_fin) in categorias.items():
 
-    df_cat = obtener_cursos(col_inicio, col_fin)
+    df_cat = obtener_cursos(rangos)
 
     if not isinstance(df_cat, pd.DataFrame) or df_cat.empty:
         continue
