@@ -89,14 +89,13 @@ def obtener_cursos(rangos):
 
             nombre_curso = fila_cursos.iloc[col]
 
-            # detectar columnas que realmente son cursos
             if not isinstance(nombre_curso, str) or nombre_curso.strip() == "":
                 continue
 
-            # intentar leer datos cercanos (flexible)
             vencimiento = None
             estatus = None
             observaciones = None
+            certificado = None
 
             try:
                 vencimiento = pd.to_datetime(fila.iloc[col + 2], errors="coerce")
@@ -114,12 +113,25 @@ def obtener_cursos(rangos):
             except:
                 pass
 
-            cursos.append({
+            # 🔥 SOLO PARA RANGOS ESPECIALES
+            if (col_inicio, col_fin) in rangos_con_certificado:
+                try:
+                    certificado = fila.iloc[col + 1]  # ajusta si no coincide
+                except:
+                    pass
+
+            curso_dict = {
                 "Curso": nombre_curso,
                 "Vencimiento": vencimiento,
                 "Estatus": estatus,
                 "Observaciones": observaciones
-            })
+            }
+
+            # agregar columna solo si aplica
+            if (col_inicio, col_fin) in rangos_con_certificado:
+                curso_dict["Certificado/Folio"] = certificado
+
+            cursos.append(curso_dict)
 
     return pd.DataFrame(cursos)
 
