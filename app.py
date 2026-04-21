@@ -183,6 +183,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     # =========================
     pdf.set_font("Helvetica", "B", 16)
     pdf.cell(0, 10, "KARDEX DE CAPACITACIÓN", ln=True, align="C")
+    pdf.cell(0, 10, "Materiales y Equipo Petrolero", ln=True, align="C")
 
     pdf.set_font("Helvetica", "", 11)
     pdf.cell(0, 6, f"Empleado: {nombre}", ln=True, align="C")
