@@ -67,7 +67,7 @@ SALTO = 5 # columnas por curso
 
 # estructura del bloque
 OFFSET_CURSO = 1
-OFFSET_VENCIMIENTO = 4
+OFFSET_VENCIMIENTO = 5
 OFFSET_ESTATUS = 5
 OFFSET_OBSERVACIONES = 1
 
