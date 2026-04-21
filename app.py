@@ -57,7 +57,7 @@ st.markdown(f"## 👤 {nombre}")
 # CONFIGURACIÓN DE CURSOS (CON RANGOS)
 # =========================
 categorias = {
-    "CURSOS TÉCNICOS": (4, 26),
+    "CURSOS TÉCNICOS": (4, 10, 16),
     "CURSOS DE SEGURIDAD": (3, 175),
     "CURSOS EXTERNOS": (21, 32),
     "CURSOS COMPLEMENTARIOS": (266, df.shape[1])
