@@ -80,9 +80,11 @@ def obtener_cursos(rangos):
 
     for col_inicio, col_fin in rangos:
 
-        for col in range(col_inicio, col_fin):
-            if (col - col_inicio) % SALTO != 0:
-                continue
+        # 🔥 alineamos al bloque real
+        col_inicio = col_inicio - (col_inicio % SALTO)
+
+        for col in range(col_inicio, col_fin, SALTO):
+
             if col + OFFSET_ESTATUS >= df.shape[1]:
                 break
 
@@ -99,7 +101,7 @@ def obtener_cursos(rangos):
                 "Estatus": fila.iloc[col + OFFSET_ESTATUS],
                 "Observaciones": fila.iloc[col + OFFSET_OBSERVACIONES]
             })
-            
+
     return pd.DataFrame(cursos)
 
 # =========================
