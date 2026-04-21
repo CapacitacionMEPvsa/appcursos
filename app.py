@@ -128,7 +128,7 @@ def obtener_cursos(rangos):
 
             # agregar columna solo si aplica
             if (col_inicio, col_fin) in rangos_con_certificado:
-                curso_dict["Certificado/Folio"] = certificado
+                curso_dict["Cert/Folio"] = certificado
 
             cursos.append(curso_dict)
 
