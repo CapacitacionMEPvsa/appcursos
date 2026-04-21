@@ -110,7 +110,6 @@ st.markdown(f"## 👤 {nombre}")
 # LIMPIEZA
 # =========================
 empleado = empleado.loc[:, ~empleado.columns.duplicated()]
-empleado = empleado.dropna(axis=1, how="all")
 
 # =========================
 # COLUMNAS VISIBLES
