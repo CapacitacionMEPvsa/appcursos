@@ -169,6 +169,21 @@ for categoria, cursos_base in categorias.items():
         continue
 
     st.markdown(f"## 📂 {categoria}")
-styled_df = df_cat.style.applymap(color_estatus, subset=["Estatus"])
+def icono_estatus(val):
+    val = str(val).lower()
 
-st.dataframe(styled_df, use_container_width=True)
+    if "vigente" in val or "ok" in val:
+        return "🟢 " + val
+
+    if "proximo" in val or "por vencer" in val or "vence" in val:
+        return "🟡 " + val
+
+    if "vencido" in val or "expirado" in val:
+        return "🔴 " + val
+
+    return val
+
+
+df_cat["Estatus"] = df_cat["Estatus"].apply(icono_estatus)
+
+st.dataframe(df_cat, use_container_width=True)
