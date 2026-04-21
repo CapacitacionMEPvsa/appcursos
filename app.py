@@ -58,7 +58,7 @@ st.markdown(f"## 👤 {nombre}")
 # =========================
 categorias = {
     "CURSOS TÉCNICOS": [(195, 262), (289, 312)],
-    "CURSOS DE SEGURIDAD": [(30, 165)],
+    "CURSOS DE SEGURIDAD": [(30, 79), (80, 85),(86, 165)],
     "CURSOS EXTERNOS": [(5, 29), (296, 315), (321, 385), (396,440)],
     "CURSOS COMPLEMENTARIOS": [(166, 195), (261, 285)]
 }
