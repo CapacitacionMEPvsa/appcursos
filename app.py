@@ -162,6 +162,7 @@ def obtener_cursos(rangos):
 if st.button("📄 Descargar Kardex de Capacitación Laboral"):
 
     from fpdf import FPDF
+    from io import BytesIO
 
     def generar_pdf(nombre, datos_dict):
         pdf = FPDF()
@@ -172,6 +173,7 @@ if st.button("📄 Descargar Kardex de Capacitación Laboral"):
         pdf.ln(5)
 
         for categoria, df in datos_dict.items():
+
             pdf.set_font("Arial", "B", 10)
             pdf.cell(200, 8, txt=categoria, ln=True)
 
@@ -184,17 +186,14 @@ if st.button("📄 Descargar Kardex de Capacitación Laboral"):
 
             pdf.ln(3)
 
-        file_path = f"kardex_{nombre}.pdf"
-        pdf.output(file_path)
-
-        return file_path
+        return pdf.output(dest="S").encode("latin-1")
 
     datos_export = {}
 
     for categoria, cursos_base in categorias.items():
 
         df_export = obtener_cursos(cursos_base).copy()
-    
+
         if categoria == "CURSOS EXTERNOS" and "Cert/Folio" in df_export.columns:
             df_export["Cert/Folio"] = df_export["Cert/Folio"].fillna("")
 
@@ -209,15 +208,14 @@ if st.button("📄 Descargar Kardex de Capacitación Laboral"):
 
         datos_export[categoria] = df_export
 
-    pdf_file = generar_pdf(nombre, datos_export)
+    pdf_bytes = generar_pdf(nombre, datos_export)
 
-    with open(pdf_file, "rb") as f:
-        st.download_button(
-            label="⬇️ Descargar PDF",
-            data=f,
-            file_name=f"Kardex_{nombre}.pdf",
-            mime="application/pdf"
-        )
+    st.download_button(
+        label="⬇️ Descargar PDF",
+        data=pdf_bytes,
+        file_name=f"Kardex_{nombre}.pdf",
+        mime="application/pdf"
+    )
 
 SALTO = 5 # columnas por curso
 
