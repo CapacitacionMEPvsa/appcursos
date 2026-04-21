@@ -164,29 +164,47 @@ if st.button("📄 Descargar Kardex de Capacitación Laboral"):
     from fpdf import FPDF
     from io import BytesIO
 
-    def generar_pdf(nombre, datos_dict):
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font("Helvetica", size=10)
+def generar_pdf(nombre, datos_dict):
+    from fpdf import FPDF
 
-        pdf.cell(200, 10, txt=f"Kardex de Capacitación - {nombre}", ln=True, align="C")
-        pdf.ln(5)
+    pdf = FPDF(orientation="L", unit="mm", format="A4")
+    pdf.add_page()
+    pdf.set_font("Helvetica", size=10)
 
-        for categoria, df in datos_dict.items():
+    pdf.cell(0, 10, txt=f"Kardex de Capacitación - {nombre}", ln=True, align="C")
+    pdf.ln(3)
 
-            pdf.set_font("Arial", "B", 10)
-            pdf.cell(200, 8, txt=categoria, ln=True)
+    for categoria, df in datos_dict.items():
 
-            pdf.set_font("Arial", size=8)
+        pdf.set_font("Helvetica", "B", 11)
+        pdf.cell(0, 8, txt=categoria, ln=True)
+        pdf.ln(1)
 
-            for _, row in df.iterrows():
-                linea = f"{row.get('Curso','')} | {row.get('Cert/Folio','')} | {row.get('Vencimiento','')} | {row.get('Estatus','')}"
-                linea = linea.encode("latin-1", "ignore").decode("latin-1")
-                pdf.cell(200, 6, txt=linea, ln=True)
+        # encabezados (como tu tabla)
+        columnas = df.columns.tolist()
 
-            pdf.ln(3)
+        pdf.set_font("Helvetica", "B", 9)
+        for col in columnas:
+            pdf.cell(50, 6, col, border=1)
+        pdf.ln()
 
-        return pdf.output(dest="S").encode("latin-1")
+        pdf.set_font("Helvetica", size=8)
+
+        # filas
+        for _, row in df.iterrows():
+            for col in columnas:
+                valor = str(row.get(col, ""))
+
+                if valor.lower() == "none":
+                    valor = ""
+
+                pdf.cell(50, 6, valor[:20], border=1)
+
+            pdf.ln()
+
+        pdf.ln(4)
+
+    return pdf.output(dest="S").encode("latin-1")
 
     datos_export = {}
 
