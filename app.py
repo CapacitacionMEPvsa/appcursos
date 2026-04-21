@@ -93,8 +93,7 @@ def obtener_cursos(col_inicio):
             "Curso": nombre_curso,
             "Vencimiento": fila.iloc[col + OFFSET_VENCIMIENTO],
             "Estatus": fila.iloc[col + OFFSET_ESTATUS],
-            "Observaciones": fila.iloc[col + OFFSET_OBSERVACIONES],
-            "Capacitación": "Tomar Curso" if str(fila.iloc[col + OFFSET_ESTATUS]).upper() == "PENDIENTE" else ""
+            "Observaciones": fila.iloc[col + OFFSET_OBSERVACIONES]       
         }
 
         cursos.append(curso)
