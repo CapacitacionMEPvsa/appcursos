@@ -58,7 +58,7 @@ st.markdown(f"## 👤 {nombre}")
 # =========================
 # 👉 AQUÍ defines dónde empieza cada tipo
 categorias = {
-    "CURSOS TÉCNICOS": 5,        # F
+    "CURSOS TÉCNICOS": 2,        # F
     "CURSOS DE SEGURIDAD": 65,   # ejemplo (ajústalo)
     "CURSOS EXTERNOS": 125,      # ejemplo
     "CURSOS COMPLEMENTARIOS": 185 # ejemplo
