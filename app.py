@@ -171,6 +171,11 @@ for categoria, cursos_base in categorias.items():
 
     df_cat = obtener_cursos(cursos_base).copy()
 
+    if categoria == "CURSOS EXTERNOS" and "Cert/Folio" in df_cat.columns:
+    columnas = ["Curso", "Cert/Folio", "Vencimiento", "Estatus", "Observaciones"]
+    columnas = [col for col in columnas if col in df_cat.columns]
+    df_cat = df_cat[columnas]
+
     # 🔥 SI NO HAY DATOS, MUESTRA MENSAJE PERO NO ROMPAS
     if df_cat.empty:
         st.markdown(f"## 📂 {categoria}")
