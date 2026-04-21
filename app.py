@@ -30,7 +30,7 @@ mapa_cursos = {}
 for i, val in enumerate(encabezados):
     if isinstance(val, str) and val.strip() != "" and val != "nan":
         mapa_cursos[val.strip()] = i
-    st.write(list(mapa_cursos.keys()))
+st.write(list(mapa_cursos.keys()))
 
 # fila donde están los nombres de cursos
 fila_cursos = df_raw.iloc[1]
