@@ -168,7 +168,9 @@ if st.button("📄 Descargar Kardex de Capacitación Laboral"):
         pdf.add_page()
         pdf.set_font("Helvetica", size=10)
 
-        pdf.cell(0, 10, txt=f"Kardex de Capacitación - {nombre}", ln=True, align="C")
+titulo = f"Kardex de Capacitacion - {nombre}"
+titulo = titulo.encode("latin-1", "ignore").decode("latin-1")
+pdf.cell(0, 10, txt=titulo, ln=True, align="C")
         pdf.ln(3)
 
         for categoria, df in datos_dict.items():
@@ -180,8 +182,9 @@ if st.button("📄 Descargar Kardex de Capacitación Laboral"):
             columnas = df.columns.tolist()
 
             pdf.set_font("Helvetica", "B", 9)
-            for col in columnas:
-                pdf.cell(50, 6, col, border=1)
+        for col in columnas:
+            col_text = col.encode("latin-1", "ignore").decode("latin-1")
+                pdf.cell(50, 6, col_text, border=1)
 
             pdf.ln()
 
@@ -190,6 +193,12 @@ if st.button("📄 Descargar Kardex de Capacitación Laboral"):
             for _, row in df.iterrows():
                 for col in columnas:
                     valor = str(row.get(col, ""))
+
+# limpiar caracteres problemáticos
+valor = valor.encode("latin-1", "ignore").decode("latin-1")
+
+if valor.lower() == "none":
+    valor = ""
 
                     if valor.lower() == "none":
                         valor = ""
@@ -200,8 +209,7 @@ if st.button("📄 Descargar Kardex de Capacitación Laboral"):
 
             pdf.ln(4)
 
-        pdf_bytes = pdf.output(dest="S").encode("latin-1", "ignore")
-        return pdf_bytes
+    return pdf.output(dest="S").encode("latin-1")
 
 
     datos_export = {}
