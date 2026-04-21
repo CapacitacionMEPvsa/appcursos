@@ -80,26 +80,40 @@ def obtener_cursos(rangos):
 
     for col_inicio, col_fin in rangos:
 
-        # 🔥 alineamos al bloque real
-        col_inicio = col_inicio - (col_inicio % SALTO)
+        for col in range(col_inicio, col_fin):
 
-        for col in range(col_inicio, col_fin, SALTO):
+            nombre_curso = fila_cursos.iloc[col]
 
-            if col + OFFSET_ESTATUS >= df.shape[1]:
-                break
-
-            nombre_curso = fila_cursos.iloc[col + OFFSET_CURSO]
-
+            # detectar columnas que realmente son cursos
             if not isinstance(nombre_curso, str) or nombre_curso.strip() == "":
                 continue
 
+            # intentar leer datos cercanos (flexible)
+            vencimiento = None
+            estatus = None
+            observaciones = None
+
+            try:
+                vencimiento = pd.to_datetime(fila.iloc[col + 1], errors="coerce")
+                vencimiento = vencimiento.date() if pd.notna(vencimiento) else None
+            except:
+                pass
+
+            try:
+                estatus = fila.iloc[col + 2]
+            except:
+                pass
+
+            try:
+                observaciones = fila.iloc[col + 3]
+            except:
+                pass
+
             cursos.append({
                 "Curso": nombre_curso,
-                "Vencimiento": pd.to_datetime(
-                    fila.iloc[col + OFFSET_VENCIMIENTO], errors="coerce"
-                ).date() if pd.notna(fila.iloc[col + OFFSET_VENCIMIENTO]) else None,
-                "Estatus": fila.iloc[col + OFFSET_ESTATUS],
-                "Observaciones": fila.iloc[col + OFFSET_OBSERVACIONES]
+                "Vencimiento": vencimiento,
+                "Estatus": estatus,
+                "Observaciones": observaciones
             })
 
     return pd.DataFrame(cursos)
