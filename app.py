@@ -96,42 +96,45 @@ if not nomina:
 # =========================
 # FILTRAR EMPLEADO
 # =========================
-empleado = df_final[
-    df_final["nomina"].astype(str).str.strip() == nomina.strip()
+empleado_df = df[
+    df[COL_NOMINA].astype(str).str.strip() == nomina.strip()
 ]
 
-if empleado.empty:
+if empleado_df.empty:
     st.error("No encontrado")
     st.stop()
 
-nombre = empleado.iloc[0]["nombre"]
+fila = empleado_df.iloc[0]
+nombre = fila[COL_NOMBRE]
 
 st.markdown(f"## 👤 {nombre}")
 
 # =========================
-# LIMPIEZA
+# EXTRAER CURSOS (COLUMNAS FIJAS)
 # =========================
-empleado = empleado.loc[:, ~empleado.columns.duplicated()]
-empleado = empleado.sort_values(by="curso")
-# =========================
-# COLUMNAS VISIBLES
-# =========================
-columnas_visibles = [
-    "No.",
-    "curso",
-    "vencimiento",
-    "estatus",
-    "observaciones"
-]
 
-columnas_finales = [c for c in columnas_visibles if c in empleado.columns]
+cursos = []
+
+# 👉 empezamos en columna F (índice 5)
+# 👉 cada curso ocupa 6 columnas (ajústalo si cambia)
+for col in range(5, df.shape[1], 6):
+
+    curso = {
+        "curso": fila.iloc[col + 1],        # G
+        "vencimiento": fila.iloc[col + 2],  # H
+        "estatus": fila.iloc[col + 4],      # J
+        "observaciones": fila.iloc[col]     # F
+    }
+
+    # opcional: evitar cursos vacíos
+    if pd.notna(curso["curso"]):
+        cursos.append(curso)
+
+df_mostrar = pd.DataFrame(cursos)
 
 # =========================
-# MOSTRAR CURSOS
+# MOSTRAR
 # =========================
 st.markdown("## 📋 Mis cursos")
 
-st.dataframe(
-    empleado[["curso", "vencimiento", "estatus", "observaciones"]],
-    use_container_width=True
-)
+st.dataframe(df_mostrar, use_container_width=True)
