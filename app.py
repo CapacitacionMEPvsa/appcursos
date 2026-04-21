@@ -124,6 +124,7 @@ def obtener_cursos(rangos):
 for categoria, cursos_base in categorias.items():
 
     df_cat = obtener_cursos(cursos_base)
+    df_cat = df_cat[df_cat["Vencimiento"].notna()]
 
     if not isinstance(df_cat, pd.DataFrame) or df_cat.empty:
         continue
