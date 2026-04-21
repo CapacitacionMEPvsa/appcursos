@@ -75,28 +75,27 @@ OFFSET_OBSERVACIONES = 1
 # =========================
 # FUNCIÓN PARA EXTRAER CURSOS
 # =========================
-def obtener_cursos(col_inicio, col_fin):
+def obtener_cursos(rangos):
     cursos = []
 
-    for col in range(col_inicio, col_fin):
+    for col_inicio, col_fin in rangos:
 
-        if col + 5 >= df.shape[1]:
-            break
+        for col in range(col_inicio, col_fin):
 
-        nombre_curso = fila_cursos.iloc[col]
+            if col + 5 >= df.shape[1]:
+                break
 
-        # si no es texto válido, saltar
-        if not isinstance(nombre_curso, str):
-            continue
+            nombre_curso = fila_cursos.iloc[col]
 
-        curso = {
-            "Curso": nombre_curso,
-            "Vencimiento": fila.iloc[col],
-            "Estatus": fila.iloc[col + 2] if col + 2 < df.shape[1] else None,
-            "Observaciones": fila.iloc[col + 1] if col + 1 < df.shape[1] else None
-        }
+            if not isinstance(nombre_curso, str) or nombre_curso.strip() == "":
+                continue
 
-        cursos.append(curso)
+            cursos.append({
+                "Curso": nombre_curso,
+                "Vencimiento": fila.iloc[col],
+                "Estatus": fila.iloc[col + 2] if col + 2 < df.shape[1] else None,
+                "Observaciones": fila.iloc[col + 1] if col + 1 < df.shape[1] else None
+            })
 
     return pd.DataFrame(cursos)
 
