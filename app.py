@@ -104,63 +104,7 @@ SALTO = 6  # columnas por curso
 SALTO = 6
 
 def obtener_cursos_por_nombre(fila, nombres_cursos):
-    cursos = []
-
-    for nombre in nombres_cursos:
-
-inicio = None
-
-for k in mapa_cursos.keys():
-    if nombre.upper() in k.upper():
-        inicio = mapa_cursos[k]
-        break
-
-if inicio is None:
-    continue
-        inicio = mapa_cursos[nombre]
-
-        for col in range(inicio, inicio + 100, SALTO):
-
-            if col + 5 >= df.shape[1]:
-                break
-
-            nombre_curso = encabezados.iloc[col + 1]
-
-            if pd.isna(nombre_curso):
-                break
-
-            cursos.append({
-                "Bloque": nombre,
-                "Curso": nombre_curso,
-                "Observación": fila.iloc[col + 1],
-                "Vencimiento": fila.iloc[col + 3],
-                "Estatus": fila.iloc[col + 5],
-            })
-
-    return pd.DataFrame(cursos)
-    
-    cursos = []
-
-    for col in range(col_inicio, col_fin, SALTO):
-
-        if col + OFFSET_ESTATUS >= df.shape[1]:
-            break
-
-        nombre_curso = fila_cursos.iloc[col + OFFSET_CURSO]
-
-        if pd.isna(nombre_curso):
-            continue
-
-        curso = {
-            "Curso": nombre_curso,
-            "Vencimiento": fila.iloc[col + OFFSET_VENCIMIENTO],
-            "Estatus": fila.iloc[col + OFFSET_ESTATUS],
-            "Observaciones": fila.iloc[col + OFFSET_OBSERVACIONES]
-        }
-
-        cursos.append(curso)
-
-    return pd.DataFrame(cursos)
+    ...
 
 # =========================
 # MOSTRAR POR CATEGORÍA
