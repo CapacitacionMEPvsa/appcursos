@@ -160,8 +160,6 @@ def obtener_cursos(rangos):
 
     return pd.DataFrame(cursos)
 
-if st.button("📄 Descargar Kardex de Capacitación Laboral"):
-
 # =========================
 # BOTÓN DESCARGA PDF (FIX)
 # =========================
