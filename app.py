@@ -113,4 +113,3 @@ for categoria, cursos_base in categorias.items():
     st.markdown(f"## 📂 {categoria}")
 
     st.dataframe(df_cat, use_container_width=True)
-    )
