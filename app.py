@@ -1,6 +1,20 @@
 import streamlit as st
 import pandas as pd
 
+def color_estatus(val):
+    val = str(val).lower()
+
+    if "vigente" in val or "ok" in val:
+        return "background-color: #c6f6d5; color: #22543d"
+
+    if "proximo" in val or "por vencer" in val or "vence" in val:
+        return "background-color: #fefcbf; color: #744210"
+
+    if "vencido" in val or "expirado" in val:
+        return "background-color: #fed7d7; color: #742a2a"
+
+    return ""
+
 # =========================
 # CONFIG
 # =========================
@@ -155,4 +169,6 @@ for categoria, cursos_base in categorias.items():
         continue
 
     st.markdown(f"## 📂 {categoria}")
-    st.dataframe(df_cat, use_container_width=True)
+styled_df = df_cat.style.applymap(color_estatus, subset=["Estatus"])
+
+st.dataframe(styled_df, use_container_width=True)
