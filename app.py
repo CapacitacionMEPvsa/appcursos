@@ -229,7 +229,8 @@ def generar_pdf(nombre, datos_dict):
         datos_export[categoria] = df_export
 
     pdf_bytes = generar_pdf(nombre, datos_export)
-
+    
+    pdf_file = generar_pdf(nombre, datos_export)
     st.download_button(
         label="⬇️ Descargar PDF",
         data=pdf_bytes,
