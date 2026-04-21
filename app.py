@@ -63,6 +63,8 @@ categorias = {
     "CURSOS COMPLEMENTARIOS": (266, df.shape[1])
 }
 
+rango 5
+
 # estructura del bloque
 OFFSET_CURSO = 1
 OFFSET_VENCIMIENTO = 3
