@@ -204,7 +204,8 @@ def generar_pdf(nombre, datos_dict):
 
         pdf.ln(4)
 
-    return pdf.output(dest="S").encode("latin-1")
+    pdf_bytes = pdf.output(dest="S").encode("latin-1", "ignore")
+    return pdf_bytes
 
     datos_export = {}
 
