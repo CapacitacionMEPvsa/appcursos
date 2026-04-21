@@ -1,102 +1,119 @@
 import streamlit as st
 import pandas as pd
 
+# =========================
+# CONFIG
+# =========================
 st.set_page_config(layout="wide")
+st.title("Consulta de Cursos")
 
-st.title("📚 Cursos del Colaborador")
+# =========================
+# CARGAR EXCEL
+# =========================
+FILE = "BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx"
 
-@st.cache_data
-def cargar_datos():
-    df = pd.read_excel("BASE DE DATOS DE CURSOS DE CAPACITACION VSA.xlsx", header=2)
-    df.columns = df.columns.astype(str).str.strip()
-    return df
+df_raw = pd.read_excel(FILE, header=None)
 
-df = cargar_datos()
+# fila donde están los nombres de cursos
+fila_cursos = df_raw.iloc[1]
 
-# 🔎 INPUT
-nomina_input = st.text_input("Ingresa tu nómina")
+# limpiar dataframe
+df = df_raw.copy()
+df.columns = df.iloc[1]
+df = df[2:].reset_index(drop=True)
+df.columns = df.columns.astype(str).str.strip()
 
-if nomina_input:
+# =========================
+# COLUMNAS BASE
+# =========================
+COL_NOMINA = "Nómina"
+COL_NOMBRE = "Nombre del Colaborador"
 
-    col_nomina = None
-    for col in df.columns:
-        if "nom" in col.lower() or "no." in col.lower():
-            col_nomina = col
-            break
+# =========================
+# INPUT
+# =========================
+nomina = st.text_input("Ingresa tu número de nómina")
 
-    if col_nomina is None:
-        st.error("No se encontró columna de nómina")
-        st.stop()
+if not nomina:
+    st.stop()
 
-    st.write("Columna usada:", col_nomina)
-    st.write(df[col_nomina].head(10))
-
-    persona = df[
-        df[col_nomina].astype(str).str.strip() == nomina_input.strip()
-    ]
-
-    if persona.empty:
-        st.error("Nómina no encontrada")
-        st.stop()
-
-    persona = persona.iloc[0]
-
-persona = df[
-    df[col_nomina]
-    .astype(str)
-    .str.replace(".0", "", regex=False)
-    .str.strip()
-    == nomina_input.strip()
+# =========================
+# FILTRAR EMPLEADO
+# =========================
+empleado_df = df[
+    df[COL_NOMINA].astype(str).str.strip() == nomina.strip()
 ]
 
-    if persona.empty:
-        st.error("Nómina no encontrada")
-        st.stop()
+if empleado_df.empty:
+    st.error("No encontrado")
+    st.stop()
 
-    persona = persona.iloc[0]
+fila = empleado_df.iloc[0]
+nombre = fila[COL_NOMBRE]
 
-    st.subheader("📂 CURSOS TÉCNICOS")
+st.markdown(f"## 👤 {nombre}")
 
-    # 🔥 EXTRAER CURSOS DINÁMICAMENTE
+# =========================
+# CONFIGURACIÓN DE CURSOS
+# =========================
+# 👉 AQUÍ defines dónde empieza cada tipo
+categorias = {
+    "CURSOS TÉCNICOS": 5,        # F
+    "CURSOS DE SEGURIDAD": 65,   # ejemplo (ajústalo)
+    "CURSOS EXTERNOS": 125,      # ejemplo
+    "CURSOS COMPLEMENTARIOS": 185 # ejemplo
+}
+
+# estructura del bloque
+OFFSET_CURSO = 1
+OFFSET_VENCIMIENTO = 2
+OFFSET_ESTATUS = 4
+OFFSET_OBSERVACIONES = 0
+
+SALTO = 6  # columnas por curso
+
+# =========================
+# FUNCIÓN PARA EXTRAER CURSOS
+# =========================
+def obtener_cursos(col_inicio):
     cursos = []
+    num_cols = df.shape[1]
 
-    columnas = list(df.columns)
+    for col in range(col_inicio, num_cols, SALTO):
 
-    for i in range(len(columnas)):
-        col = columnas[i]
+        if col + OFFSET_ESTATUS >= num_cols:
+            break
 
-        # Detectar bloques tipo: Curso, Emisión, Vigencia, Estatus
-        if "vigencia" in col.lower():
+        nombre_curso = fila_cursos.iloc[col + OFFSET_CURSO]
 
-            curso_nombre = columnas[i-2] if i >= 2 else col
+        if pd.isna(nombre_curso):
+            continue
 
-            try:
-                curso = {
-                    "Curso": curso_nombre,
-                    "Vencimiento": persona[col],
-                    "Estatus": persona[columnas[i+2]] if i+2 < len(columnas) else "",
-                    "Observaciones": persona[columnas[i-1]] if i-1 >= 0 else "",
-                    "Capacitación": ""
-                }
+        curso = {
+            "Curso": nombre_curso,
+            "Vencimiento": fila.iloc[col + OFFSET_VENCIMIENTO],
+            "Estatus": fila.iloc[col + OFFSET_ESTATUS],
+            "Observaciones": fila.iloc[col + OFFSET_OBSERVACIONES],
+            "Capacitación": "Tomar Curso" if str(fila.iloc[col + OFFSET_ESTATUS]).upper() == "PENDIENTE" else ""
+        }
 
-                cursos.append(curso)
-            except:
-                pass
+        cursos.append(curso)
 
-    df_cursos = pd.DataFrame(cursos)
+    return pd.DataFrame(cursos)
 
-    # Limpiar vacíos
-    df_cursos = df_cursos[df_cursos["Curso"].notna()]
+# =========================
+# MOSTRAR POR CATEGORÍA
+# =========================
+for categoria, col_inicio in categorias.items():
 
-    # 🎨 COLORES
-    def color_fila(row):
-        if "VIGENTE" in str(row["Estatus"]):
-            return ["background-color: #c8e6c9"] * len(row)
-        elif "PENDIENTE" in str(row["Estatus"]):
-            return ["background-color: #ffcdd2"] * len(row)
-        return [""] * len(row)
+    df_cat = obtener_cursos(col_inicio)
+
+    if df_cat.empty:
+        continue
+
+    st.markdown(f"## 📂 {categoria}")
 
     st.dataframe(
-        df_cursos.style.apply(color_fila, axis=1),
+        df_cat,
         use_container_width=True
     )
