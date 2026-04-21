@@ -211,7 +211,6 @@ if st.button("📄 Descargar Kardex de Capacitación Laboral"):
     pdf_bytes = generar_pdf(nombre, datos_export)
 
     st.download_button(
-        label="⬇️ Descargar PDF",
         data=pdf_bytes,
         file_name=f"Kardex_{nombre}.pdf",
         mime="application/pdf"
