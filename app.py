@@ -64,7 +64,7 @@ categorias = {
 }
 
 rangos_con_certificado = [
-    (18, 23), (24, 29)   # externos (bloques de 6)
+    (18, 23), (24, 29)  # externos (bloques de 6)
     (80, 85)   # seguridad especial
 ]
 
