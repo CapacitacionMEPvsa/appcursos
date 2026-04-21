@@ -60,7 +60,7 @@ categorias = {
     "CURSOS TÉCNICOS": [(196, 260), (289, 312)],
     "CURSOS DE SEGURIDAD": [(30, 164)],
     "CURSOS EXTERNOS": [(3, 29), (296, 315), (321, 385), (396,440)],
-    "CURSOS COMPLEMENTARIOS": [(166, 195), (261, 285)]
+    "CURSOS COMPLEMENTARIOS": [(165, 194), (261, 285)]
 }
 
 rangos_con_certificado = [
