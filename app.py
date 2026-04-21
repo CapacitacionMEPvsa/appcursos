@@ -30,6 +30,7 @@ if nomina_input:
 
     # filtro
     persona = df[df[col_nomina].astype(str).str.strip() == nomina_input.strip()]
+    
     if col_nomina is None:
         st.error("No se encontró columna de nómina")
         st.write(df.columns)
