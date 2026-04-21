@@ -60,7 +60,7 @@ categorias = {
     "CURSOS TÉCNICOS": (198, 262),
     "CURSOS DE SEGURIDAD": (32, 167),
     "CURSOS EXTERNOS": (5, 32),
-    "CURSOS COMPLEMENTARIOS": (170, 199)
+    "CURSOS COMPLEMENTARIOS": (170, 198)
 }
 
 SALTO = 5 # columnas por curso
