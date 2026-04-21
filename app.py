@@ -105,16 +105,16 @@ if st.button("📄 Descargar Kardex de Capacitación Laboral"):
         df_export = obtener_cursos(cursos_base).copy()
     
         if categoria == "CURSOS EXTERNOS" and "Cert/Folio" in df_export.columns:
-        df_export["Cert/Folio"] = df_export["Cert/Folio"].fillna("")
+            df_export["Cert/Folio"] = df_export["Cert/Folio"].fillna("")
 
         if "Observaciones" in df_export.columns:
-        df_export["Observaciones"] = df_export["Observaciones"].fillna("")
+            df_export["Observaciones"] = df_export["Observaciones"].fillna("")
 
         if "Estatus" in df_export.columns:
-        df_export["Estatus"] = df_export["Estatus"].apply(icono_estatus)
+            df_export["Estatus"] = df_export["Estatus"].apply(icono_estatus)
 
         if "Vencimiento" in df_export.columns:
-        df_export = df_export[df_export["Vencimiento"].notna()]
+            df_export = df_export[df_export["Vencimiento"].notna()]
 
         datos_export[categoria] = df_export
 
