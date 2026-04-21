@@ -10,6 +10,8 @@ def cargar_datos():
     return df
 
 df = cargar_datos()
+for col in df.columns:
+    st.write(f"'{col}'")
 
 # DEBUG (puedes quitar luego)
 st.write(df.columns)
