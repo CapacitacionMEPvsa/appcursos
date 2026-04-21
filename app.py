@@ -4,13 +4,13 @@ import pandas as pd
 def color_estatus(val):
     val = str(val).lower()
 
-    if "vigente" in val or "ok" in val:
+    if "Vigente" in val or "ok" in val:
         return "background-color: #c6f6d5; color: #22543d"
 
-    if "proximo" in val or "por vencer" in val or "vence" in val:
+    if "proximo" in val or "Por vencer" in val or "vence" in val:
         return "background-color: #fefcbf; color: #744210"
 
-    if "vencido" in val or "expirado" in val:
+    if "Vencido" in val or "expirado" in val:
         return "background-color: #fed7d7; color: #742a2a"
 
     return ""
@@ -83,13 +83,13 @@ rangos_con_certificado = [
 def icono_estatus(val):
     val = str(val).lower()
 
-    if "vigente" in val or "ok" in val:
+    if "Vigente" in val or "ok" in val:
         return "🟢 " + val
 
-    if "proximo" in val or "por vencer" in val or "vence" in val:
+    if "proximo" in val or "Por vencer" in val or "vence" in val:
         return "🟡 " + val
 
-    if "vencido" in val or "expirado" in val:
+    if "Vencido" in val or "expirado" in val:
         return "🔴 " + val
 
     return val
