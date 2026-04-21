@@ -157,7 +157,7 @@ def obtener_cursos(rangos):
 # =========================
 for categoria, cursos_base in categorias.items():
 
-    df_cat = obtener_cursos(cursos_base)
+    df_cat = obtener_cursos(cursos_base).copy()
     if "Cert/Folio" in df_cat.columns:
         columnas = ["Curso", "Cert/Folio", "Vencimiento", "Estatus", "Observaciones"]
         columnas = [col for col in columnas if col in df_cat.columns]
