@@ -69,7 +69,6 @@ OFFSET_VENCIMIENTO = 3
 OFFSET_ESTATUS = 5
 OFFSET_OBSERVACIONES = 1
 
-SALTO = 5  # columnas por curso
 
 # =========================
 # FUNCIÓN PARA EXTRAER CURSOS
