@@ -37,7 +37,7 @@ COL_PROCESO = "Proceso"
 # 🔥 CREAR CURSOS (AQUÍ ESTÁ LO IMPORTANTE)
 # =========================
 bloques = [
-    {"categoria": "CERTIFICACIONES TECNICAS", "inicio": 20, "fin":80},
+    {"categoria": "CERTIFICACIONES TECNICAS", "inicio": 1, "fin": df.shape[1]},
     
 ]
 
@@ -81,7 +81,7 @@ for b in bloques:
         
 df_final = pd.concat(cursos, ignore_index=True)
 
-df_final = df_final[df_final["curso"].notna()]
+df_final["curso"] = df_final["curso"].fillna("Curso sin nombre"")
 
 # =========================
 # INPUT
@@ -110,7 +110,7 @@ st.markdown(f"## 👤 {nombre}")
 # LIMPIEZA
 # =========================
 empleado = empleado.loc[:, ~empleado.columns.duplicated()]
-
+empleado = empleado.sort_values(by="curso")
 # =========================
 # COLUMNAS VISIBLES
 # =========================
@@ -129,6 +129,6 @@ columnas_finales = [c for c in columnas_visibles if c in empleado.columns]
 st.markdown("## 📋 Mis cursos")
 
 st.dataframe(
-    empleado[columnas_finales],
+    empleado[["curso", "vencimiento", "estatus", "observaciones"]],
     use_container_width=True
 )
