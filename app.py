@@ -416,7 +416,7 @@ for categoria, cursos_base in categorias.items():
     # -------------------------
     if "Estatus" in df_cat.columns:
         df_cat["Estatus"] = df_cat["Estatus"].apply(icono_estatus)
-
+    df_cat = df_cat.dropna(how="all")
     # -------------------------
     # MOSTRAR
     # -------------------------
