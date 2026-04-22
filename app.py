@@ -357,6 +357,31 @@ OFFSET_OBSERVACIONES = 5
 for categoria, cursos_base in categorias.items():
 
     df_cat = obtener_cursos(cursos_base).copy()
+from datetime import datetime
+
+def calcular_estado(fecha):
+    if pd.isna(fecha):
+        return "SIN FECHA"
+
+    hoy = datetime.now().date()
+    diff = (fecha - hoy).days
+
+    if diff < 0:
+        return "VENCIDO"
+    elif diff <= 30:
+        return "POR VENCER"
+    else:
+        return "VIGENTE"
+
+# 🔽 aplicar estado
+if "Vencimiento" in df_cat.columns:
+    df_cat["EstadoCalc"] = df_cat["Vencimiento"].apply(calcular_estado)
+
+    # 🔥 AQUÍ SE ACTIVA EL FILTRO
+    if filtro_activo:
+        df_cat = df_cat[
+            df_cat["EstadoCalc"].isin(["VENCIDO", "POR VENCER"])
+        ]
 
     if categoria == "CURSOS EXTERNOS" and "Cert/Folio" in df_cat.columns:
         df_cat["Cert/Folio"] = df_cat["Cert/Folio"].fillna("")
