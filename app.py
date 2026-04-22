@@ -102,7 +102,7 @@ st.markdown("---")
 categorias = {
     "CURSOS TÉCNICOS": [(195, 259), (295, 314)],
     "CURSOS DE SEGURIDAD": [(30, 164)],
-    "CURSOS EXTERNOS": [(3, 29), (295, 314), (320, 384), (395,439)],
+    "CURSOS EXTERNOS": [(5, 29), (295, 314), (320, 384), (395,439)],
     "CURSOS COMPLEMENTARIOS": [(165, 194), (260, 284)]
 }
 
