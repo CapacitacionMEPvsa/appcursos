@@ -375,6 +375,10 @@ for categoria, cursos_base in categorias.items():
 
     df_cat = obtener_cursos(cursos_base).copy()
 
+# 🔴 SI NO TIENE CURSOS, NO MUESTRA NADA
+    if df_cat.empty:
+        continue
+
     if "Vencimiento" in df_cat.columns:
         df_cat["EstadoCalc"] = df_cat["Vencimiento"].apply(calcular_estado)
 
