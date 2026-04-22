@@ -395,11 +395,14 @@ for categoria, cursos_base in categorias.items():
         df_cat["Estado_calculado"] = df_cat["Vencimiento"].apply(calcular_estado)
 
     # -------------------------
-    # FILTRO (AQUÍ ACTÚA EL TOGGLE)
+    # FILTRO USANDO ESTATUS DEL EXCEL
     # -------------------------
-    if filtro_activo and "Estado_calculado" in df_cat.columns:
+    if filtro_activo and "Estatus" in df_cat.columns:
+
+        df_cat["Estatus"] = df_cat["Estatus"].astype(str).str.lower()
+
         df_cat = df_cat[
-            df_cat["Estado_calculado"].isin(["VENCIDO", "POR VENCER"])
+            df_cat["Estatus"].str.contains("vencido|por vencer|vence", na=False)
         ]
 
     # -------------------------
