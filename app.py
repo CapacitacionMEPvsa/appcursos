@@ -378,7 +378,12 @@ for categoria, cursos_base in categorias.items():
 # 🔴 SI NO TIENE CURSOS, NO MUESTRA NADA
     if df_cat.empty:
         continue
-
+    if categoria == "CURSOS EXTERNOS" and "Cert/Folio" in df_cat.columns:
+        df_cat["Cert/Folio"] = df_cat["Cert/Folio"].fillna("")
+    
+    if "Observaciones" in df_cat.columns:
+        df_cat["Observaciones"] = df_cat["Observaciones"].fillna("")
+    
     if "Vencimiento" in df_cat.columns:
         df_cat["EstadoCalc"] = df_cat["Vencimiento"].apply(calcular_estado)
 
