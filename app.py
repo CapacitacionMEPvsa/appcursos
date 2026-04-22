@@ -410,7 +410,7 @@ for categoria, cursos_base in categorias.items():
     # -------------------------
     if df_cat.empty:
         continue
-
+    df_cat = df_cat[df_cat["Vencimiento"].notna()]
     # -------------------------
     # ESTATUS VISUAL
     # -------------------------
