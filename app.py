@@ -77,7 +77,7 @@ if empleado_df.empty:
     st.error("No encontrado")
     st.stop()
 
-fila = empleado_df.iloc[0]
+base_fila = empleado_df.iloc[0]
 nombre = fila[COL_NOMBRE]
 proceso = fila.iloc[3]
 
