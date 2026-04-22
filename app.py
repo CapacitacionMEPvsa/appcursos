@@ -230,6 +230,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
                 # 🎨 COLOR EN ESTATUS
                 # =========================
                 if col.lower() == "estatus":
+                    
                     val_lower = valor.lower()
 
                     if "vigente" in val_lower:
@@ -245,9 +246,8 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
                     pdf.multi_cell(col_width, max_height, valor, border=1, fill=True)
                     x_start += col_width
                     pdf.set_xy(x_start, y_before)
-                    pdf.ln(max_height)
-                    pdf.cell(60, 6, valor[:25], border=1, fill=True)
-                 else:
+                    
+                else:
                     pdf.set_fill_color(255, 255, 255)
                     pdf.cell(60, 6, valor[:25], border=1)
             pdf.ln()
