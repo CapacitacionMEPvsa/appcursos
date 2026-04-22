@@ -220,16 +220,25 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
 
             # 🔹 Anchos tipo reporte (más ordenado)
             if "Cert/Folio" in columnas:
-                col_widths = [70, 45, 30, 35, 80]
+                col_widths = [
+                    TABLE_WIDTH * 0.40,
+                    TABLE_WIDTH * 0.20,
+                    TABLE_WIDTH * 0.15,
+                    TABLE_WIDTH * 0.25,
+                    TABLE_WIDTH * 0.25
+                 ]
             else:
-                col_widths = [90, 35, 35, 90]
+                col_widths = [
+                    TABLE_WIDTH * 0.50,
+                    TABLE_WIDTH * 0.20,
+                    TABLE_WIDTH * 0.15,
+                    TABLE_WIDTH * 0.15
+                ]
 
             # 🔹 Encabezados
             pdf.set_font("Helvetica", "B", 9)
             pdf.set_fill_color(230, 230, 230)
-            
             pdf.set_x(start_x)
-            
             for i, col in enumerate(columnas):
                 txt = str(col).encode("latin-1", "ignore").decode("latin-1")
                 pdf.cell(col_widths[i], 7, txt, border=1, fill=True)
