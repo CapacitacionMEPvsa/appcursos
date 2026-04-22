@@ -167,7 +167,7 @@ def obtener_cursos(rangos):
             # 🔥 SOLO PARA RANGOS ESPECIALES
             if any(inicio <= col < fin for inicio, fin in rangos_con_certificado):
                 try:
-                    certificado = fila.iloc[col + 1]  # ajusta si no coincide
+                    certificado = fila.iloc[col + 0]  # ajusta si no coincide
                 except:
                     pass
 
