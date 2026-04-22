@@ -375,44 +375,30 @@ for categoria, cursos_base in categorias.items():
 
     df_cat = obtener_cursos(cursos_base).copy()
 
-# 🔴 SI NO TIENE CURSOS, NO MUESTRA NADA
-    if df_cat.empty:
-        continue
+    # -------------------------
+    # LIMPIEZA DE COLUMNAS
+    # -------------------------
     if categoria == "CURSOS EXTERNOS" and "Cert/Folio" in df_cat.columns:
         df_cat["Cert/Folio"] = df_cat["Cert/Folio"].fillna("")
     
     if "Observaciones" in df_cat.columns:
         df_cat["Observaciones"] = df_cat["Observaciones"].fillna("")
-    
-    if "Vencimiento" in df_cat.columns:
-        df_cat["EstadoCalc"] = df_cat["Vencimiento"].apply(calcular_estado)
 
-        if filtro_activo:
-            df_cat = df_cat[
-                df_cat["Estatus"].astype(str).str.lower().str.contains("vencido|vencida|por vencer|proximo|expirado|vence")
-            ]
-
-    if categoria == "CURSOS EXTERNOS" and "Cert/Folio" in df_cat.columns:
-        df_cat["Cert/Folio"] = df_cat["Cert/Folio"].fillna("")
-
-    if "Observaciones" in df_cat.columns:
-        df_cat["Observaciones"] = df_cat["Observaciones"].fillna("")
-
-    if categoria == "CURSOS EXTERNOS" and "Cert/Folio" in df_cat.columns:
-        columnas = ["Curso", "Cert/Folio", "Vencimiento", "Estatus", "Observaciones"]
-        columnas = [col for col in columnas if col in df_cat.columns]
-        df_cat = df_cat[columnas]
-
-    if df_cat.empty:
-        st.markdown(f"## 📂 {categoria}")
-        st.warning("Sin datos en esta categoría")
-        continue
-
-    if "Estatus" in df_cat.columns:
-        df_cat["Estatus"] = df_cat["Estatus"].apply(icono_estatus)
-
+    # -------------------------
+    # FILTRO DE FECHA
+    # -------------------------
     if "Vencimiento" in df_cat.columns:
         df_cat = df_cat[df_cat["Vencimiento"].notna()]
+
+    # 🔴 ESTE ES EL PUNTO CLAVE (AL FINAL DE TODO)
+    if df_cat.empty:
+        continue
+
+    # -------------------------
+    # ESTATUS
+    # -------------------------
+    if "Estatus" in df_cat.columns:
+        df_cat["Estatus"] = df_cat["Estatus"].apply(icono_estatus)
 
     st.markdown(f"## 📂 {categoria}")
     st.dataframe(df_cat, use_container_width=True)
