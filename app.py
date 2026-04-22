@@ -227,7 +227,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
             # 🔹 Encabezados
             pdf.set_font("Helvetica", "B", 9)
             pdf.set_fill_color(230, 230, 230)
-
+            pdf.set_x(start_x)
             for i, col in enumerate(columnas):
                 txt = str(col).encode("latin-1", "ignore").decode("latin-1")
                 pdf.cell(col_widths[i], 7, txt, border=1, fill=True)
