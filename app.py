@@ -107,7 +107,8 @@ categorias = {
 }
 
 rangos_con_certificado = [
-    (18, 29),  # externos (bloques de 6)
+    (18, 23),
+    (24, 29) # externos (bloques de 6)
 ]
 
 def icono_estatus(val):
@@ -153,11 +154,13 @@ def obtener_cursos(rangos):
             try:
                 # si es bloque con certificado → se recorre 1 columna
                 if any(inicio <= col < fin for inicio, fin in rangos_con_certificado):
-                    estatus = fila.iloc[col + 5]
+                    vencimiento = pd.to_datetime(fila.iloc[col + 3], errors="coerce")
                 else:
-                    estatus = fila.iloc[col + 4]
-            except:
-                pass
+                    vencimiento = pd.to_datetime(fila.iloc[col + 2], errors="coerce")
+
+                vencimiento = vencimiento.date() if pd.notna(vencimiento) else None
+        except:
+            pass
 
             try:
                 observaciones = fila.iloc[col + 0]
