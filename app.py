@@ -204,7 +204,6 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
          start_x = (PAGE_WIDTH - TABLE_WIDTH) / 2
          pdf.set_x(start_x)
 
-        # 👉 SOLO aplicar nuevo formato desde SEGURIDAD en adelante
         if categoria in ["CURSOS TÉCNICOS", "CURSOS DE SEGURIDAD", "CURSOS EXTERNOS", "CURSOS COMPLEMENTARIOS"]:
 
             # ⚪ BARRA GRIS (título de sección)
@@ -265,7 +264,6 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
                     pdf.set_fill_color(255, 255, 255)
 
                 for i, col in enumerate (columnas):
-                    valor = srt(row.get(col, ""))[:45]
                     valor = valor.encode("latin-1", "ignore").decode("latin-1")
 
                     pdf.cell(col_widths[i], 6, valor, border=1, fill=True)
