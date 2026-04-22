@@ -219,16 +219,14 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
             columnas = df.columns.tolist()
 
             # 🔹 Anchos tipo reporte (más ordenado)
-            if categoria == "CURSOS EXTERNOS":
-                columnas = ["Curso", "Cert/Folio", "Vencimiento", "Estatus", "Observaciones"]
-
+            if "Cert/Folio" in columnas:
                 col_widths = [
-                    TABLE_WIDTH * 0.35,  # Curso
-                    TABLE_WIDTH * 0.15,  # Cert/Folio
-                    TABLE_WIDTH * 0.20,  # Vencimiento
-                    TABLE_WIDTH * 0.15,  # Estatus
-                    TABLE_WIDTH * 0.15   # Observaciones
-                ]
+                    TABLE_WIDTH * 0.40,
+                    TABLE_WIDTH * 0.20,
+                    TABLE_WIDTH * 0.15,
+                    TABLE_WIDTH * 0.25,
+                    TABLE_WIDTH * 0.25
+                 ]
             else:
                 col_widths = [
                     TABLE_WIDTH * 0.50,
@@ -250,7 +248,6 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
             pdf.set_font("Helvetica", "", 8)
 
             for _, row in df.iterrows():
-                pdf.set_x(start_x)
 
                 estatus = str(row.get("Estatus", "")).lower()
 
@@ -264,22 +261,11 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
                 else:
                     pdf.set_fill_color(255, 255, 255)
 
-                y_before = pdf.get_y()
-                x_start = start_x  # IMPORTANTE: usa tu alineación existente
-
-                max_height = 6
-
                 for i, col in enumerate(columnas):
-
-                    valor = str(row.get(col, ""))
+                    valor = str(row.get(col, ""))[:45]
                     valor = valor.encode("latin-1", "ignore").decode("latin-1")
 
-                    pdf.set_xy(x_start, y_before)
-                    pdf.multi_cell(col_widths[i], max_height, valor, border=1, fill=True)
-
-                    x_start += col_widths[i]
-
-                pdf.set_y(y_before + max_height)
+                    pdf.cell(col_widths[i], 6, valor, border=1, fill=True)
 
                 pdf.ln()
 
