@@ -405,8 +405,10 @@ for categoria, cursos_base in categorias.items():
         estatus = df_cat["Estatus"].fillna("").astype(str).str.lower()
 
         df_cat = df_cat[
-            estatus.str.contains("vencido|por vencer|vence", na=False)
-        ]
+        estatus.str.contains("venc", na=False) |
+        estatus.str.contains("por vencer", na=False) |
+        estatus.str.contains("vence", na=False)
+    ]
         df_cat = df_cat[df_cat["Curso"].notna()]
     # -------------------------
     # EVITAR TABLAS VACÍAS
