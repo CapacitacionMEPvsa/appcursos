@@ -259,7 +259,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
                     pdf.set_fill_color(198, 239, 206)
                 elif "por vencer" in estatus:
                     pdf.set_fill_color(255, 235, 156)
-                elif "vencida" in estatus:
+                elif "vencido" in estatus:
                     pdf.set_fill_color(255, 199, 206)
                 else:
                     pdf.set_fill_color(255, 255, 255)
