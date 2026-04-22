@@ -201,8 +201,8 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     GRIS = (200, 200, 200)
     for categoria, df in datos_dict.items():
 
-         start_x = (PAGE_WIDTH - TABLE_WIDTH) / 2
-         pdf.set_x(start_x)
+        start_x = (PAGE_WIDTH - TABLE_WIDTH) / 2
+        pdf.set_x(start_x)
 
         if categoria in ["CURSOS TÉCNICOS", "CURSOS DE SEGURIDAD", "CURSOS EXTERNOS", "CURSOS COMPLEMENTARIOS"]:
 
