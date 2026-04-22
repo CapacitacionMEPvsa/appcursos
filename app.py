@@ -266,7 +266,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
 
                 for i, col in enumerate (columnas):
                     valor = srt(row.get(col, ""))[:45]
-                    valor = valor.encode(latin-1", "ignore").decode("latin-1")
+                    valor = valor.encode("latin-1", "ignore").decode("latin-1")
 
                     pdf.cell(col_widths[i], 6, valor, border=1, fill=True)
 
