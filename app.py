@@ -222,7 +222,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
 
             max_height = 6
             
-        for col in columnas:
+            for col in columnas:
 
                 valor = str(row.get(col, ""))
                 valor = valor.encode("latin-1", "ignore").decode("latin-1")
