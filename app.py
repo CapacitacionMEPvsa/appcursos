@@ -399,12 +399,12 @@ for categoria, cursos_base in categorias.items():
     # -------------------------
     if filtro_activo and "Estatus" in df_cat.columns:
 
-        estatus = df_cat["Estatus"].astype(str).str.lower()
+        estatus = df_cat["Estatus"].fillna("").astype(str).str.lower()
 
         df_cat = df_cat[
             estatus.str.contains("vencido|por vencer|vence", na=False)
         ]
-
+        df_cat = df_cat[df_cat["Curso"].notna()]
     # -------------------------
     # EVITAR TABLAS VACÍAS
     # -------------------------
