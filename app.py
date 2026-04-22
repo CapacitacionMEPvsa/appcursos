@@ -166,6 +166,9 @@ def obtener_cursos(rangos):
 # =========================
 from fpdf import FPDF
 
+TABLE_WIDTH = 270
+PAGE_WIDTH = 297
+
 def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     pdf = FPDF(orientation="L", unit="mm", format="A4")
     pdf.add_page()
