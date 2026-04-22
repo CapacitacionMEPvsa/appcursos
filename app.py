@@ -250,6 +250,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
 
             for _, row in df.iterrows():
                 pdf.set_x(start_x)
+                y_before = pdf.get_y()
 
                 estatus = str(row.get("Estatus", "")).lower()
 
