@@ -196,63 +196,70 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     # =========================
     # 📊 TABLAS
     # =========================
-    for categoria, df in datos_dict.items():
+VERDE_LIMON = (153, 255, 0)
+for categoria, df in datos_dict.items():
 
-        pdf.set_font("Helvetica", "B", 12)
-        pdf.cell(0, 8, categoria, ln=True)
+    # 👉 SOLO aplicar nuevo formato desde SEGURIDAD en adelante
+    if categoria in ["CURSOS DE SEGURIDAD", "CURSOS EXTERNOS", "CURSOS COMPLEMENTARIOS"]:
+
+        # 🟢 BARRA VERDE LIMÓN (título de sección)
+        pdf.set_fill_color(*VERDE_LIMON)
+        pdf.set_text_color(0, 0, 0)
+        pdf.set_font("Helvetica", "B", 11)
+        pdf.cell(0, 8, categoria, ln=True, fill=True)
+
         pdf.ln(1)
 
         columnas = df.columns.tolist()
 
-        # encabezados
-        pdf.set_font("Helvetica", "B", 9)
-        pdf.set_fill_color(200, 200, 200)
+        # 🔹 Anchos tipo reporte (más ordenado)
+        if "Cert/Folio" in columnas:
+            col_widths = [70, 45, 30, 35, 80]
+        else:
+            col_widths = [90, 35, 35, 90]
 
-        for col in columnas:
-            col_text = str(col).encode("latin-1", "ignore").decode("latin-1")
-            pdf.cell(60, 7, col_text, border=1, fill=True)
+        # 🔹 Encabezados
+        pdf.set_font("Helvetica", "B", 9)
+        pdf.set_fill_color(230, 230, 230)
+
+        for i, col in enumerate(columnas):
+            txt = str(col).encode("latin-1", "ignore").decode("latin-1")
+            pdf.cell(col_widths[i], 7, txt, border=1, fill=True)
         pdf.ln()
 
-        # filas
-        pdf.set_font("Helvetica", size=8)
+        # 🔹 Filas
+        pdf.set_font("Helvetica", "", 8)
 
         for _, row in df.iterrows():
-            y_before = pdf.get_y()
-            x_start = pdf.get_x()
-            max_height = 6
-            
-            for col in columnas:
 
-                valor = str(row.get(col, ""))
+            estatus = str(row.get("Estatus", "")).lower()
+
+            # 🎨 color por fila completa (más limpio como tu imagen)
+            if "vigente" in estatus:
+                pdf.set_fill_color(198, 239, 206)
+            elif "vencer" in estatus:
+                pdf.set_fill_color(255, 235, 156)
+            elif "pendiente" in estatus:
+                pdf.set_fill_color(255, 199, 206)
+            else:
+                pdf.set_fill_color(255, 255, 255)
+
+            for i, col in enumerate(columnas):
+                valor = str(row.get(col, ""))[:45]
                 valor = valor.encode("latin-1", "ignore").decode("latin-1")
 
-                # =========================
-                # 🎨 COLOR EN ESTATUS
-                # =========================
-                if col.lower() == "estatus":
-                    
-                    val_lower = valor.lower()
+                pdf.cell(col_widths[i], 6, valor, border=1, fill=True)
 
-                    if "vigente" in val_lower:
-                        pdf.set_fill_color(198, 246, 213)  # verde
-                    elif "vencer" in val_lower:
-                        pdf.set_fill_color(254, 252, 191)  # amarillo
-                    elif "vencido" in val_lower:
-                        pdf.set_fill_color(254, 215, 215)  # rojo
-                    else:
-                        pdf.set_fill_color(255, 255, 255)
-                        
-                    col_width = 50 if len(columnas) <= 4 else 40
-                    pdf.multi_cell(col_width, max_height, valor, border=1, fill=True)
-                    x_start += col_width
-                    pdf.set_xy(x_start, y_before)
-                    
-                else:
-                    pdf.set_fill_color(255, 255, 255)
-                    pdf.cell(60, 6, valor[:25], border=1)
             pdf.ln()
+
         pdf.ln(4)
-    return pdf.output(dest="S").encode("latin-1")
+
+    else:
+        # 👉 lo técnico lo dejas como ya lo tienes
+        pdf.set_font("Helvetica", "B", 12)
+        pdf.cell(0, 8, categoria, ln=True)
+
+        # tu lógica original aquí 👇 (no la toco)
 
 
 # 🔘 BOTÓN REAL
