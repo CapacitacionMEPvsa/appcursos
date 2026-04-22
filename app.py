@@ -376,33 +376,43 @@ for categoria, cursos_base in categorias.items():
     df_cat = obtener_cursos(cursos_base).copy()
 
     # -------------------------
-    # LIMPIEZA DE COLUMNAS
+    # LIMPIEZA
     # -------------------------
     if categoria == "CURSOS EXTERNOS" and "Cert/Folio" in df_cat.columns:
         df_cat["Cert/Folio"] = df_cat["Cert/Folio"].fillna("")
-    
+
     if "Observaciones" in df_cat.columns:
         df_cat["Observaciones"] = df_cat["Observaciones"].fillna("")
 
     # -------------------------
-    # FILTRO DE FECHA
+    # ASEGURAR VENCIMIENTO + ESTADO
     # -------------------------
     if "Vencimiento" in df_cat.columns:
         df_cat = df_cat[df_cat["Vencimiento"].notna()]
+        df_cat["Estado_calculado"] = df_cat["Vencimiento"].apply(calcular_estado)
 
-    # 🔴 ESTE ES EL PUNTO CLAVE (AL FINAL DE TODO)
+    # -------------------------
+    # FILTRO (AQUÍ ACTÚA EL TOGGLE)
+    # -------------------------
+    if filtro_activo and "Estado_calculado" in df_cat.columns:
+        df_cat = df_cat[
+            df_cat["Estado_calculado"].isin(["VENCIDO", "POR VENCER"])
+        ]
+
+    # -------------------------
+    # EVITAR TABLAS VACÍAS
+    # -------------------------
     if df_cat.empty:
         continue
 
     # -------------------------
-    # ESTATUS
+    # ESTATUS VISUAL
     # -------------------------
     if "Estatus" in df_cat.columns:
         df_cat["Estatus"] = df_cat["Estatus"].apply(icono_estatus)
 
-        df_cat = df_cat[
-        df_cat["Estado_calculado"].isin(["VENCIDO", "POR VENCER"])
-    ]
-
+    # -------------------------
+    # MOSTRAR
+    # -------------------------
     st.markdown(f"## 📂 {categoria}")
     st.dataframe(df_cat, use_container_width=True)
