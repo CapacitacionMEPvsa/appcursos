@@ -156,11 +156,14 @@ def obtener_cursos(rangos):
             except:
                 pass
 
-            # 🔹 ESTATUS (NO SE TOCA)
+            # 🔹 ESTATUS (solo cambia en cursos con certificado)
             try:
+                if any(inicio <= col < fin for inicio, fin in rangos_con_certificado):
+                    estatus = fila.iloc[col + 5]
+            else:
                 estatus = fila.iloc[col + 4]
-            except:
-                pass
+        except:
+            pass
 
             # 🔹 OBSERVACIONES (NO SE TOCA)
             try:
