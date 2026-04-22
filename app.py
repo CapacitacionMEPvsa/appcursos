@@ -268,8 +268,9 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
                     valor = valor.encode("latin-1", "ignore").decode("latin-1")
                     
                     pdf.set_xy(x_start, y_before)
-                    pdf.cell(col_widths[i], 6, valor, border=1, fill=True)
-
+                    pdf.multi_cell(col_widths[i], 6, valor, border=1, fill=True)
+                    x_start += col_widths[i]
+                    
                 pdf.ln()
 
             pdf.ln(6)
