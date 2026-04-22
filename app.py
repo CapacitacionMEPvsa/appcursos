@@ -252,7 +252,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
 
                 pdf.ln()
 
-                pdf.ln(4)
+                pdf.ln(0)
             return pdf.output(dest="S").encode("latin-1")
         else:
             # 👉 lo técnico lo dejas como ya lo tienes
