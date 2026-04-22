@@ -257,9 +257,9 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
                 # 🎨 color por fila completa (más limpio como tu imagen)
                 if "vigente" in estatus:
                     pdf.set_fill_color(198, 239, 206)
-                elif "vencer" in estatus:
+                elif "por vencer" in estatus:
                     pdf.set_fill_color(255, 235, 156)
-                elif "pendiente" in estatus:
+                elif "vencida" in estatus:
                     pdf.set_fill_color(255, 199, 206)
                 else:
                     pdf.set_fill_color(255, 255, 255)
