@@ -247,7 +247,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
                     x_start += col_width
                     pdf.set_xy(x_start, y_before)
                 pdf.ln(max_height)
-            pdf.cell(60, 6, valor[:25], border=1, fill=True)
+                pdf.cell(60, 6, valor[:25], border=1, fill=True)
                 else:
                     pdf.set_fill_color(255, 255, 255)
                     pdf.cell(60, 6, valor[:25], border=1)
