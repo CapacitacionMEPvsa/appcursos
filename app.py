@@ -400,5 +400,9 @@ for categoria, cursos_base in categorias.items():
     if "Estatus" in df_cat.columns:
         df_cat["Estatus"] = df_cat["Estatus"].apply(icono_estatus)
 
+        df_cat = df_cat[
+        df_cat["Estado_calculado"].isin(["VENCIDO", "POR VENCER"])
+    ]
+
     st.markdown(f"## 📂 {categoria}")
     st.dataframe(df_cat, use_container_width=True)
