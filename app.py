@@ -171,9 +171,6 @@ PAGE_WIDTH = 297
 
 def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     
-    PAGE_WIDTH = 297   # A4 horizontal
-    TABLE_WIDTH = 270
-    
     pdf = FPDF(orientation="L", unit="mm", format="A4")
     pdf.add_page()
 
