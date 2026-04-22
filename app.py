@@ -354,9 +354,6 @@ OFFSET_OBSERVACIONES = 5
 # =========================
 # MOSTRAR POR CATEGORÍA
 # =========================
-for categoria, cursos_base in categorias.items():
-
-    df_cat = obtener_cursos(cursos_base).copy()
 from datetime import datetime
 
 def calcular_estado(fecha):
@@ -373,19 +370,22 @@ def calcular_estado(fecha):
     else:
         return "VIGENTE"
 
-# 🔽 aplicar estado
-if "Vencimiento" in df_cat.columns:
-    df_cat["EstadoCalc"] = df_cat["Vencimiento"].apply(calcular_estado)
 
-    # 🔥 AQUÍ SE ACTIVA EL FILTRO
-    if filtro_activo:
-        df_cat = df_cat[
-            df_cat["EstadoCalc"].isin(["VENCIDO", "POR VENCER"])
-        ]
+for categoria, cursos_base in categorias.items():
+
+    df_cat = obtener_cursos(cursos_base).copy()
+
+    if "Vencimiento" in df_cat.columns:
+        df_cat["EstadoCalc"] = df_cat["Vencimiento"].apply(calcular_estado)
+
+        if filtro_activo:
+            df_cat = df_cat[
+                df_cat["EstadoCalc"].isin(["VENCIDO", "POR VENCER"])
+            ]
 
     if categoria == "CURSOS EXTERNOS" and "Cert/Folio" in df_cat.columns:
         df_cat["Cert/Folio"] = df_cat["Cert/Folio"].fillna("")
-    
+
     if "Observaciones" in df_cat.columns:
         df_cat["Observaciones"] = df_cat["Observaciones"].fillna("")
 
@@ -394,17 +394,14 @@ if "Vencimiento" in df_cat.columns:
         columnas = [col for col in columnas if col in df_cat.columns]
         df_cat = df_cat[columnas]
 
-    # 🔥 SI NO HAY DATOS, MUESTRA MENSAJE PERO NO ROMPAS
     if df_cat.empty:
         st.markdown(f"## 📂 {categoria}")
         st.warning("Sin datos en esta categoría")
         continue
 
-    # 🔥 SEMÁFORO SEGURO
     if "Estatus" in df_cat.columns:
         df_cat["Estatus"] = df_cat["Estatus"].apply(icono_estatus)
 
-    # ⚠️ FILTRO SEGURO (NO ELIMINA TODO)
     if "Vencimiento" in df_cat.columns:
         df_cat = df_cat[df_cat["Vencimiento"].notna()]
 
