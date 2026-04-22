@@ -392,7 +392,6 @@ for categoria, cursos_base in categorias.items():
         df_cat["Vencimiento"] = pd.to_datetime(df_cat["Vencimiento"], errors="coerce").dt.date
 
         df_cat = df_cat[df_cat["Vencimiento"].notna()]
-        df_cat["Estado_calculado"] = df_cat["Vencimiento"].apply(calcular_estado)
 
     # -------------------------
     # FILTRO SOLO CON ESTATUS DEL EXCEL
