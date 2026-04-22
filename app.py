@@ -202,7 +202,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
         # 👉 SOLO aplicar nuevo formato desde SEGURIDAD en adelante
         if categoria in ["CURSOS DE SEGURIDAD", "CURSOS EXTERNOS", "CURSOS COMPLEMENTARIOS"]:
 
-            # 🟢 BARRA GRIS CLARO (título de sección)
+            # ⚪ BARRA GRIS CLARO (título de sección)
             pdf.set_fill_color(*GRIS_CLARO)
             pdf.set_text_color(0, 0, 0)
             pdf.set_font("Helvetica", "B", 11)
