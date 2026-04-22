@@ -107,7 +107,7 @@ categorias = {
 }
 
 rangos_con_certificado = [
-    (17, 28),  # externos (bloques de 6)
+    (18, 29),  # externos (bloques de 6)
 ]
 
 def icono_estatus(val):
