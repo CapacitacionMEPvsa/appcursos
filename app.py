@@ -420,6 +420,5 @@ for categoria, cursos_base in categorias.items():
     # -------------------------
     # MOSTRAR
     # -------------------------
-    df_cat = df_cat.dropna(how="all")
     st.markdown(f"## 📂 {categoria}")
     st.dataframe(df_cat, use_container_width=True)
