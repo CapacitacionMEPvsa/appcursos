@@ -159,8 +159,8 @@ def obtener_cursos(rangos):
                     vencimiento = pd.to_datetime(fila.iloc[col + 2], errors="coerce")
 
                 vencimiento = vencimiento.date() if pd.notna(vencimiento) else None
-        except:
-            pass
+            except:
+                pass
 
             try:
                 observaciones = fila.iloc[col + 0]
