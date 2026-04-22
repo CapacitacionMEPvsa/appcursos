@@ -47,10 +47,24 @@ COL_NOMBRE = "Nombre del Colaborador"
 # =========================
 # INPUT
 # =========================
-nomina = st.text_input("Ingresa tu número de nómina")
+if "nomina" not in st.session_state:
+    st.session_state.nomina = None
 
-if not nomina:
+if st.session_state.nomina is None:
+    st.image("logo.png", width=150)
+
+    nomina_input = st.text_input("Ingresa tu número de nómina")
+
+    if st.button("Ver mis cursos"):
+        if nomina_input.strip() == "":
+            st.warning("Ingresa tu número de nómina")
+        else:
+            st.session_state.nomina = nomina_input.strip()
+            st.rerun()
+
     st.stop()
+
+nomina = st.session_state.nomina
 
 # =========================
 # FILTRAR EMPLEADO
