@@ -92,6 +92,7 @@ with col2:
         st.rerun()
 
 st.markdown(f"## 👤 {nombre}")
+filtro_activo = st.toggle("🚀 Solo pendientes o por vencer")
 
 st.markdown("---")
 
@@ -310,7 +311,6 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
 if st.button("📄 Descargar Kardex de Capacitación Laboral"):
 
     datos_export = {}
-    filtro_activo = st.toggle("🚀 Solo pendientes o por vencer")
     for categoria, cursos_base in categorias.items():
 
         df_export = obtener_cursos(cursos_base).copy()
