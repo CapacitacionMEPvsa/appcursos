@@ -380,7 +380,7 @@ for categoria, cursos_base in categorias.items():
 
         if filtro_activo:
             df_cat = df_cat[
-                df_cat["Estatus"].isin(["VENCIDO", "POR VENCER"])
+                df_cat["Estatus"].astype(str).str.lower().str.contains("vencido|por vencer")
             ]
 
     if categoria == "CURSOS EXTERNOS" and "Cert/Folio" in df_cat.columns:
