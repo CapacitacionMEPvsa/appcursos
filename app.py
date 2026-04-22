@@ -92,7 +92,7 @@ with col2:
         st.rerun()
 
 st.markdown(f"## 👤 {nombre}")
-filtro_activo = st.toggle("🚀 Por Vencer / Vencidos")
+filtro_activo = st.toggle("🚀 Por Vencer / Vencido")
 
 st.markdown("---")
 
