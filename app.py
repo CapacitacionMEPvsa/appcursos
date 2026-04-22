@@ -264,11 +264,22 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
                 else:
                     pdf.set_fill_color(255, 255, 255)
 
+                y_before = pdf.get_y()
+                x_start = start_x  # IMPORTANTE: usa tu alineación existente
+
+                max_height = 6
+
                 for i, col in enumerate(columnas):
-                    valor = str(row.get(col, ""))[:45]
+
+                    valor = str(row.get(col, ""))
                     valor = valor.encode("latin-1", "ignore").decode("latin-1")
 
-                    pdf.cell(col_widths[i], 6, valor, border=1, fill=True)
+                    pdf.set_xy(x_start, y_before)
+                    pdf.multi_cell(col_widths[i], max_height, valor, border=1, fill=True)
+
+                    x_start += col_widths[i]
+
+                pdf.set_y(y_before + max_height)
 
                 pdf.ln()
 
