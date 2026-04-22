@@ -81,6 +81,16 @@ fila = empleado_df.iloc[0]
 nombre = fila[COL_NOMBRE]
 proceso = fila.iloc[3]
 
+col1, col2 = st.columns([6,1])
+
+with col1:
+    st.image("logo.png", width=120)
+
+with col2:
+    if st.button("Cerrar sesión"):
+        st.session_state.nomina = None
+        st.rerun()
+
 st.markdown(f"## 👤 {nombre}")
 
 st.markdown("---")
