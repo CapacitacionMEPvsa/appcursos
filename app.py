@@ -153,7 +153,7 @@ def obtener_cursos(rangos):
             try:
                 # si es bloque con certificado → se recorre 1 columna
                 if any(inicio <= col < fin for inicio, fin in rangos_con_certificado):
-                    estatus = fila.iloc[col + 4]
+                    estatus = fila.iloc[col + 5]
                 else:
                     estatus = fila.iloc[col + 4]
             except:
