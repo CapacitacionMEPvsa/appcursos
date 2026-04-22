@@ -145,14 +145,8 @@ def obtener_cursos(rangos):
             observaciones = None
             certificado = None
 
+            # 🔹 VENCIMIENTO (único que cambia en especiales)
             try:
-                vencimiento = pd.to_datetime(fila.iloc[col + 2], errors="coerce")
-                vencimiento = vencimiento.date() if pd.notna(vencimiento) else None
-            except:
-                pass
-
-            try:
-                # si es bloque con certificado → se recorre 1 columna
                 if any(inicio <= col < fin for inicio, fin in rangos_con_certificado):
                     vencimiento = pd.to_datetime(fila.iloc[col + 3], errors="coerce")
                 else:
@@ -162,8 +156,15 @@ def obtener_cursos(rangos):
             except:
                 pass
 
+            # 🔹 ESTATUS (NO SE TOCA)
             try:
-                observaciones = fila.iloc[col + 0]
+                estatus = fila.iloc[col + 4]
+            except:
+                pass
+
+            # 🔹 OBSERVACIONES (NO SE TOCA)
+            try:
+                observaciones = fila.iloc[col + 5]
             except:
                 pass
 
