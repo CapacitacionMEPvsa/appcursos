@@ -385,9 +385,12 @@ for categoria, cursos_base in categorias.items():
         df_cat["Observaciones"] = df_cat["Observaciones"].fillna("")
 
     # -------------------------
-    # ASEGURAR VENCIMIENTO + ESTADO
+    # ASEGURAR VENCIMIENTO + ESTADO (FIX EXTERNOS)
     # -------------------------
     if "Vencimiento" in df_cat.columns:
+        # 👇 ESTA LÍNEA ES LA IMPORTANTE (PÉGALA AQUÍ)
+        df_cat["Vencimiento"] = pd.to_datetime(df_cat["Vencimiento"], errors="coerce").dt.date
+
         df_cat = df_cat[df_cat["Vencimiento"].notna()]
         df_cat["Estado_calculado"] = df_cat["Vencimiento"].apply(calcular_estado)
 
