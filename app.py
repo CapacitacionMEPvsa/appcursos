@@ -374,7 +374,10 @@ def calcular_estado(fecha):
 for categoria, cursos_base in categorias.items():
 
     df_cat = obtener_cursos(cursos_base).copy()
-
+    df_cat = df_cat[
+        df_cat["Curso"].notna() &
+        (df_cat["Curso"].astype(str).str.strip() != "")
+    ]
     # -------------------------
     # LIMPIEZA
     # -------------------------
