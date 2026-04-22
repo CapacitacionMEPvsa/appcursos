@@ -78,8 +78,8 @@ if empleado_df.empty:
     st.stop()
 
 fila = empleado_df.iloc[0]
-nombre = base_fila[COL_NOMBRE]
-proceso = base_fila.iloc[3]
+nombre = fila[COL_NOMBRE]
+proceso = fila.iloc[3]
 
 col1, col2 = st.columns([6,1])
 
