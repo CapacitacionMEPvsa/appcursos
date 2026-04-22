@@ -211,7 +211,8 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
             pdf.set_fill_color(*GRIS)
             pdf.set_text_color(0, 0, 0)
             pdf.set_font("Helvetica", "B", 11)
-            pdf.cell(0, 8, categoria, ln=True, fill=True)
+            pdf.set_x(start_x)
+            pdf.cell(TABLE_WIDTH, 8, categoria, ln=True, fill=True, align="L")
 
             pdf.ln(1)
 
