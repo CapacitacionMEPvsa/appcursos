@@ -92,7 +92,7 @@ with col2:
         st.rerun()
 
 st.markdown(f"## 👤 {nombre}")
-filtro_activo = st.toggle("🚀 Por Vencer / Vencida")
+filtro_activo = st.toggle("🚀 Por Vencer / Vencido")
 
 st.markdown("---")
 
@@ -363,9 +363,9 @@ def calcular_estado(fecha):
     hoy = datetime.now().date()
     diff = (fecha - hoy).days
 
-    if diff < 0:
+    if diff < -0:
         return "VENCIDO"
-    elif diff <= 30:
+    elif diff <= 90:
         return "POR VENCER"
     else:
         return "VIGENTE"
