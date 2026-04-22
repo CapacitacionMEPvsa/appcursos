@@ -250,7 +250,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
 
                     pdf.cell(col_widths[i], 6, valor, border=1, fill=True)
 
-                pdf.ln()
+                pdf.ln(1)
 
                 pdf.ln(0)
             return pdf.output(dest="S").encode("latin-1")
