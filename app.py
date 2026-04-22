@@ -249,8 +249,8 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
             pdf.set_font("Helvetica", "", 8)
 
             for _, row in df.iterrows():
-                pdf.set_x(start_x)
                 y_before = pdf.get_y()
+                x_start = start_x
 
                 estatus = str(row.get("Estatus", "")).lower()
 
