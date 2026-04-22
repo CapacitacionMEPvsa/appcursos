@@ -94,7 +94,7 @@ def icono_estatus(val):
     if "proximo" in val or "por vencer" in val or "vence" in val:
         return "🟡 Por vencer"
 
-    if "vencido" in val or "expirado" in val:
+    if "vencida" in val or "expirado" in val:
         return "🔴 Vencido"
 
     return val
