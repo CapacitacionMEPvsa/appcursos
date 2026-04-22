@@ -196,68 +196,68 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     # =========================
     # 📊 TABLAS
     # =========================
-VERDE_LIMON = (153, 255, 0)
-for categoria, df in datos_dict.items():
+    VERDE_LIMON = (153, 255, 0)
+    for categoria, df in datos_dict.items():
 
-    # 👉 SOLO aplicar nuevo formato desde SEGURIDAD en adelante
-    if categoria in ["CURSOS DE SEGURIDAD", "CURSOS EXTERNOS", "CURSOS COMPLEMENTARIOS"]:
+        # 👉 SOLO aplicar nuevo formato desde SEGURIDAD en adelante
+        if categoria in ["CURSOS DE SEGURIDAD", "CURSOS EXTERNOS", "CURSOS COMPLEMENTARIOS"]:
 
-        # 🟢 BARRA VERDE LIMÓN (título de sección)
-        pdf.set_fill_color(*VERDE_LIMON)
-        pdf.set_text_color(0, 0, 0)
-        pdf.set_font("Helvetica", "B", 11)
-        pdf.cell(0, 8, categoria, ln=True, fill=True)
+            # 🟢 BARRA VERDE LIMÓN (título de sección)
+            pdf.set_fill_color(*VERDE_LIMON)
+            pdf.set_text_color(0, 0, 0)
+            pdf.set_font("Helvetica", "B", 11)
+            pdf.cell(0, 8, categoria, ln=True, fill=True)
 
-        pdf.ln(1)
+            pdf.ln(1)
 
-        columnas = df.columns.tolist()
+            columnas = df.columns.tolist()
 
-        # 🔹 Anchos tipo reporte (más ordenado)
-        if "Cert/Folio" in columnas:
-            col_widths = [70, 45, 30, 35, 80]
-        else:
-            col_widths = [90, 35, 35, 90]
-
-        # 🔹 Encabezados
-        pdf.set_font("Helvetica", "B", 9)
-        pdf.set_fill_color(230, 230, 230)
-
-        for i, col in enumerate(columnas):
-            txt = str(col).encode("latin-1", "ignore").decode("latin-1")
-            pdf.cell(col_widths[i], 7, txt, border=1, fill=True)
-        pdf.ln()
-
-        # 🔹 Filas
-        pdf.set_font("Helvetica", "", 8)
-
-        for _, row in df.iterrows():
-
-            estatus = str(row.get("Estatus", "")).lower()
-
-            # 🎨 color por fila completa (más limpio como tu imagen)
-            if "vigente" in estatus:
-                pdf.set_fill_color(198, 239, 206)
-            elif "vencer" in estatus:
-                pdf.set_fill_color(255, 235, 156)
-            elif "pendiente" in estatus:
-                pdf.set_fill_color(255, 199, 206)
+            # 🔹 Anchos tipo reporte (más ordenado)
+            if "Cert/Folio" in columnas:
+                col_widths = [70, 45, 30, 35, 80]
             else:
-                pdf.set_fill_color(255, 255, 255)
+                col_widths = [90, 35, 35, 90]
+
+            # 🔹 Encabezados
+            pdf.set_font("Helvetica", "B", 9)
+            pdf.set_fill_color(230, 230, 230)
 
             for i, col in enumerate(columnas):
-                valor = str(row.get(col, ""))[:45]
-                valor = valor.encode("latin-1", "ignore").decode("latin-1")
-
-                pdf.cell(col_widths[i], 6, valor, border=1, fill=True)
-
+                txt = str(col).encode("latin-1", "ignore").decode("latin-1")
+                pdf.cell(col_widths[i], 7, txt, border=1, fill=True)
             pdf.ln()
 
-        pdf.ln(4)
+            # 🔹 Filas
+            pdf.set_font("Helvetica", "", 8)
 
-    else:
-        # 👉 lo técnico lo dejas como ya lo tienes
-        pdf.set_font("Helvetica", "B", 12)
-        pdf.cell(0, 8, categoria, ln=True)
+            for _, row in df.iterrows():
+
+                estatus = str(row.get("Estatus", "")).lower()
+
+                # 🎨 color por fila completa (más limpio como tu imagen)
+                if "vigente" in estatus:
+                    pdf.set_fill_color(198, 239, 206)
+                elif "vencer" in estatus:
+                    pdf.set_fill_color(255, 235, 156)
+                elif "pendiente" in estatus:
+                    pdf.set_fill_color(255, 199, 206)
+                else:
+                    pdf.set_fill_color(255, 255, 255)
+
+                for i, col in enumerate(columnas):
+                    valor = str(row.get(col, ""))[:45]
+                    valor = valor.encode("latin-1", "ignore").decode("latin-1")
+
+                    pdf.cell(col_widths[i], 6, valor, border=1, fill=True)
+
+               pdf.ln()
+
+          pdf.ln(4)
+
+        else:
+            # 👉 lo técnico lo dejas como ya lo tienes
+            pdf.set_font("Helvetica", "B", 12)
+            pdf.cell(0, 8, categoria, ln=True)
 
         # tu lógica original aquí 👇 (no la toco)
 
