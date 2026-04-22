@@ -158,7 +158,7 @@ def obtener_cursos(rangos):
 
             # 🔹 ESTATUS (NO SE TOCA)
             try:
-                estatus = fila.iloc[col + 5]
+                estatus = fila.iloc[col + 4]
             except:
                 pass
 
