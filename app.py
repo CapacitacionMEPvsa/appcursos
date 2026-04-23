@@ -492,7 +492,7 @@ for categoria, cursos_base in categorias.items():
         df_cat = df_cat[
         estatus.str.contains("venc", na=False) |
         estatus.str.contains("por vencer", na=False) |
-        estatus.str.contains("vence", na=False)
+        estatus.str.contains("vence", na=False) |
         obs.str.contains("pendiente|programado", na=False)
     ]
         df_cat = df_cat[df_cat["Curso"].notna()]
