@@ -205,6 +205,10 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     pdf = FPDF(orientation="L", unit="mm", format="A4")
     pdf.add_page()
 
+    pdf.set_draw_color(0, 0, 0)
+    pdf.set_line_width(0.8)
+    pdf.rect(10, 10, 277, 190)
+    
     # =========================
     # 🔰 LOGO
     # =========================
@@ -263,10 +267,10 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     pdf.set_draw_color(0, 150, 0)
     pdf.set_line_width(0.8)
 
-    pdf.line(10, 38, 287, 38)
+    pdf.line(10, 30, 287, 30)
     
     # Línea vertical derecha
-    pdf.line(287, 10, 287, 34)
+    pdf.line(287, 10, 287, 30)
 
     # 🔁 REGRESAR A NEGRO PARA EL RESTO DEL PDF
     pdf.set_draw_color(0, 0, 0)
@@ -275,10 +279,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     # =========================
     # 👤 DATOS DEL COLABORADOR
     # =========================
-    pdf.set_xy(10, 40)
-
-    # Línea superior
-    pdf.line(10, 47, 287, 47)
+    pdf.set_xy(10, 34)
 
     pdf.set_font("Helvetica", "", 10)
 
