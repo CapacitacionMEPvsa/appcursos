@@ -167,7 +167,7 @@ def obtener_cursos(rangos):
 
             # 🔹 OBSERVACIONES (NO SE TOCA)
             try:
-                observaciones = fila.iloc[col + 4]
+                observaciones = fila.iloc[col + 5]
             except:
                 pass
 
