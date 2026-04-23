@@ -272,7 +272,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     # =========================
     # 👤 DATOS DEL COLABORADOR
     # =========================
-    pdf.set_xy(10, 34)
+    pdf.set_xy(10, 36)
 
     pdf.set_font("Helvetica", "", 10)
 
