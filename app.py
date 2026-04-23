@@ -493,6 +493,7 @@ for categoria, cursos_base in categorias.items():
         estatus.str.contains("venc", na=False) |
         estatus.str.contains("por vencer", na=False) |
         estatus.str.contains("vence", na=False)
+        obs.str.contains("pendiente|programado", na=False)
     ]
         df_cat = df_cat[df_cat["Curso"].notna()]
     # -------------------------
@@ -502,7 +503,7 @@ for categoria, cursos_base in categorias.items():
         continue
     df_cat = df_cat[
         df_cat["Vencimiento"].notna() |
-        df_cat["Observaciones"].astype(str).str.lower().str.contains("pendiente|programado", na=False)
+        df_cat["Observaciones"].astype(str).str.lower().str.contains("Pendiente|Programado", na=False)
     ]
     # -------------------------
     # ESTATUS VISUAL
