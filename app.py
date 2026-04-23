@@ -488,13 +488,15 @@ for categoria, cursos_base in categorias.items():
     if filtro_activo and "Estatus" in df_cat.columns:
 
         estatus = df_cat["Estatus"].fillna("").astype(str).str.lower()
+        obs = df_cat["Observaciones"].fillna("").astype(str).str.lower()
 
         df_cat = df_cat[
-        estatus.str.contains("venc", na=False) |
-        estatus.str.contains("por vencer", na=False) |
-        estatus.str.contains("vence", na=False) |
-        obs.str.contains("Pendiente|Programado", na=False)
-    ]
+            estatus.str.contains("venc", na=False) |
+            estatus.str.contains("por vencer", na=False) |
+            estatus.str.contains("vence", na=False) |
+            obs.str.contains("pendiente|programado", na=False)
+        ]
+        
         df_cat = df_cat[df_cat["Curso"].notna()]
     # -------------------------
     # EVITAR TABLAS VACÍAS
