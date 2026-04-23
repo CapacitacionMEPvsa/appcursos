@@ -276,7 +276,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     # =========================
     # 👤 DATOS DEL COLABORADOR
     # =========================
-    pdf.set_xy(10, 47)
+    pdf.set_xy(10, 38)
 
     # Línea superior
     pdf.line(10, 47, 287, 47)
