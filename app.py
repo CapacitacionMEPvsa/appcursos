@@ -218,18 +218,6 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     # =========================
     pdf.set_draw_color(0, 0, 0)
 
-    # Rectángulo general
-    pdf.rect(10, 10, 277, 35)
-
-    # División vertical (logo / info)
-    pdf.line(50, 10, 50, 45)
-
-    # División horizontal inferior
-    pdf.line(10, 45, 287, 45)
-
-    # Línea para separar título
-    pdf.line(50, 25, 287, 25)
-
     # =========================
     # 📄 DATOS DERECHA (código)
     # =========================
@@ -269,7 +257,18 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
         "Elaboración: 10-may-21    Revisión: 20-abr-26    Emisión: 22-abr-26    Versión: 02    Idioma: ES",
         align="C"
     )
+    # =========================
+    # 🟢 LÍNEAS VERDES (SOLO COMO FORMATO EXCEL)
+    # =========================
+    pdf.set_draw_color(0, 150, 0)
+    pdf.set_line_width(0.8)
 
+    # Línea horizontal (debajo de fechas)
+    pdf.line(10, 34, 287, 34)
+
+    # Línea vertical derecha
+    pdf.line(287, 10, 287, 34)
+    
     # =========================
     # 👤 DATOS DEL COLABORADOR
     # =========================
