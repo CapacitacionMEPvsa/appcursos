@@ -283,9 +283,32 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
 
     pdf.set_font("Helvetica", "", 10)
 
-    pdf.cell(90, 8, f"Colaborador: {nombre}", border=0)
-    pdf.cell(90, 8, f"Núm. nómina: {nomina}", border=0)
-    pdf.cell(97, 8, f"Proceso: {proceso}", border=0)
+    y = pdf.get_y()
+
+    # Colaborador
+    pdf.set_xy(10, y)
+    pdf.cell(60, 6, "Colaborador:", border=0)
+    pdf.line(35, y + 6, 100, y + 6)
+
+    # Nombre
+    pdf.set_xy(36, y)
+    pdf.cell(60, 6, str(nombre), border=0)
+
+    # Nómina
+    pdf.set_xy(105, y)
+    pdf.cell(40, 6, "Núm. nómina:", border=0)
+    pdf.line(135, y + 6, 190, y + 6)
+
+    pdf.set_xy(136, y)
+    pdf.cell(40, 6, str(nomina), border=0)
+
+    # Proceso
+    pdf.set_xy(195, y)
+    pdf.cell(30, 6, "Proceso:", border=0)
+    pdf.line(220, y + 6, 287, y + 6)
+
+    pdf.set_xy(221, y)
+    pdf.cell(60, 6, str(proceso), border=0)
 
     pdf.ln(10)
 
