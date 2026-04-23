@@ -263,7 +263,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     pdf.set_draw_color(0, 0, 0)
     pdf.set_line_width(0.8)
 
-    start_x = (PAGE_WIDTH - TABLE_WIDTH) / 2
+    start_x = (PAGE_WIDTH - TABLE_WIDTH) / 3
     end_x = start_x + TABLE_WIDTH
 
     pdf.line(start_x, 35, end_x, 35)
