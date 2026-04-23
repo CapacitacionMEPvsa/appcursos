@@ -258,13 +258,13 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
         align="C"
     )
     # =========================
-    # 🟢 LÍNEAS VERDES (SOLO COMO FORMATO EXCEL)
+    # 🔲 LÍNEAS NEGRAS (FORMATO FINAL)
     # =========================
-    pdf.set_draw_color(0, 150, 0)
+    pdf.set_draw_color(0, 0, 0)
     pdf.set_line_width(0.8)
 
     pdf.line(10, 30, 287, 30)
-    
+
     # Línea vertical derecha
     pdf.line(287, 10, 287, 30)
 
