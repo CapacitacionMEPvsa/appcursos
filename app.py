@@ -263,7 +263,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     pdf.set_draw_color(0, 0, 0)
     pdf.set_line_width(0.8)
 
-    pdf.line(10, 34, 287, 28)
+    pdf.line(10, 34, 280, 31)
 
     # 🔁 REGRESAR A NEGRO PARA EL RESTO DEL PDF
     pdf.set_draw_color(0, 0, 0)
