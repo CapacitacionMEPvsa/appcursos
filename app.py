@@ -228,9 +228,6 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     pdf.set_xy(230, 17)
     pdf.cell(50, 5, "Autor: MEP/CH", align="R")
 
-    pdf.set_xy(230, 22)
-    pdf.cell(50, 5, "Página 1 de 1", align="R")
-
     # =========================
     # 🏢 EMPRESA
     # =========================
