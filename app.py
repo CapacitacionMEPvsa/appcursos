@@ -265,9 +265,6 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
 
     pdf.line(10, 30, 287, 30)
 
-    # Línea vertical derecha
-    pdf.line(287, 10, 287, 30)
-
     # 🔁 REGRESAR A NEGRO PARA EL RESTO DEL PDF
     pdf.set_draw_color(0, 0, 0)
     pdf.set_line_width(0.2)
