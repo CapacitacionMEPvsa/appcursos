@@ -283,9 +283,9 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
 
     pdf.set_font("Helvetica", "", 10)
 
-    pdf.cell(90, 8, f"Colaborador: {nombre}", border=1)
-    pdf.cell(90, 8, f"Núm. nómina: {nomina}", border=1)
-    pdf.cell(97, 8, f"Proceso: {proceso}", border=1)
+    pdf.cell(90, 8, f"Colaborador: {nombre}", border=0)
+    pdf.cell(90, 8, f"Núm. nómina: {nomina}", border=0)
+    pdf.cell(97, 8, f"Proceso: {proceso}", border=0)
 
     pdf.ln(10)
 
