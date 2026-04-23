@@ -263,7 +263,10 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     pdf.set_draw_color(0, 0, 0)
     pdf.set_line_width(0.8)
 
-    pdf.line(10, 35, 287, 35)
+    start_x = (PAGE_WIDTH - TABLE_WIDTH) / 2
+    end_x = start_x + TABLE_WIDTH
+
+    pdf.line(start_x, 35, end_x, 35)
 
     # 🔁 REGRESAR A NEGRO PARA EL RESTO DEL PDF
     pdf.set_draw_color(0, 0, 0)
@@ -298,7 +301,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     # Proceso
     pdf.set_xy(195, y)
     pdf.cell(30, 6, "Proceso:", border=0)
-    pdf.line(220, y + 6, 287, y + 6)
+    pdf.line(220, y + 6, end_x, y + 6)
 
     pdf.set_xy(221, y)
     pdf.cell(60, 6, str(proceso), border=0)
