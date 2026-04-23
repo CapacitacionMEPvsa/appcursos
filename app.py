@@ -206,24 +206,53 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     pdf.add_page()
 
     # =========================
-    # 🔰 LOGO (ajusta la ruta)
+    # 🔰 LOGO
     # =========================
     try:
-        pdf.image("logo.png", x=10, y=8, w=30)  # 👈 pon tu archivo aquí
+        pdf.image("logo.png", x=10, y=8, w=25)
     except:
         pass
 
     # =========================
-    # 🧾 ENCABEZADO
+    # 🧾 ENCABEZADO TIPO FORMATO EXCEL
     # =========================
+
+    # Línea superior derecha (código y autor)
+    pdf.set_font("Helvetica", "", 8)
+    pdf.set_xy(230, 10)
+    pdf.cell(0, 5, "CH-04-FO-39", ln=True)
+
+    pdf.set_x(230)
+    pdf.cell(0, 5, "Autor:", ln=True)
+
+    pdf.set_x(230)
+    pdf.cell(0, 5, "MEP/CH", ln=True)
+
+    # Título empresa
+    pdf.set_font("Helvetica", "B", 14)
+    pdf.set_xy(0, 10)
+    pdf.cell(0, 8, "Materiales y Equipo Petrolero S.A. de C.V.", align="C", ln=True)
+
+    # Título principal
     pdf.set_font("Helvetica", "B", 16)
-    pdf.cell(0, 10, "Materiales y Equipo Petrolero", ln=True, align="C")
+    pdf.set_text_color(0, 128, 0)  # verde
+    pdf.cell(0, 8, "Kardex de Capacitación Laboral", align="C", ln=True)
 
-    pdf.set_font("Helvetica", "B", 20)
-    pdf.cell(0, 10, "Kardex de Capacitación Laboral", ln=True, align="C")
+    pdf.set_text_color(0, 0, 0)
 
-    pdf.set_font("Helvetica", "", 11)
-    pdf.cell(0, 6, f"Colaborador: {nombre}                                 No. Nómina: {nomina}                                   Proceso: {proceso}", ln=True, align="C")
+    # Línea de información (fechas y versión)
+    pdf.set_font("Helvetica", "", 9)
+    pdf.cell(0, 6,
+             "Elaboración: 10-may-21        Revisión: 20-abr-26        Emisión: 22-abr-26        Versión: 02        Idioma: ES        Página 1 de 1",
+             ln=True, align="C")
+
+    pdf.ln(3)
+
+    # Datos del colaborador
+    pdf.set_font("Helvetica", "", 10)
+    pdf.cell(0, 6,
+             f"Colaborador: {nombre}        Núm. nómina: {nomina}        Proceso: {proceso}",
+             ln=True)
 
     pdf.ln(5)
 
