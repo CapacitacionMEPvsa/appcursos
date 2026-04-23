@@ -500,7 +500,10 @@ for categoria, cursos_base in categorias.items():
     # -------------------------
     if df_cat.empty:
         continue
-    df_cat = df_cat[df_cat["Vencimiento"].notna()]
+    df_cat = df_cat[
+        df_cat["Vencimiento"].notna() |
+        df_cat["Observaciones"].astype(str).str.lower().str.contains("pendiente|programado", na=False)
+    ]
     # -------------------------
     # ESTATUS VISUAL
     # -------------------------
