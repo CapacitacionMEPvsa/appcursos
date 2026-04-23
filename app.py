@@ -254,7 +254,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     pdf.set_font("Helvetica", "", 8)
     pdf.set_xy(50, 30)
     pdf.cell(180, 5,
-        "Elaboración: 10-may-21                                           Revisión: 20-abr-26                                           Emisión: 22-abr-26                                           Versión: 02                                           Idioma: ES"                                           Página 1 de 1,
+        "Elaboración: 10-may-21                                           Revisión: 20-abr-26                                           Emisión: 22-abr-26                                           Versión: 02                                           Idioma: ES                                           Página 1 de 1",
         align="C"
     )
     # =========================
