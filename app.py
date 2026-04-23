@@ -329,8 +329,8 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
             columnas = df.columns.tolist()
 
             # 🔹 Anchos tipo reporte (más ordenado)
-            if categoria == "CURSOS EXTERNOS":
-                columnas = ["Nombre del curso", "Cert/Folio", "Vencimiento", "Estado", "Observaciones"]
+            if categoria == "Cursos Externos":
+                columnas = ["Nombre del curso", "Núm. de cert/folio", "Vencimiento", "Estado", "Observaciones"]
 
                 col_widths = [
                     TABLE_WIDTH * 0.35,  # Curso
