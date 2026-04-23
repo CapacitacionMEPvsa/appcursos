@@ -209,52 +209,82 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     # 🔰 LOGO
     # =========================
     try:
-        pdf.image("logo.png", x=10, y=8, w=25)
+        pdf.image("logo.png", x=12, y=12, w=25)
     except:
         pass
 
     # =========================
-    # 🧾 ENCABEZADO TIPO FORMATO EXCEL
+    # 🧾 MARCO DEL ENCABEZADO
     # =========================
+    pdf.set_draw_color(0, 0, 0)
 
-    # Línea superior derecha (código y autor)
+    # Rectángulo general
+    pdf.rect(10, 10, 277, 35)
+
+    # División vertical (logo / info)
+    pdf.line(50, 10, 50, 45)
+
+    # División horizontal inferior
+    pdf.line(10, 45, 287, 45)
+
+    # Línea para separar título
+    pdf.line(50, 25, 287, 25)
+
+    # =========================
+    # 📄 DATOS DERECHA (código)
+    # =========================
     pdf.set_font("Helvetica", "", 8)
-    pdf.set_xy(230, 10)
-    pdf.cell(0, 5, "CH-04-FO-39", ln=True)
+    pdf.set_xy(230, 12)
+    pdf.cell(50, 5, "CH-04-FO-39", align="R")
 
-    pdf.set_x(230)
-    pdf.cell(0, 5, "Autor:", ln=True)
+    pdf.set_xy(230, 17)
+    pdf.cell(50, 5, "Autor: MEP/CH", align="R")
 
-    pdf.set_x(230)
-    pdf.cell(0, 5, "MEP/CH", ln=True)
+    pdf.set_xy(230, 22)
+    pdf.cell(50, 5, "Página 1 de 1", align="R")
 
-    # Título empresa
-    pdf.set_font("Helvetica", "B", 14)
-    pdf.set_xy(0, 10)
-    pdf.cell(0, 8, "Materiales y Equipo Petrolero S.A. de C.V.", align="C", ln=True)
+    # =========================
+    # 🏢 EMPRESA
+    # =========================
+    pdf.set_font("Helvetica", "B", 13)
+    pdf.set_xy(50, 12)
+    pdf.cell(180, 6, "Materiales y Equipo Petrolero S.A. de C.V.", align="C")
 
-    # Título principal
-    pdf.set_font("Helvetica", "B", 16)
-    pdf.set_text_color(0, 128, 0)  # verde
-    pdf.cell(0, 8, "Kardex de Capacitación Laboral", align="C", ln=True)
+    # =========================
+    # 🟢 TÍTULO
+    # =========================
+    pdf.set_font("Helvetica", "B", 15)
+    pdf.set_text_color(0, 128, 0)
+    pdf.set_xy(50, 18)
+    pdf.cell(180, 7, "Kardex de Capacitación Laboral", align="C")
 
     pdf.set_text_color(0, 0, 0)
 
-    # Línea de información (fechas y versión)
-    pdf.set_font("Helvetica", "", 9)
-    pdf.cell(0, 6,
-             "Elaboración: 10-may-21        Revisión: 20-abr-26        Emisión: 22-abr-26        Versión: 02        Idioma: ES        Página 1 de 1",
-             ln=True, align="C")
+    # =========================
+    # 📅 CONTROL DE DOCUMENTO
+    # =========================
+    pdf.set_font("Helvetica", "", 8)
+    pdf.set_xy(50, 27)
+    pdf.cell(180, 5,
+        "Elaboración: 10-may-21    Revisión: 20-abr-26    Emisión: 22-abr-26    Versión: 02    Idioma: ES",
+        align="C"
+    )
 
-    pdf.ln(3)
+    # =========================
+    # 👤 DATOS DEL COLABORADOR
+    # =========================
+    pdf.set_xy(10, 47)
 
-    # Datos del colaborador
+    # Línea superior
+    pdf.line(10, 47, 287, 47)
+
     pdf.set_font("Helvetica", "", 10)
-    pdf.cell(0, 6,
-             f"Colaborador: {nombre}        Núm. nómina: {nomina}        Proceso: {proceso}",
-             ln=True)
 
-    pdf.ln(5)
+    pdf.cell(90, 8, f"Colaborador: {nombre}", border=1)
+    pdf.cell(90, 8, f"Núm. nómina: {nomina}", border=1)
+    pdf.cell(97, 8, f"Proceso: {proceso}", border=1)
+
+    pdf.ln(10)
 
     # =========================
     # 📊 TABLAS
