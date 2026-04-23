@@ -263,9 +263,6 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     pdf.set_draw_color(0, 150, 0)
     pdf.set_line_width(0.8)
 
-    # Línea horizontal (debajo de fechas)
-    pdf.line(10, 34, 287, 34)
-
     # Línea vertical derecha
     pdf.line(287, 10, 287, 34)
 
