@@ -252,7 +252,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     # 📅 CONTROL DE DOCUMENTO
     # =========================
     pdf.set_font("Helvetica", "", 8)
-    pdf.set_xy(50, 27)
+    pdf.set_xy(50, 30)
     pdf.cell(180, 5,
         "Elaboración: 10-may-21                                                       Revisión: 20-abr-26                                                    Emisión: 22-abr-26                                    Versión: 02                                     Idioma: ES",
         align="C"
@@ -263,7 +263,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     pdf.set_draw_color(0, 0, 0)
     pdf.set_line_width(0.8)
 
-    pdf.line(10, 33, 287, 33)
+    pdf.line(10, 35, 287, 35)
 
     # 🔁 REGRESAR A NEGRO PARA EL RESTO DEL PDF
     pdf.set_draw_color(0, 0, 0)
