@@ -330,7 +330,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
 
             # 🔹 Anchos tipo reporte (más ordenado)
             if categoria == "CURSOS EXTERNOS":
-                columnas = ["Curso", "Cert/Folio", "Vencimiento", "Estatus", "Observaciones"]
+                columnas = ["Nombre del curso", "Cert/Folio", "Vencimiento", "Estado", "Observaciones"]
 
                 col_widths = [
                     TABLE_WIDTH * 0.35,  # Curso
