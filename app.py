@@ -212,7 +212,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     pdf.set_line_width(0.5)
 
     margin_left = 8
-    margin_right = 10   # 👈 más pequeño = más pegado
+    margin_right = 13   # 👈 más pequeño = más pegado
     margin_top = 8
     margin_bottom = 8
 
