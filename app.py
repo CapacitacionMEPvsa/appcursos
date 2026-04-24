@@ -205,20 +205,20 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     pdf = FPDF(orientation="L", unit="mm", format="A4")
     pdf.add_page()
 
-# =========================
-# 📦 MARCO GENERAL DE LA PÁGINA
-# =========================
-pdf.set_draw_color(0, 0, 0)
-pdf.set_line_width(0.5)
+    # =========================
+    # 📦 MARCO GENERAL DE LA PÁGINA
+    # =========================
+    pdf.set_draw_color(0, 0, 0)
+    pdf.set_line_width(0.5)
 
-margin = 8  # margen interno
+    margin = 8  # margen interno
 
-pdf.rect(
-    margin,
-    margin,
-    297 - (margin * 2),
-    210 - (margin * 2)
-)
+    pdf.rect(
+        margin,
+        margin,
+        297 - (margin * 2),
+        210 - (margin * 2)
+    )
     
     # =========================
     # 🔰 LOGO
