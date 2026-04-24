@@ -206,18 +206,21 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     pdf.add_page()
 
     # =========================
-    # 📦 MARCO GENERAL DE LA PÁGINA
+    # 📦 MARCO AJUSTADO (derecho más pegado)
     # =========================
     pdf.set_draw_color(0, 0, 0)
     pdf.set_line_width(0.5)
 
-    margin = 8  # margen interno
+    margin_left = 8
+    margin_right = 3   # 👈 más pequeño = más pegado
+    margin_top = 8
+    margin_bottom = 8
 
     pdf.rect(
-        margin,
-        margin,
-        297 - (margin * 2),
-        210 - (margin * 2)
+        margin_left,
+        margin_top,
+        297 - margin_left - margin_right,
+        210 - margin_top - margin_bottom
     )
     
     # =========================
