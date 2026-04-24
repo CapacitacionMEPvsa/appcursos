@@ -204,23 +204,6 @@ PAGE_WIDTH = 297
 def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
     pdf = FPDF(orientation="L", unit="mm", format="A4")
     pdf.add_page()
-
-    # =========================
-    # 📦 MARCO AJUSTADO (derecho más pegado)
-    # =========================
-    pdf.set_draw_color(0, 0, 0)
-    pdf.set_line_width(0.5)
-
-    margin_left = 8
-    margin_right = 17   # 👈 más pequeño = más pegado
-    margin_top = 8
-    margin_bottom = 8
-
-    pdf.rect(
-        margin_left,
-        margin_top,
-        297 - margin_left - margin_right,
-        210 - margin_top - margin_bottom
     )
     
     # =========================
