@@ -2,6 +2,47 @@ import streamlit as st
 import pandas as pd
 from fpdf import FPDF
 
+class PDF(FPDF):
+
+    def header(self):
+
+        # =========================
+        # 📦 MARCO GENERAL
+        # =========================
+        self.set_draw_color(0, 0, 0)
+        self.set_line_width(0.5)
+
+        margin_left = 8
+        margin_right = 3
+        margin_top = 8
+        margin_bottom = 8
+
+        self.rect(
+            margin_left,
+            margin_top,
+            297 - margin_left - margin_right,
+            210 - margin_top - margin_bottom
+        )
+
+        # =========================
+        # 🏢 ENCABEZADO
+        # =========================
+        try:
+            self.image("logo.png", x=12, y=12, w=25)
+        except:
+            pass
+
+        self.set_font("Helvetica", "B", 13)
+        self.set_xy(50, 12)
+        self.cell(180, 6, "Materiales y Equipo Petrolero S.A. de C.V.", align="C")
+
+        self.set_font("Helvetica", "B", 15)
+        self.set_text_color(0, 128, 0)
+        self.set_xy(50, 18)
+        self.cell(180, 7, "Kardex de Capacitación Laboral", align="C")
+
+        self.set_text_color(0, 0, 0)
+
 def color_estatus(val):
     val = str(val).lower()
 
@@ -202,7 +243,7 @@ TABLE_WIDTH = 270
 PAGE_WIDTH = 297
 
 def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
-    pdf = FPDF(orientation="L", unit="mm", format="A4")
+    pdf = PDF(orientation="L", unit="mm", format="A4")
     pdf.add_page()
 
     # =========================
