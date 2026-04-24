@@ -372,7 +372,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
                 # 🔥 CENTRADO SOLO PARA ESTAS COLUMNAS
                 align = "C" if col_txt in columnas_centradas else "L"
 
-                pdf.cell(col_widths[i], 7, txt, border=1, fill=True, align=align)
+                pdf.cell(col_widths[i], 7, txt, border=0, fill=True, align=align)
 
             pdf.ln()
 
@@ -398,7 +398,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
                     valor = str(row.get(col, ""))[:100]
                     valor = valor.encode("latin-1", "ignore").decode("latin-1")
                 
-                    pdf.cell(col_widths[i], 6, valor, border=1, fill=True)
+                    pdf.cell(col_widths[i], 6, valor, border=0, fill=True)
 
                 pdf.ln()
 
