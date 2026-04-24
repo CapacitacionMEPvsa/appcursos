@@ -395,10 +395,17 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
                     pdf.set_fill_color(255, 255, 255)
 
                 for i, col in enumerate(columnas):
-                    valor = str(row.get(col, ""))[:100]
-                    valor = valor.encode("latin-1", "ignore").decode("latin-1")
 
-                    pdf.cell(col_widths[i], 6, valor, border=1, fill=True)
+                valor = str(row.get(col, ""))[:100]
+                valor = valor.encode("latin-1", "ignore").decode("latin-1")
+
+                # 🎯 CENTRAR SOLO VENCIMIENTO Y ESTATUS
+                if col in ["Vencimiento", "Estatus"]:
+                    align = "C"
+                else:
+                align = "L"
+
+                pdf.cell(col_widths[i], 6, valor, border=1, fill=True, align=align)
 
                 pdf.ln()
 
