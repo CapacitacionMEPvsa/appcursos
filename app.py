@@ -322,7 +322,8 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
             pdf.set_text_color(0, 0, 0)
             pdf.set_font("Helvetica", "B", 11)
             pdf.set_x(start_x)
-            pdf.cell(TABLE_WIDTH, 8, categoria, ln=True, fill=True, align="L")
+            categoria_txt = categoria.lower()
+            pdf.cell(TABLE_WIDTH, 8, categoria_txt, ln=True, fill=True, align="L")
 
             pdf.ln(1)
 
@@ -352,7 +353,18 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
             pdf.set_fill_color(230, 230, 230)
             pdf.set_x(start_x)
             for i, col in enumerate(columnas):
-                txt = str(col).encode("latin-1", "ignore").decode("latin-1")
+
+                # 🔥 CAMBIO SOLO VISUAL (PDF)
+                if col == "Curso":
+                    col_txt = "Nombre del curso"
+                elif col == "Estatus":
+                    col_txt = "Estado"
+                elif col == "Cert/Folio":
+                    col_txt = "Núm. de Cert/folio"
+                else:
+                    col_txt = col
+
+                txt = str(col_txt).encode("latin-1", "ignore").decode("latin-1")
                 pdf.cell(col_widths[i], 7, txt, border=1, fill=True)
             pdf.ln()
 
