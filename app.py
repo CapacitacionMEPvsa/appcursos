@@ -352,9 +352,12 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
             pdf.set_font("Helvetica", "B", 9)
             pdf.set_fill_color(230, 230, 230)
             pdf.set_x(start_x)
+
+            columnas_centradas = ["Nombre del curso", "Vencimiento", "Estado", "Observaciones"]
+
             for i, col in enumerate(columnas):
 
-                # 🔥 CAMBIO SOLO VISUAL (PDF)
+                # 🔥 texto visible
                 if col == "Curso":
                     col_txt = "Nombre del curso"
                 elif col == "Estatus":
@@ -365,7 +368,12 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
                     col_txt = col
 
                 txt = str(col_txt).encode("latin-1", "ignore").decode("latin-1")
-                pdf.cell(col_widths[i], 7, txt, border=1, fill=True)
+
+                # 🔥 CENTRADO SOLO PARA ESTAS COLUMNAS
+                align = "C" if col_txt in columnas_centradas else "L"
+
+                pdf.cell(col_widths[i], 7, txt, border=1, fill=True, align=align)
+
             pdf.ln()
 
             # 🔹 Filas
