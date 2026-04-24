@@ -322,7 +322,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
             pdf.set_text_color(0, 0, 0)
             pdf.set_font("Helvetica", "B", 11)
             pdf.set_x(start_x)
-            categoria_txt = categoria.lower()
+            categoria_txt = " ".join([w.capitalize() for w in categoria.lower().split()])
             pdf.cell(TABLE_WIDTH, 8, categoria_txt, ln=True, fill=True, align="L")
 
             pdf.ln(1)
