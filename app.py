@@ -403,7 +403,7 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
                 if col in ["Vencimiento", "Estatus"]:
                     align = "C"
                 else:
-                align = "L"
+                    align = "L"
 
                 pdf.cell(col_widths[i], 6, valor, border=1, fill=True, align=align)
 
