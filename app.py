@@ -126,14 +126,13 @@ def icono_estatus(val):
     return val
 
 def asignar_link_en_observaciones(row, categoria):
-    estatus = str(row.get("Estatus", "")).lower()
-    obs = str(row.get("Observaciones", "")).lower()
 
-    # ❌ si está vigente NO mostrar nada
+    estatus = str(row.get("Estatus", "") or "").lower()
+    obs = str(row.get("Observaciones", "") or "").lower()
+
     if "vigente" in estatus:
         return ""
 
-    # ✅ condiciones para mostrar link
     if (
         "venc" in estatus
         or "por vencer" in estatus
@@ -519,6 +518,7 @@ for categoria, cursos_base in categorias.items():
 
     df_cat["Observaciones"] = df_cat["Observaciones"].fillna("")
     df_cat["Observaciones"] = df_cat["Observaciones"].astype(str)
+    df_cat["Observaciones"] = df_cat["Observaciones"].replace("nan", "")
     
     df_cat = df_cat[
         df_cat["Curso"].notna() &
