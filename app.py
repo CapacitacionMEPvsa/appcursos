@@ -145,7 +145,7 @@ def asignar_link_en_observaciones(row, categoria):
             return "https://capacitacion-online-2.netlify.app/"
         elif "complementarios" in cat:
             return "https://capacitacion-en-linea.netlify.app/"
-        elif "externos" in cat:
+        elif "técnicos" in cat:
             return "https://capacitacion-online-3.netlify.app/"
 
     return ""
