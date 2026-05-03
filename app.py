@@ -513,17 +513,17 @@ for categoria, cursos_base in categorias.items():
     df_cat = obtener_cursos(cursos_base).copy()
     
     df_cat["Observaciones"] = df_cat.apply(
-        lambda row: (
-            "Tomar curso"
-            if (
-                "venc" in str(row["Estatus"]).lower()
-                or "por vencer" in str(row["Estatus"]).lower()
-                or "pendiente" in str(row["Observaciones"]).lower()
-            )
-            else row["Observaciones"]
-        ),
-        axis=1
-    )
+    lambda row: (
+        asignar_link_en_observaciones(row, categoria)
+        if (
+            "venc" in str(row["Estatus"]).lower()
+            or "por vencer" in str(row["Estatus"]).lower()
+            or "pendiente" in str(row["Observaciones"]).lower()
+        )
+        else ""
+    ),
+    axis=1
+)
     
     df_cat = df_cat[
         df_cat["Curso"].notna() &
