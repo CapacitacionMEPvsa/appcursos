@@ -469,6 +469,27 @@ OFFSET_OBSERVACIONES = 0
 from datetime import datetime
 
 def calcular_estado(fecha):
+
+    def asignar_link_en_observaciones(row, categoria):
+    estatus = str(row.get("Estatus", "")).lower()
+    obs = str(row.get("Observaciones", "")).lower()
+
+        # 🔍 condición (cubre: por vencer, vencido, vence, etc.)
+    if (
+        "venc" in estatus or
+        "pendiente" in obs
+    ):
+        cat = categoria.lower()
+
+        if "seguridad" in cat:
+            return "https://capacitacion-online-2.netlify.app/"
+        elif "complementarios" in cat:
+            return "https://capacitacion-en-linea.netlify.app/"
+        elif "externos" in cat:
+            return "https://capacitacion-online-3.netlify.app/"
+
+    return ""
+    
     if pd.isna(fecha):
         return "SIN FECHA"
 
@@ -541,26 +562,6 @@ for categoria, cursos_base in categorias.items():
     # -------------------------
     # ESTATUS VISUAL
     # -------------------------
-    
-def asignar_link_en_observaciones(row, categoria):
-    estatus = str(row.get("Estatus", "")).lower()
-    obs = str(row.get("Observaciones", "")).lower()
-
-        # 🔍 condición (cubre: por vencer, vencido, vence, etc.)
-    if (
-        "venc" in estatus or
-        "pendiente" in obs
-    ):
-        cat = categoria.lower()
-
-        if "seguridad" in cat:
-            return "https://capacitacion-online-2.netlify.app/"
-        elif "complementarios" in cat:
-            return "https://capacitacion-en-linea.netlify.app/"
-        elif "externos" in cat:
-            return "https://capacitacion-online-3.netlify.app/"
-
-    return ""
     if "Estatus" in df_cat.columns:
         df_cat["Estatus"] = df_cat["Estatus"].apply(icono_estatus)
     df_cat = df_cat.dropna(how="all")
