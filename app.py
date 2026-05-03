@@ -486,6 +486,10 @@ def calcular_estado(fecha):
 for categoria, cursos_base in categorias.items():
 
     df_cat = obtener_cursos(cursos_base).copy()
+    df_cat["Observaciones"] = df_cat.apply(
+    lambda row: asignar_link_en_observaciones(row, categoria),
+    axis=1
+)
     df_cat = df_cat[
         df_cat["Curso"].notna() &
         (df_cat["Curso"].astype(str).str.strip() != "")
@@ -537,7 +541,7 @@ for categoria, cursos_base in categorias.items():
     # -------------------------
     # ESTATUS VISUAL
     # -------------------------
-    if "Estatus" in df_cat.columns:
+    
 def asignar_link_en_observaciones(row, categoria):
     estatus = str(row.get("Estatus", "")).lower()
     obs = str(row.get("Observaciones", "")).lower()
@@ -557,11 +561,20 @@ def asignar_link_en_observaciones(row, categoria):
             return "https://capacitacion-online-3.netlify.app/"
 
     return ""
-        
+    if "Estatus" in df_cat.columns:
         df_cat["Estatus"] = df_cat["Estatus"].apply(icono_estatus)
     df_cat = df_cat.dropna(how="all")
     # -------------------------
     # MOSTRAR
     # -------------------------
     st.markdown(f"## 📂 {categoria}")
-    st.dataframe(df_cat, use_container_width=True)
+    st.data_editor(
+        df_cat,
+        column_config={
+            "Observaciones": st.column_config.LinkColumn(
+                "Observaciones",
+                display_text="Tomar curso"
+            )
+        },
+        use_container_width=True
+    )
