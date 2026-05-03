@@ -126,13 +126,14 @@ def icono_estatus(val):
     return val
 
 def asignar_link_en_observaciones(row, categoria):
+    estatus = str(row.get("Estatus", "")).lower()
+    obs = str(row.get("Observaciones", "")).lower()
 
-    estatus = str(row.get("Estatus", "") or "").lower()
-    obs = str(row.get("Observaciones", "") or "").lower()
-
+    # ❌ si está vigente NO mostrar nada
     if "vigente" in estatus:
         return ""
 
+    # ✅ condiciones para mostrar link
     if (
         "venc" in estatus
         or "por vencer" in estatus
@@ -511,21 +512,18 @@ for categoria, cursos_base in categorias.items():
 
     df_cat = obtener_cursos(cursos_base).copy()
     
-    df_cat = df_cat.copy()
-
     df_cat["Observaciones"] = df_cat.apply(
-        lambda row: (
-            f"[Tomar curso]({asignar_link_en_observaciones(row, categoria)})"
-            if asignar_link_en_observaciones(row, categoria) != ""
+    lambda row: (
+        asignar_link_en_observaciones(row, categoria)
+        if (
+            "venc" in str(row["Estatus"]).lower()
+            or "por vencer" in str(row["Estatus"]).lower()
+            or "pendiente" in str(row["Observaciones"]).lower()
+        )
         else ""
     ),
     axis=1
 )
-
-# 🔥 LIMPIEZA TOTAL (ESTO ES LO QUE TE FALTA)
-    df_cat["Observaciones"] = df_cat["Observaciones"].fillna("")
-    df_cat["Observaciones"] = df_cat["Observaciones"].astype(str)
-    df_cat["Observaciones"] = df_cat["Observaciones"].replace(["nan", "None", "NoneType"], "")
     
     df_cat = df_cat[
         df_cat["Curso"].notna() &
@@ -538,11 +536,7 @@ for categoria, cursos_base in categorias.items():
         df_cat["Cert/Folio"] = df_cat["Cert/Folio"].fillna("")
 
     if "Observaciones" in df_cat.columns:
-        import numpy as np
-
-        df_cat["Observaciones"] = df_cat["Observaciones"].apply(
-            lambda x: np.nan if str(x).strip() == "" else x
-        )
+        df_cat["Observaciones"] = df_cat["Observaciones"].replace("", None)
 
     # -------------------------
     # ASEGURAR VENCIMIENTO + ESTADO (FIX EXTERNOS)
@@ -589,29 +583,11 @@ for categoria, cursos_base in categorias.items():
     # MOSTRAR
     # -------------------------
     st.markdown(f"## 📂 {categoria}")
-   
-    df_cat = df_cat.copy()
-
-    df_cat["Observaciones"] = df_cat.apply(
-        lambda row: asignar_link_en_observaciones(row, categoria),
-        axis=1
-    )
-
-    # 🔥 LIMPIEZA ABSOLUTA (CRÍTICA)
-    df_cat["Observaciones"] = (
-        df_cat["Observaciones"]
-        .astype(str)
-        .replace(["nan", "None", "NoneType", "NaN"], "")
-        .fillna("")
-    )
-
-    st.write(df_cat["Observaciones"].apply(type).value_counts())
-    st.write(df_cat["Observaciones"].head(10))
     st.data_editor(
         df_cat,
         column_config={
             "Observaciones": st.column_config.LinkColumn(
-                "Acción",
+                "Observaciones",
                 display_text="Tomar curso"
             )
         },
