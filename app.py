@@ -520,7 +520,7 @@ for categoria, cursos_base in categorias.items():
             or "por vencer" in str(row["Estatus"]).lower()
             or "pendiente" in str(row["Observaciones"]).lower()
         )
-        else ""
+        else np.nan
     ),
     axis=1
 )
@@ -536,7 +536,11 @@ for categoria, cursos_base in categorias.items():
         df_cat["Cert/Folio"] = df_cat["Cert/Folio"].fillna("")
 
     if "Observaciones" in df_cat.columns:
-        df_cat["Observaciones"] = df_cat["Observaciones"].replace("", None)
+        import numpy as np
+
+        df_cat["Observaciones"] = df_cat["Observaciones"].apply(
+            lambda x: np.nan if str(x).strip() == "" else x
+        )
 
     # -------------------------
     # ASEGURAR VENCIMIENTO + ESTADO (FIX EXTERNOS)
