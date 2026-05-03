@@ -511,14 +511,17 @@ for categoria, cursos_base in categorias.items():
 
     df_cat = obtener_cursos(cursos_base).copy()
     
+    df_cat = df_cat.copy()
+
     df_cat["Observaciones"] = df_cat.apply(
         lambda row: asignar_link_en_observaciones(row, categoria),
         axis=1
     )
 
+# 🔥 LIMPIEZA TOTAL (ESTO ES LO QUE TE FALTA)
     df_cat["Observaciones"] = df_cat["Observaciones"].fillna("")
     df_cat["Observaciones"] = df_cat["Observaciones"].astype(str)
-    df_cat["Observaciones"] = df_cat["Observaciones"].replace("nan", "")
+    df_cat["Observaciones"] = df_cat["Observaciones"].replace(["nan", "None", "NoneType"], "")
     
     df_cat = df_cat[
         df_cat["Curso"].notna() &
@@ -586,7 +589,7 @@ for categoria, cursos_base in categorias.items():
         df_cat,
         column_config={
             "Observaciones": st.column_config.LinkColumn(
-                "Observaciones",
+                "Acción",
                 display_text="Tomar curso"
             )
         },
