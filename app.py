@@ -536,7 +536,7 @@ for categoria, cursos_base in categorias.items():
         df_cat["Cert/Folio"] = df_cat["Cert/Folio"].fillna("")
 
     if "Observaciones" in df_cat.columns:
-        df_cat["Observaciones"] = df_cat["Observaciones"].fillna("")
+        df_cat["Observaciones"] = df_cat["Observaciones"].replace("", None)
 
     # -------------------------
     # ASEGURAR VENCIMIENTO + ESTADO (FIX EXTERNOS)
@@ -586,8 +586,8 @@ for categoria, cursos_base in categorias.items():
     st.data_editor(
         df_cat,
         column_config={
-            "Tomar curso": st.column_config.LinkColumn(
-                "Acción",
+            "Observaciones": st.column_config.LinkColumn(
+                "Observaciones",
                 display_text="Tomar curso"
             )
         },
