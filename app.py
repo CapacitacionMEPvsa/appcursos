@@ -130,16 +130,16 @@ def asignar_link_en_observaciones(row, categoria):
     obs = str(row.get("Observaciones", "")).lower()
 
     if "venc" in estatus or "pendiente" in obs:
-            cat = categoria.lower()
+        cat = categoria.lower()
 
-            if "seguridad" in cat:
-                return "https://capacitacion-online-2.netlify.app/"
-            elif "complementarios" in cat:
-                return "https://capacitacion-en-linea.netlify.app/"
-            elif "externos" in cat:
-                return "https://capacitacion-online-3.netlify.app/"
+        if "seguridad" in cat:
+            return "https://capacitacion-online-2.netlify.app/"
+        elif "complementarios" in cat:
+            return "https://capacitacion-en-linea.netlify.app/"
+        elif "externos" in cat:
+            return "https://capacitacion-online-3.netlify.app/"
 
-        return ""
+    return ""
 
 # =========================
 # FUNCIÓN PARA EXTRAER CURSOS
@@ -502,6 +502,7 @@ def calcular_estado(fecha):
 for categoria, cursos_base in categorias.items():
 
     df_cat = obtener_cursos(cursos_base).copy()
+    
     df_cat["Tomar curso"] = df_cat.apply(
         lambda row: asignar_link_en_observaciones(row, categoria),
         axis=1
