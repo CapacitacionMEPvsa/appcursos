@@ -546,10 +546,7 @@ for categoria, cursos_base in categorias.items():
 
         df_cat = df_cat[
         df_cat["Curso"].notna() &
-        (
-            estatus.str.contains("venc|por vencer|vence", na=False) |
-            obs.str.contains("pendiente|programado", na=False)
-        )
+
     ]
         
         df_cat = df_cat[df_cat["Curso"].notna()]
@@ -569,21 +566,19 @@ for categoria, cursos_base in categorias.items():
         df_cat["Estatus"] = df_cat["Estatus"].apply(icono_estatus)
     df_cat = df_cat.dropna(how="all")
     def procesar_observaciones(row, categoria):
-        obs = str(row.get("Observaciones", "")).strip()
-        estatus = str(row.get("Estatus", "")).lower()
+        obs = str(row.get("Observaciones", "")).strip().lower()
+        estatus = str(row.get("Estatus", "")).strip().lower()
 
-        obs_lower = obs.lower()
-
-        # 1. SI ES "pendiente" → mostrar link
-        if "pendiente" in obs_lower:
+        # 1. SOLO "pendiente" activa link
+        if "pendiente" in obs:
             return asignar_link_en_observaciones(row, categoria)
 
-        # 2. SI ES "vencido / por vencer" en estatus → también link
-        if "venc" in estatus or "por vencer" in estatus:
+        # 2. SOLO estatus EXACTO controlado (no substring “venc”)
+        if estatus == "por vencer" or estatus == "vencido":
             return asignar_link_en_observaciones(row, categoria)
 
-        # 3. CUALQUIER OTRO CASO → mostrar texto original del Excel
-        return obs
+        # 3. TODO LO DEMÁS SE RESPETA TAL CUAL
+        return row.get("Observaciones", "")
 
 
     df_cat["Observaciones"] = df_cat.apply(
