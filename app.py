@@ -502,6 +502,7 @@ def calcular_estado(fecha):
                 return "https://capacitacion-online-3.netlify.app/"
 
         return ""
+        
 for categoria, cursos_base in categorias.items():
 
     df_cat = obtener_cursos(cursos_base).copy()
@@ -509,6 +510,7 @@ for categoria, cursos_base in categorias.items():
         lambda row: asignar_link_en_observaciones(row, categoria),
         axis=1
     )
+    
     df_cat = df_cat[
         df_cat["Curso"].notna() &
         (df_cat["Curso"].astype(str).str.strip() != "")
