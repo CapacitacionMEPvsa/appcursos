@@ -583,8 +583,9 @@ for categoria, cursos_base in categorias.items():
         df_cat,
         column_config={
             "Observaciones": st.column_config.LinkColumn(
-                "Observaciones",
+                "Acción",
                 display_text="Tomar curso"
             )
-        }
+        },
+        use_container_width=True
     )
