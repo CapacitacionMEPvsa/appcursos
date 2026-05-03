@@ -506,7 +506,7 @@ def calcular_estado(fecha):
 for categoria, cursos_base in categorias.items():
 
     df_cat = obtener_cursos(cursos_base).copy()
-    df_cat["Observaciones"] = df_cat.apply(
+    df_cat["Observaciones"] = df_cat["Observaciones"].astype(str)
         lambda row: asignar_link_en_observaciones(row, categoria),
         axis=1
     )
