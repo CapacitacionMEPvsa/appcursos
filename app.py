@@ -126,14 +126,10 @@ def icono_estatus(val):
     return val
 
 def asignar_link_en_observaciones(row, categoria):
-        estatus = str(row.get("Estatus", "")).lower()
-        obs = str(row.get("Observaciones", "")).lower()
+    estatus = str(row.get("Estatus", "")).lower()
+    obs = str(row.get("Observaciones", "")).lower()
 
-        # 🔍 condición (cubre: por vencer, vencido, vence, etc.)
-        if (
-            "venc" in estatus or
-            "pendiente" in obs
-        ):
+    if "venc" in estatus or "pendiente" in obs:
             cat = categoria.lower()
 
             if "seguridad" in cat:
@@ -506,10 +502,10 @@ def calcular_estado(fecha):
 for categoria, cursos_base in categorias.items():
 
     df_cat = obtener_cursos(cursos_base).copy()
-df_cat["Observaciones"] = df_cat["Observaciones"].astype(str)
-    lambda row: asignar_link_en_observaciones(row, categoria),
-    axis=1
-)
+    df_cat["Tomar curso"] = df_cat.apply(
+        lambda row: asignar_link_en_observaciones(row, categoria),
+        axis=1
+    )
     
     df_cat = df_cat[
         df_cat["Curso"].notna() &
@@ -572,8 +568,8 @@ df_cat["Observaciones"] = df_cat["Observaciones"].astype(str)
     st.data_editor(
         df_cat,
         column_config={
-            "Observaciones": st.column_config.LinkColumn(
-                "Observaciones",
+            "Tomar curso": st.column_config.LinkColumn(
+                "Acción",
                 display_text="Tomar curso"
             )
         },
