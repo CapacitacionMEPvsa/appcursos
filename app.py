@@ -513,14 +513,14 @@ for categoria, cursos_base in categorias.items():
     
     df_cat = df_cat.copy()
 
-       df_cat["Observaciones"] = df_cat.apply(
-            lambda row: (
-                f"[Tomar curso]({asignar_link_en_observaciones(row, categoria)})"
-                if asignar_link_en_observaciones(row, categoria) != ""
-            else ""
-        ),
-        axis=1
-    )
+    df_cat["Observaciones"] = df_cat.apply(
+        lambda row: (
+            f"[Tomar curso]({asignar_link_en_observaciones(row, categoria)})"
+            if asignar_link_en_observaciones(row, categoria) != ""
+        else ""
+    ),
+    axis=1
+)
 
 # 🔥 LIMPIEZA TOTAL (ESTO ES LO QUE TE FALTA)
     df_cat["Observaciones"] = df_cat["Observaciones"].fillna("")
