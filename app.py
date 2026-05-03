@@ -469,6 +469,19 @@ OFFSET_OBSERVACIONES = 0
 from datetime import datetime
 
 def calcular_estado(fecha):
+    
+    if pd.isna(fecha):
+        return "SIN FECHA"
+
+    hoy = datetime.now().date()
+    diff = (fecha - hoy).days
+
+    if diff < -0:
+        return "VENCIDO"
+    elif diff <= 90:
+        return "POR VENCER"
+    else:
+        return "VIGENTE"
 
     def asignar_link_en_observaciones(row, categoria):
         estatus = str(row.get("Estatus", "")).lower()
@@ -489,21 +502,6 @@ def calcular_estado(fecha):
                 return "https://capacitacion-online-3.netlify.app/"
 
         return ""
-    
-    if pd.isna(fecha):
-        return "SIN FECHA"
-
-    hoy = datetime.now().date()
-    diff = (fecha - hoy).days
-
-    if diff < -0:
-        return "VENCIDO"
-    elif diff <= 90:
-        return "POR VENCER"
-    else:
-        return "VIGENTE"
-
-
 for categoria, cursos_base in categorias.items():
 
     df_cat = obtener_cursos(cursos_base).copy()
