@@ -512,19 +512,6 @@ for categoria, cursos_base in categorias.items():
 
     df_cat = obtener_cursos(cursos_base).copy()
     
-    df_cat["Observaciones"] = df_cat.apply(
-    lambda row: (
-        asignar_link_en_observaciones(row, categoria)
-        if (
-            "venc" in str(row["Estatus"]).lower()
-            or "por vencer" in str(row["Estatus"]).lower()
-            or "pendiente" in str(row["Observaciones"]).lower()
-        )
-        else ""
-    ),
-    axis=1
-)
-    
     df_cat = df_cat[
         df_cat["Curso"].notna() &
         (df_cat["Curso"].astype(str).str.strip() != "")
@@ -555,13 +542,15 @@ for categoria, cursos_base in categorias.items():
 
         estatus = df_cat["Estatus"].fillna("").astype(str).str.lower()
         obs = df_cat["Observaciones"].fillna("").astype(str).str.lower()
+        estatus = df_cat["Estatus"].fillna("").astype(str).str.lower()
 
         df_cat = df_cat[
-            estatus.str.contains("venc", na=False) |
-            estatus.str.contains("por vencer", na=False) |
-            estatus.str.contains("vence", na=False) |
+        df_cat["Curso"].notna() &
+        (
+            estatus.str.contains("venc|por vencer|vence", na=False) |
             obs.str.contains("pendiente|programado", na=False)
-        ]
+        )
+    ]
         
         df_cat = df_cat[df_cat["Curso"].notna()]
     # -------------------------
@@ -579,6 +568,13 @@ for categoria, cursos_base in categorias.items():
     if "Estatus" in df_cat.columns:
         df_cat["Estatus"] = df_cat["Estatus"].apply(icono_estatus)
     df_cat = df_cat.dropna(how="all")
+
+    df_cat["Observaciones"] = df_cat["Observaciones"].apply(
+        lambda x: "https://capacitacion-online-2.netlify.app/" 
+        if isinstance(x, str) and "pendiente" in x.lower()
+        else x
+    )
+
     # -------------------------
     # MOSTRAR
     # -------------------------
@@ -591,5 +587,4 @@ for categoria, cursos_base in categorias.items():
                 display_text="Tomar curso"
             )
         },
-        use_container_width=True
     )
