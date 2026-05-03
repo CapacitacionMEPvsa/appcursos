@@ -129,7 +129,16 @@ def asignar_link_en_observaciones(row, categoria):
     estatus = str(row.get("Estatus", "")).lower()
     obs = str(row.get("Observaciones", "")).lower()
 
-    if "venc" in estatus or "pendiente" in obs:
+    # ❌ si está vigente NO mostrar nada
+    if "vigente" in estatus:
+        return ""
+
+    # ✅ condiciones para mostrar link
+    if (
+        "venc" in estatus
+        or "por vencer" in estatus
+        or "pendiente" in obs
+    ):
         cat = categoria.lower()
 
         if "seguridad" in cat:
