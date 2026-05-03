@@ -516,6 +516,9 @@ for categoria, cursos_base in categorias.items():
         lambda row: asignar_link_en_observaciones(row, categoria),
         axis=1
     )
+
+    df_cat["Observaciones"] = df_cat["Observaciones"].fillna("")
+    df_cat["Observaciones"] = df_cat["Observaciones"].astype(str)
     
     df_cat = df_cat[
         df_cat["Curso"].notna() &
@@ -583,7 +586,7 @@ for categoria, cursos_base in categorias.items():
         df_cat,
         column_config={
             "Observaciones": st.column_config.LinkColumn(
-                "Acción",
+                "Observaciones",
                 display_text="Tomar curso"
             )
         },
