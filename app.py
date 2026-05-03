@@ -513,8 +513,12 @@ for categoria, cursos_base in categorias.items():
     
     df_cat = df_cat.copy()
 
-    df_cat["Observaciones"] = df_cat.apply(
-        lambda row: asignar_link_en_observaciones(row, categoria),
+       df_cat["Observaciones"] = df_cat.apply(
+            lambda row: (
+                f"[Tomar curso]({asignar_link_en_observaciones(row, categoria)})"
+                if asignar_link_en_observaciones(row, categoria) != ""
+            else ""
+        ),
         axis=1
     )
 
@@ -585,6 +589,24 @@ for categoria, cursos_base in categorias.items():
     # MOSTRAR
     # -------------------------
     st.markdown(f"## 📂 {categoria}")
+   
+    df_cat = df_cat.copy()
+
+    df_cat["Observaciones"] = df_cat.apply(
+        lambda row: asignar_link_en_observaciones(row, categoria),
+        axis=1
+    )
+
+    # 🔥 LIMPIEZA ABSOLUTA (CRÍTICA)
+    df_cat["Observaciones"] = (
+        df_cat["Observaciones"]
+        .astype(str)
+        .replace(["nan", "None", "NoneType", "NaN"], "")
+        .fillna("")
+    )
+
+    st.write(df_cat["Observaciones"].apply(type).value_counts())
+    st.write(df_cat["Observaciones"].head(10))
     st.data_editor(
         df_cat,
         column_config={
