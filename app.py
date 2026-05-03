@@ -538,6 +538,26 @@ for categoria, cursos_base in categorias.items():
     # ESTATUS VISUAL
     # -------------------------
     if "Estatus" in df_cat.columns:
+    def asignar_link_en_observaciones(row, categoria):
+        estatus = str(row.get("Estatus", "")).lower()
+        obs = str(row.get("Observaciones", "")).lower()
+
+        # 🔍 condición (cubre: por vencer, vencido, vence, etc.)
+        if (
+            "venc" in estatus or
+            "pendiente" in obs
+        ):
+            cat = categoria.lower()
+
+            if "seguridad" in cat:
+                return "https://capacitacion-online-2.netlify.app/"
+            elif "complementarios" in cat:
+                return "https://capacitacion-en-linea.netlify.app/"
+            elif "externos" in cat:
+                return "https://capacitacion-online-3.netlify.app/"
+
+        return ""
+        
         df_cat["Estatus"] = df_cat["Estatus"].apply(icono_estatus)
     df_cat = df_cat.dropna(how="all")
     # -------------------------
