@@ -569,16 +569,18 @@ for categoria, cursos_base in categorias.items():
         df_cat["Estatus"] = df_cat["Estatus"].apply(icono_estatus)
     df_cat = df_cat.dropna(how="all")
 
+    def procesar_observaciones(row, categoria):
+        obs = str(row.get("Observaciones", ""))
+
+        # solo si dice "pendiente" se convierte en link
+        if "pendiente" in obs.lower():
+            return asignar_link_en_observaciones(row, categoria)
+
+        # cualquier otro texto se respeta tal cual viene del Excel
+        return obs
+        
     df_cat["Observaciones"] = df_cat.apply(
-        lambda row: (
-            asignar_link_en_observaciones(row, categoria)
-            if (
-                "venc" in str(row["Estatus"]).lower()
-                or "por vencer" in str(row["Estatus"]).lower()
-                or "pend" in str(row["Observaciones"]).lower()
-            )
-            else row["Observaciones"]
-        ),
+        lambda row: procesar_observaciones(row, categoria),
         axis=1
     )
 
