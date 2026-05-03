@@ -569,10 +569,17 @@ for categoria, cursos_base in categorias.items():
         df_cat["Estatus"] = df_cat["Estatus"].apply(icono_estatus)
     df_cat = df_cat.dropna(how="all")
 
-    df_cat["Observaciones"] = df_cat["Observaciones"].apply(
-        lambda x: "https://capacitacion-online-2.netlify.app/" 
-        if isinstance(x, str) and "pendiente" in x.lower()
-        else x
+    df_cat["Observaciones"] = df_cat.apply(
+        lambda row: (
+            asignar_link_en_observaciones(row, categoria)
+            if (
+                "venc" in str(row["Estatus"]).lower()
+                or "por vencer" in str(row["Estatus"]).lower()
+                or "pend" in str(row["Observaciones"]).lower()
+            )
+            else row["Observaciones"]
+        ),
+        axis=1
     )
 
     # -------------------------
