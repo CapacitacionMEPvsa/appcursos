@@ -423,6 +423,19 @@ def generar_pdf(nombre, datos_dict, nomina="N/A", proceso="N/A"):
 if st.button("📄 Descargar Kardex de Capacitación Laboral"):
 
     datos_export = {}
+    st.markdown("## 🎯 Acceso a plataformas de capacitación")
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        st.link_button("🎓 Técnicos", "https://capacitacion-online-3.netlify.app/")
+
+    with col2:
+        st.link_button("🦺 Seguridad", "https://capacitacion-online-2.netlify.app/")
+
+    with col3:
+        st.link_button("📘 Complementarios", "https://capacitacion-en-linea.netlify.app/")
+    
     for categoria, cursos_base in categorias.items():
 
         df_export = obtener_cursos(cursos_base).copy()
