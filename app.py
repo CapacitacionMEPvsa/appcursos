@@ -567,25 +567,30 @@ for categoria, cursos_base in categorias.items():
         obs = str(row.get("Observaciones", "")).strip().lower()
         estatus = str(row.get("Estatus", "")).strip().lower()
 
-        # quitar emojis si existen
-        estatus_clean = estatus.replace("🟢","").replace("🟡","").replace("🔴","").strip()
+        # 🔥 limpiar emojis SI EXISTEN
+        estatus = (
+            estatus
+            .replace("🟢", "")
+            .replace("🟡", "")
+            .replace("🔴", "")
+            .strip()
+        )
 
-        # 1. vencido o por vencer → link automático
-        if ("vencido" in estatus_clean) or ("por vencer" in estatus_clean):
+        # 1. vencido o por vencer → SIEMPRE link
+        if "vencido" in estatus or "por vencer" in estatus:
             return asignar_link_en_observaciones(row, categoria)
 
-        # 2. pendiente → link automático
+        # 2. pendiente → link
         if "pendiente" in obs:
             return asignar_link_en_observaciones(row, categoria)
 
-        # 3. cualquier otro texto → mostrar lo que escribiste
+        # 3. cualquier otro texto → se respeta lo que escribes
         return row.get("Observaciones", "")
 
-    df_cat["Observaciones"] = df_cat.apply(
-        lambda row: procesar_observaciones(row, categoria),
-        axis=1
-    )
-
+        df_cat["Observaciones"] = df_cat.apply(
+            lambda row: procesar_observaciones(row, categoria),
+            axis=1
+        )
 
     # -------------------------
     # MOSTRAR
