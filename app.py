@@ -542,11 +542,13 @@ for categoria, cursos_base in categorias.items():
 
         estatus = df_cat["Estatus"].fillna("").astype(str).str.lower()
         obs = df_cat["Observaciones"].fillna("").astype(str).str.lower()
-        estatus = df_cat["Estatus"].fillna("").astype(str).str.lower()
 
         df_cat = df_cat[
-            df_cat["Curso"].notna() &
-            (df_cat["Curso"].astype(str).str.strip() != "")
+            (
+                estatus.str.contains("vencido", na=False) |
+                estatus.str.contains("por vencer", na=False) |
+                obs.str.contains("pendiente", na=False)
+            )
         ]
     # -------------------------
     # EVITAR TABLAS VACÍAS
