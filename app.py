@@ -596,7 +596,7 @@ for categoria, cursos_base in categorias.items():
     st.data_editor(
         df_cat,
         column_config={
-            "Observaciones": st.column_config.LinkColumn(
+            "Observaciones": st.column_config.TextColumn(
                 "Observaciones",
                 display_text="Tomar curso"
             )
