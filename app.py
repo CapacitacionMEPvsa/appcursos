@@ -145,7 +145,7 @@ def asignar_link_en_observaciones(row, categoria):
             return "https://capacitacion-online-2.netlify.app/"
         elif "complementarios" in cat:
             return "https://capacitacion-en-linea.netlify.app/"
-        elif "técnicos" in cat:
+        elif "externos" in cat:
             return "https://capacitacion-online-3.netlify.app/"
 
     return ""
@@ -512,6 +512,19 @@ for categoria, cursos_base in categorias.items():
 
     df_cat = obtener_cursos(cursos_base).copy()
     
+    df_cat["Observaciones"] = df_cat.apply(
+    lambda row: (
+        asignar_link_en_observaciones(row, categoria)
+        if (
+            "venc" in str(row["Estatus"]).lower()
+            or "por vencer" in str(row["Estatus"]).lower()
+            or "pendiente" in str(row["Observaciones"]).lower()
+        )
+        else ""
+    ),
+    axis=1
+)
+    
     df_cat = df_cat[
         df_cat["Curso"].notna() &
         (df_cat["Curso"].astype(str).str.strip() != "")
@@ -542,12 +555,15 @@ for categoria, cursos_base in categorias.items():
 
         estatus = df_cat["Estatus"].fillna("").astype(str).str.lower()
         obs = df_cat["Observaciones"].fillna("").astype(str).str.lower()
-        estatus = df_cat["Estatus"].fillna("").astype(str).str.lower()
 
         df_cat = df_cat[
-            df_cat["Curso"].notna() &
-            (df_cat["Curso"].astype(str).str.strip() != "")
+            estatus.str.contains("venc", na=False) |
+            estatus.str.contains("por vencer", na=False) |
+            estatus.str.contains("vence", na=False) |
+            obs.str.contains("pendiente|programado", na=False)
         ]
+        
+        df_cat = df_cat[df_cat["Curso"].notna()]
     # -------------------------
     # EVITAR TABLAS VACÍAS
     # -------------------------
@@ -563,30 +579,6 @@ for categoria, cursos_base in categorias.items():
     if "Estatus" in df_cat.columns:
         df_cat["Estatus"] = df_cat["Estatus"].apply(icono_estatus)
     df_cat = df_cat.dropna(how="all")
-    def procesar_observaciones(row, categoria):
-        obs = str(row.get("Observaciones", "")).strip().lower()
-        estatus = str(row.get("Estatus", "")).strip().lower()
-
-        # quitar emojis si existen
-        estatus_clean = estatus.replace("🟢","").replace("🟡","").replace("🔴","").strip()
-
-        # 1. vencido o por vencer → link automático
-        if ("vencido" in estatus_clean) or ("por vencer" in estatus_clean):
-            return asignar_link_en_observaciones(row, categoria)
-
-        # 2. pendiente → link automático
-        if "pendiente" in obs:
-            return asignar_link_en_observaciones(row, categoria)
-
-        # 3. cualquier otro texto → mostrar lo que escribiste
-        return row.get("Observaciones", "")
-
-    df_cat["Observaciones"] = df_cat.apply(
-        lambda row: procesar_observaciones(row, categoria),
-        axis=1
-    )
-
-
     # -------------------------
     # MOSTRAR
     # -------------------------
@@ -599,4 +591,5 @@ for categoria, cursos_base in categorias.items():
                 display_text="Tomar curso"
             )
         },
+        use_container_width=True
     )
