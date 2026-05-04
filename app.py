@@ -567,17 +567,16 @@ for categoria, cursos_base in categorias.items():
         obs = str(row.get("Observaciones", "")).strip().lower()
         estatus = str(row.get("Estatus", "")).strip().lower()
 
-        # 1. SOLO "pendiente" activa link
+        # 🔗 1. SI ESTÁ VENCIDO O POR VENCER → link automático
+        if estatus in ["vencido", "por vencer"]:
+            return asignar_link_en_observaciones(row, categoria)
+
+        # 🔗 2. SI TÚ ESCRIBES "pendiente" → link
         if "pendiente" in obs:
             return asignar_link_en_observaciones(row, categoria)
 
-        # 2. SOLO estatus EXACTO controlado (no substring “venc”)
-        if estatus == "por vencer" or estatus == "vencido":
-            return asignar_link_en_observaciones(row, categoria)
-
-        # 3. TODO LO DEMÁS SE RESPETA TAL CUAL
+        # 📝 3. CUALQUIER OTRO TEXTO → se respeta tal cual
         return row.get("Observaciones", "")
-
 
     df_cat["Observaciones"] = df_cat.apply(
         lambda row: procesar_observaciones(row, categoria),
