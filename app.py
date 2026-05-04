@@ -149,7 +149,16 @@ def asignar_link_en_observaciones(row, categoria):
             return "https://capacitacion-online-3.netlify.app/"
 
     return ""
+def render_observaciones(row, categoria):
+    obs = str(row.get("Observaciones", "")).strip()
+    estatus = str(row.get("Estatus", "")).lower()
 
+    link = asignar_link_en_observaciones(row, categoria)
+
+    if link:
+        return f'<a href="{link}" target="_blank">Tomar curso</a>'
+
+    return obs
 # =========================
 # FUNCIÓN PARA EXTRAER CURSOS
 # =========================
@@ -593,12 +602,8 @@ for categoria, cursos_base in categorias.items():
     # MOSTRAR
     # -------------------------
     st.markdown(f"## 📂 {categoria}")
-    st.data_editor(
-        df_cat,
-        column_config={
-            "Observaciones": st.column_config.TextColumn(
-                "Observaciones",
-                display_text="Tomar curso"
-            )
-        },
+
+    st.write(
+        df_cat.to_html(escape=False, index=False),
+        unsafe_allow_html=True
     )
