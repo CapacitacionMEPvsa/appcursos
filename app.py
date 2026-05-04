@@ -101,9 +101,9 @@ st.markdown("---")
 # =========================
 categorias = {
     "CURSOS TÉCNICOS": [(195, 259), (285, 294)],
-    "CURSOS DE SEGURIDAD": [(30, 164)],
+    "CURSOS DE SEGURIDAD": [(30, 194)],
     "CURSOS EXTERNOS": [(5, 29), (295, 319), (320, 384), (385,439)],
-    "CURSOS COMPLEMENTARIOS": [(165, 194), (260, 284)]
+    "CURSOS COMPLEMENTARIOS": [(260, 284)]
 }
 
 rangos_con_certificado = [
