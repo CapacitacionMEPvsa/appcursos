@@ -567,15 +567,18 @@ for categoria, cursos_base in categorias.items():
         obs = str(row.get("Observaciones", "")).strip().lower()
         estatus = str(row.get("Estatus", "")).strip().lower()
 
-        # 🔗 1. SI ESTÁ VENCIDO O POR VENCER → link automático
-        if estatus in ["vencido", "por vencer"]:
+        # quitar emojis si existen
+        estatus_clean = estatus.replace("🟢","").replace("🟡","").replace("🔴","").strip()
+
+        # 1. vencido o por vencer → link automático
+        if ("vencido" in estatus_clean) or ("por vencer" in estatus_clean):
             return asignar_link_en_observaciones(row, categoria)
 
-        # 🔗 2. SI TÚ ESCRIBES "pendiente" → link
+        # 2. pendiente → link automático
         if "pendiente" in obs:
             return asignar_link_en_observaciones(row, categoria)
 
-        # 📝 3. CUALQUIER OTRO TEXTO → se respeta tal cual
+        # 3. cualquier otro texto → mostrar lo que escribiste
         return row.get("Observaciones", "")
 
     df_cat["Observaciones"] = df_cat.apply(
