@@ -100,9 +100,9 @@ st.markdown("---")
 # CONFIGURACIÓN DE CURSOS (CON RANGOS)
 # =========================
 categorias = {
-    "CURSOS TÉCNICOS": [(195, 259), (285, 294)],
+    "CURSOS TÉCNICOS": [(195, 259), (295, 314)],
     "CURSOS DE SEGURIDAD": [(30, 164)],
-    "CURSOS EXTERNOS": [(5, 29), (295, 319), (320, 384), (385,439)],
+    "CURSOS EXTERNOS": [(5, 29), (295, 314), (320, 384), (395,439)],
     "CURSOS COMPLEMENTARIOS": [(165, 194), (260, 284)]
 }
 
@@ -124,31 +124,6 @@ def icono_estatus(val):
         return "🔴 Vencido"
 
     return val
-
-def asignar_link_en_observaciones(row, categoria):
-    estatus = str(row.get("Estatus", "")).lower()
-    obs = str(row.get("Observaciones", "")).lower()
-
-    # ❌ si está vigente NO mostrar nada
-    if "vigente" in estatus:
-        return ""
-
-    # ✅ condiciones para mostrar link
-    if (
-        "venc" in estatus
-        or "por vencer" in estatus
-        or "pendiente" in obs
-    ):
-        cat = categoria.lower()
-
-        if "seguridad" in cat:
-            return "https://capacitacion-online-2.netlify.app/"
-        elif "complementarios" in cat:
-            return "https://capacitacion-en-linea.netlify.app/"
-        elif "externos" in cat:
-            return "https://capacitacion-online-3.netlify.app/"
-
-    return ""
 
 # =========================
 # FUNCIÓN PARA EXTRAER CURSOS
@@ -494,7 +469,6 @@ OFFSET_OBSERVACIONES = 0
 from datetime import datetime
 
 def calcular_estado(fecha):
-    
     if pd.isna(fecha):
         return "SIN FECHA"
 
@@ -507,24 +481,11 @@ def calcular_estado(fecha):
         return "POR VENCER"
     else:
         return "VIGENTE"
-        
+
+
 for categoria, cursos_base in categorias.items():
 
     df_cat = obtener_cursos(cursos_base).copy()
-    
-    df_cat["Observaciones"] = df_cat.apply(
-    lambda row: (
-        asignar_link_en_observaciones(row, categoria)
-        if (
-            "venc" in str(row["Estatus"]).lower()
-            or "por vencer" in str(row["Estatus"]).lower()
-            or "pendiente" in str(row["Observaciones"]).lower()
-        )
-        else ""
-    ),
-    axis=1
-)
-    
     df_cat = df_cat[
         df_cat["Curso"].notna() &
         (df_cat["Curso"].astype(str).str.strip() != "")
@@ -583,13 +544,4 @@ for categoria, cursos_base in categorias.items():
     # MOSTRAR
     # -------------------------
     st.markdown(f"## 📂 {categoria}")
-    st.data_editor(
-        df_cat,
-        column_config={
-            "Observaciones": st.column_config.LinkColumn(
-                "Observaciones",
-                display_text="Tomar curso"
-            )
-        },
-        use_container_width=True
-    )
+    st.dataframe(df_cat, use_container_width=True)
