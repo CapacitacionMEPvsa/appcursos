@@ -544,26 +544,19 @@ for categoria, cursos_base in categorias.items():
     # MOSTRAR
     # -------------------------
     
-col_titulo, col_boton = st.columns([6,2])
-
-with col_titulo:
     st.markdown(f"## 📂 {categoria}")
 
-with col_boton:
-    link = None
+    col1, col2, col3 = st.columns(3)
 
-    if categoria == "CURSOS TÉCNICOS":
-        link = "https://capacitacion-online-3.netlify.app/"
+    with col1:
+        if categoria == "CURSOS TÉCNICOS":
+            st.link_button("🎓 Ir a Cursos Técnicos", "https://capacitacion-online-3.netlify.app/")
 
-    elif categoria == "CURSOS COMPLEMENTARIOS":
-        link = "https://capacitacion-en-linea.netlify.app/"
+    with col2:
+        if categoria == "CURSOS COMPLEMENTARIOS":
+            st.link_button("📘 Ir a Cursos Complementarios", "https://capacitacion-en-linea.netlify.app/")
 
-    elif categoria == "CURSOS DE SEGURIDAD":
-        link = "https://capacitacion-online-2.netlify.app/"
-
-    elif categoria == "CURSOS EXTERNOS":
-        link = "https://capacitacion-online-2.netlify.app/"  # o el que tú quieras
-
-    if link:
-        st.link_button("🎓 Cursos", link)
-    st.dataframe(df_cat, use_container_width=True)
+    with col3:
+        if categoria == "CURSOS DE SEGURIDAD":
+            st.link_button("🦺 Ir a Cursos de Seguridad", "https://capacitacion-online-2.netlify.app/")
+        st.dataframe(df_cat, use_container_width=True)
