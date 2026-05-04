@@ -436,6 +436,7 @@ with col2:
 with col3:
     st.link_button("📘 Complementarios", "https://capacitacion-en-linea.netlify.app/")
     
+    datos_export = {}
     for categoria, cursos_base in categorias.items():
 
         df_export = obtener_cursos(cursos_base).copy()
