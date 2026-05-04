@@ -545,7 +545,9 @@ for categoria, cursos_base in categorias.items():
         estatus = df_cat["Estatus"].fillna("").astype(str).str.lower()
 
         df_cat = df_cat[
-        df_cat = df_cat[df_cat["Curso"].notna()]]
+            df_cat["Curso"].notna() &
+            (df_cat["Curso"].astype(str).str.strip() != "")
+        ]
     # -------------------------
     # EVITAR TABLAS VACÍAS
     # -------------------------
