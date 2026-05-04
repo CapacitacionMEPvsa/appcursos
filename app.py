@@ -593,10 +593,5 @@ for categoria, cursos_base in categorias.items():
     st.markdown(f"## 📂 {categoria}")
     st.data_editor(
         df_cat,
-        column_config={
-            "Observaciones": st.column_config.LinkColumn(
-                "Observaciones",
-                display_text="Tomar curso"
-            )
-        },
+        use_container_width=True
     )
